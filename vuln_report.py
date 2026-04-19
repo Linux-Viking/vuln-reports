@@ -60,6 +60,93 @@ try:
 except ImportError:
     HAS_WEASYPRINT = False
 
+try:
+    import openpyxl
+    from openpyxl.styles import Font, Alignment, PatternFill
+    from openpyxl.utils import get_column_letter
+    HAS_OPENPYXL = True
+except ImportError:
+    HAS_OPENPYXL = False
+
+def save_xlsx_report(vulnerabilities, cve_to_hosts, output_file):
+    if not HAS_OPENPYXL:
+        print("[!] openpyxl not installed. XLSX report skipped.")
+        return
+
+    wb = openpyxl.Workbook()
+    
+    # 1. Summary Sheet
+    ws_summary = wb.active
+    ws_summary.title = "Summary"
+    summary_headers = ["CVE ID", "Title", "CVSS Score", "CISA KEV", "Exploitability", "Hosts Affected"]
+    ws_summary.append(summary_headers)
+    
+    # Header Styling
+    header_fill = PatternFill(start_color="334155", end_color="334155", fill_type="solid")
+    header_font = Font(color="FFFFFF", bold=True)
+    for col in range(1, len(summary_headers) + 1):
+        cell = ws_summary.cell(row=1, column=col)
+        cell.fill = header_fill
+        cell.font = header_font
+
+    # Sort vulnerabilities by CVSS
+    def get_score(v):
+        s = v.get('cvss_score', 0)
+        return float(s) if s != 'N/A' else 0
+    
+    sorted_cves = sorted(vulnerabilities.keys(), key=lambda cid: get_score(vulnerabilities[cid]), reverse=True)
+
+    for cve_id in sorted_cves:
+        d = vulnerabilities[cve_id]
+        hosts_count = len(cve_to_hosts.get(cve_id, []))
+        ws_summary.append([
+            cve_id, d.get('title', 'N/A'), d.get('cvss_score', 'N/A'),
+            d.get('cisa_kev', 'N/A'), d.get('exploitability', 'N/A'), hosts_count
+        ])
+
+    # 2. Individual CVE Sheets
+    for cve_id in sorted_cves:
+        d = vulnerabilities[cve_id]
+        # Excel sheet names limited to 31 chars
+        sheet_name = cve_id[:31]
+        ws = wb.create_sheet(title=sheet_name)
+        
+        # CVE Metadata Table
+        metadata = [
+            ("CVE ID", cve_id),
+            ("Title", d.get('title', 'N/A')),
+            ("CVSS Score", d.get('cvss_score', 'N/A')),
+            ("CISA KEV", d.get('cisa_kev', 'N/A')),
+            ("Exploitability", d.get('exploitability', 'N/A')),
+            ("EPSS Score", d.get('epss_score', 'N/A')),
+            ("Remediation", d.get('remediation', 'N/A')),
+            ("Description", d.get('description', 'N/A'))
+        ]
+        
+        for i, (label, val) in enumerate(metadata, 1):
+            ws.cell(row=i, column=1, value=label).font = Font(bold=True)
+            ws.cell(row=i, column=2, value=str(val)).alignment = Alignment(wrap_text=True)
+        
+        # Affected Hosts Table
+        start_row = len(metadata) + 2
+        ws.cell(row=start_row, column=1, value="Affected Hosts").font = Font(bold=True, size=12)
+        host_headers = ["IP Address", "Hostname", "Port/Proto", "Service Name"]
+        for col, h_text in enumerate(host_headers, 1):
+            cell = ws.cell(row=start_row+1, column=col, value=h_text)
+            cell.fill = header_fill
+            cell.font = header_font
+            
+        for i, (ip, host, port, svc) in enumerate(sorted(cve_to_hosts.get(cve_id, [])), 1):
+            ws.append([ip, host, port, svc]) # Note: this appends to end of sheet, may need careful row management if multiple tables
+            # Actually appending is fine if it's the last section.
+
+        # Adjust columns
+        ws.column_dimensions['A'].width = 20
+        ws.column_dimensions['B'].width = 80
+
+    wb.save(output_file)
+    print(f"[+] XLSX intelligence report saved to: {output_file}")
+
 def save_markdown_report(vulnerabilities, cve_to_hosts, scanner_type, target_file, output_file):
     if not HAS_JINJA: return
     
@@ -173,7 +260,7 @@ def save_html_report(vulnerabilities, cve_to_hosts, scanner_type, target_file, o
     except Exception as e:
         print(f"[!] Error generating HTML report: {e}")
 
-def generate_report(scan_file: str, output_file: str, group_by: str, github_token: str = None, nvd_key: str = None, html_file: str = None, md_file: str = None, pdf_file: str = None):
+def generate_report(scan_file: str, output_file: str, group_by: str, github_token: str = None, nvd_key: str = None, html_file: str = None, md_file: str = None, pdf_file: str = None, xlsx_file: str = None):
     scanner_type = scan2cve.detect_scanner(scan_file)
     if not scanner_type: print(f"[!] Could not detect scanner type for {scan_file}"); return
     print(f"[*] Detected scanner type: {scanner_type}")
@@ -209,11 +296,12 @@ def generate_report(scan_file: str, output_file: str, group_by: str, github_toke
     cve_to_hosts = {}
     for _, host_data in parser.hosts.items():
         ip, hostname = host_data.get('ip', ''), host_data.get('hostname', '')
+        display_name = ip if ip else hostname
         for s in host_data["services"]:
             port_proto = f"{s['port']}/{s['proto']}" if s['port'] != "0" else "Host-level"
             for cve_id in s['cves']:
                 if cve_id not in cve_to_hosts: cve_to_hosts[cve_id] = []
-                cve_to_hosts[cve_id].append((ip, hostname, port_proto, s['name']))
+                cve_to_hosts[cve_id].append((display_name, hostname, port_proto, s['name']))
 
     try:
         with open(output_file, 'w', newline='', encoding='utf-8') as f:
@@ -258,6 +346,8 @@ def generate_report(scan_file: str, output_file: str, group_by: str, github_toke
             save_markdown_report(cve_enrichment, cve_to_hosts, scanner_type, scan_file, md_file)
         if pdf_file:
             save_pdf_report(cve_enrichment, cve_to_hosts, scanner_type, scan_file, pdf_file)
+        if xlsx_file:
+            save_xlsx_report(cve_enrichment, cve_to_hosts, xlsx_file)
             
     except Exception as e: print(f"[!] Error writing CSV: {e}")
 
@@ -268,11 +358,12 @@ def main():
     p.add_argument("-H", "--html", help="Output HTML report filename")
     p.add_argument("-M", "--markdown", help="Output Markdown report filename")
     p.add_argument("-P", "--pdf", help="Output PDF report filename")
+    p.add_argument("-X", "--xlsx", help="Output XLSX report filename")
     p.add_argument("-g", "--group-by", choices=['host', 'cve'], default='host', help="Group rows by host or CVE")
     p.add_argument("-T", "--token", help="GitHub Token for PoC lookup")
     p.add_argument("-N", "--nvd-key", help="NVD API Key")
     args = p.parse_args()
     if not os.path.exists(args.file): print(f"[!] File not found: {args.file}"); return
-    generate_report(args.file, args.output, args.group_by, args.token, args.nvd_key, args.html, args.markdown, args.pdf)
+    generate_report(args.file, args.output, args.group_by, args.token, args.nvd_key, args.html, args.markdown, args.pdf, args.xlsx)
 
 if __name__ == "__main__": main()

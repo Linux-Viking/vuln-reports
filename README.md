@@ -67,9 +67,9 @@ pip install -r requirements.txt
 ## 📖 Usage Guide
 
 ### End-to-End Reporting
-Generate a full vulnerability report from a Nessus, Nmap, or Qualys file:
+Generate comprehensive reports in multiple formats (CSV, HTML, PDF, Markdown) from a scan file:
 ```bash
-python3 vuln_report.py my_scan.nessus -o final_report.csv --group-by host
+python3 vuln_report.py my_scan.nessus -o report.csv -H report.html -P report.pdf -M report.md
 ```
 
 ### Standalone CVE Research
@@ -94,7 +94,11 @@ python3 scan2cve.py scan.xml -o unique_cves.txt
 
 | Format | Description | Command Flag |
 | :--- | :--- | :--- |
-| **CSV** | Professional spreadsheet for clients | `--csv` |
+| **CSV** | Professional spreadsheet for clients | `--csv` (cve_lookup) or `-o` (vuln_report) |
+| **HTML** | Interactive intelligence report with styling | `-H` (vuln_report) |
+| **PDF** | High-fidelity intelligence report for delivery | `-P` (vuln_report) |
+| **XLSX**| Multi-sheet workbook (one sheet per CVE) | `-X` (vuln_report) |
+| **Markdown**| Technical documentation and Wiki integration | `-M` (vuln_report) |
 | **JSON** | Machine-readable data for automation | `--json` |
 | **Grep** | Pipe-delimited flat file for CLI wizards | `--grep` |
 | **Text** | Human-readable terminal output | `--text` |

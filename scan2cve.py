@@ -77,12 +77,22 @@ class NmapParser(BaseParser):
             for host_node in root.findall('host'):
                 addr_tag = host_node.find('address')
                 raw_addr = addr_tag.get('addr') if addr_tag is not None else ""
-                ip = raw_addr if is_ip(raw_addr) else ""
+                
+                # Logic: If it's an IP, use it. If not, it's a hostname.
+                ip = ""
                 hostname = ""
+                
+                if is_ip(raw_addr):
+                    ip = raw_addr
+                else:
+                    hostname = raw_addr
+                
+                # Check for explicit hostname nodes
                 hostname_node = host_node.find('.//hostname')
                 if hostname_node is not None:
-                    hostname = hostname_node.get('name', '')
-                if not ip and raw_addr: hostname = raw_addr
+                    name = hostname_node.get('name', '')
+                    if name: hostname = name
+
                 host_id = raw_addr or ip or hostname or "Unknown"
                 if host_id not in self.hosts:
                     self.hosts[host_id] = {"ip": ip, "hostname": hostname, "services": []}
