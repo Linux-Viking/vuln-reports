@@ -1,2 +1,5 @@
-requests==2.31.0
-keyring==24.3.0
+requests
+argparse
+keyring
+jinja2
+weasyprint

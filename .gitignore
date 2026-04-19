@@ -1,0 +1,12 @@
+__pycache__/
+*.csv
+*.xml
+*.nessus
+*.html
+*.grep
+*.txt
+*.json
+*.pdf
+*.md
+.env
+.config/

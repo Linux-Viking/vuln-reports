@@ -218,7 +218,6 @@ def get_cve_data(session: requests.Session, cve_id: str, github_token: Optional[
             action_match = re.search(pattern, description, re.IGNORECASE)
             if action_match:
                 action = action_match.group(1).strip()
-                if len(action) > 60: action = action[:57] + "..."
                 vuln_type = action.capitalize()
                 break
     # Try to get a clean CWE title as a secondary fallback
