@@ -3,3 +3,4 @@ argparse
 keyring
 jinja2
 weasyprint
+openpyxl
