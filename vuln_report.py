@@ -21,17 +21,29 @@ except ImportError as e:
     print(f"    Missing module: {e.name}")
     sys.exit(1)
 
+from concurrent.futures import ThreadPoolExecutor, as_completed
+
 def get_detailed_cve_info(cve_ids: List[str], github_token: str = None, nvd_key: str = None) -> Dict[str, Dict[str, Any]]:
-    """Fetch details for a list of CVEs using cve_lookup logic."""
+    """Fetch details for a list of CVEs using cve_lookup logic with concurrency."""
     session = requests.Session()
     cve_details = {}
     print(f"[*] Fetching enrichment data for {len(cve_ids)} unique CVEs...")
-    for cve_id in sorted(cve_ids):
-        try:
-            data = cve_lookup.get_cve_data(session, cve_id, github_token, nvd_key)
-            if "error" not in data: cve_details[cve_id] = data
-            else: cve_details[cve_id] = {"cve_id": cve_id, "error": data["error"]}
-        except Exception as e: cve_details[cve_id] = {"cve_id": cve_id, "error": str(e)}
+    
+    max_workers = 10
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        futures = {executor.submit(cve_lookup.get_cve_data, session, cve_id, github_token, nvd_key): cve_id for cve_id in cve_ids}
+        for future in as_completed(futures):
+            cve_id = futures[future]
+            try:
+                data = future.result()
+                if "error" not in data:
+                    cve_details[cve_id] = data
+                else:
+                    print(f"  [!] Error enriching {cve_id}: {data['error']}")
+                    cve_details[cve_id] = {"cve_id": cve_id, "error": data["error"]}
+            except Exception as e:
+                print(f"  [!] Exception enriching {cve_id}: {e}")
+                cve_details[cve_id] = {"cve_id": cve_id, "error": str(e)}
     return cve_details
 
 def generate_report(scan_file: str, output_file: str, group_by: str, github_token: str = None, nvd_key: str = None):

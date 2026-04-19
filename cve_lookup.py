@@ -95,14 +95,23 @@ def get_cve_data(session: requests.Session, cve_id: str, github_token: Optional[
     epss_url = "https://api.first.org/data/v1/epss"
     headers = {'User-Agent': USER_AGENT}
     
+    max_retries = 3
+    circl_data = None
+    for attempt in range(max_retries):
+        try:
+            circl_resp = session.get(circl_url, headers=headers, timeout=DEFAULT_TIMEOUT)
+            circl_resp.raise_for_status()
+            circl_data = circl_resp.json()
+            break
+        except Exception as e:
+            if attempt == max_retries - 1: return {"cve_id": cve_id, "error": str(e)}
+            time.sleep(1)
+
+    epss_data = {}
     try:
-        circl_resp = session.get(circl_url, headers=headers, timeout=DEFAULT_TIMEOUT)
-        circl_resp.raise_for_status()
-        circl_data = circl_resp.json()
         epss_resp = session.get(epss_url, headers=headers, params={'cve': cve_id}, timeout=DEFAULT_TIMEOUT)
-        epss_resp.raise_for_status()
-        epss_data = epss_resp.json()
-    except Exception as e: return {"cve_id": cve_id, "error": str(e)}
+        if epss_resp.status_code == 200: epss_data = epss_resp.json()
+    except Exception: pass
 
     if not circl_data: return {"cve_id": cve_id, "error": "Not found"}
 
@@ -124,61 +133,138 @@ def get_cve_data(session: requests.Session, cve_id: str, github_token: Optional[
 
     # Fallback product detection from description if missing
     detected_products = []
+    
+    # Pre-check for common high-value products
+    if "openssh" in description.lower():
+        product = "OpenSSH"; detected_products = ["OpenSSH"]
+    elif "apache http server" in description.lower() or "httpd" in description.lower():
+        product = "Apache HTTP Server"; detected_products = ["Apache HTTP Server"]
+    
     if not product:
-        # 1. Try matching at the start of the description (common for older records)
-        # Look for multiple products: Product A, Product B, and Product C
+        # 1. Try matching at the start of the description
         multi_match = re.match(r"^([A-Z][a-zA-Z0-9]+(?:\s+[A-Z][a-zA-Z0-9]+)*(?:,\s+[A-Z][a-zA-Z0-9]+(?:\s+[A-Z][a-zA-Z0-9]+)*)*)", description)
         if multi_match:
             products_str = multi_match.group(1)
-            # Split by comma and 'and'
             detected_products = [p.strip() for p in re.split(r",| and ", products_str) if p.strip()]
             product = detected_products[0] if detected_products else ''
         
-        if not product:
-            pm = re.search(r"(?:discovered in|in) ([A-Z][a-zA-Z0-9]+(?:\s+[A-Z][a-zA-Z0-9]+)*)", description)
+        if not product or product.lower() in ['the', 'in', 'an', 'a']:
+            pm = re.search(r"(?:discovered in|\bin\b|\bat\b|\bof\b) ([A-Z][a-zA-Z0-9]+(?:\s+[A-Z][a-zA-Z0-9]+)*)", description)
             if pm:
-                product = pm.group(1)
+                product = pm.group(1).strip()
                 detected_products = [product]
             elif "owncloud" in description.lower():
                 product = "ownCloud"; detected_products = [product]
             elif "log4j" in description.lower():
                 product = "Apache Log4j"; detected_products = [product]
 
+    # Clean product name from noise
+    def clean_noise(text):
+        if not text: return ""
+        prev = ""
+        while text != prev:
+            prev = text
+            text = re.sub(r"^(?:the|in|an|a|at|of|on|issue was discovered in|multiple|use-after-free vulnerability in|vulnerability in)\s+", "", text, flags=re.IGNORECASE).strip()
+        return text
+
+    product = clean_noise(product)
+    
+    # Validation: Products should generally not be just common verbs or descriptors
+    noise_words = ['issue', 'use', 'vulnerability', 'multiple', 'all', 'certain', 'use-after-free', 'an', 'the']
+    if product.lower() in noise_words:
+        product = ""
+
+    detected_products = [clean_noise(p) for p in detected_products if clean_noise(p)]
+    detected_products = [p for p in detected_products if p.lower() not in noise_words]
+    
+    if not product and detected_products: product = detected_products[0]
+
     # Enhanced Title Logic
     aka_match = re.search(r"aka a? ([A-Z][a-zA-Z0-9\s\-]+?)(?:\s+attack|\.|$)", description, re.IGNORECASE)
     aka_title = aka_match.group(1).strip() if aka_match else None
     
-    generic_vulns = ["information disclosure", "remote code execution", "command injection", "cross-site scripting", "buffer overflow", "denial of service", "privilege escalation", "sql injection", "path traversal", "directory traversal"]
+    generic_vulns = [
+        "information disclosure", "remote code execution", "command injection", "cross-site scripting", 
+        "buffer overflow", "denial of service", "privilege escalation", "sql injection", "path traversal", 
+        "directory traversal", "authentication bypass", "incorrect authorization", "input validation", 
+        "cross-site request forgery", "csrf", "xss", "rce", "use-after-free", "user enumeration",
+        "impersonation", "crlf injection", "side-channel", "race condition", "memory corruption"
+    ]
     
+    # Try to extract a vulnerability type from the description
+    vuln_type = None
+    for gv in generic_vulns:
+        if gv in description.lower():
+            vuln_type = gv.title()
+            if len(vuln_type) <= 4: vuln_type = vuln_type.upper() # CSRF, XSS, RCE
+            break
+    
+    if not vuln_type:
+        # Try to extract what the attacker can do or what is broken
+        # Matches: "allows ... to [action]", "mishandles [feature]", "is vulnerable to [type]", "Due to [reason]"
+        patterns = [
+            r"allows (?:remote )?attackers to ([^,\.\(;]+)",
+            r"mishandles ([^,\.\(;]+)",
+            r"is vulnerable to ([^,\.\(;]+)",
+            r"could allow (?:remote )?attackers to ([^,\.\(;]+)",
+            r"due to ([^,\.\(;]+)",
+            r"lacks ([^,\.\(;]+)",
+            r"provides ([^,\.\(;]+)",
+            r"creates ([^,\.\(;]+)",
+            r"triggering ([^,\.\(;]+)",
+            r"allows ([^,\.\(;]+)"
+        ]
+        for pattern in patterns:
+            action_match = re.search(pattern, description, re.IGNORECASE)
+            if action_match:
+                action = action_match.group(1).strip()
+                if len(action) > 60: action = action[:57] + "..."
+                vuln_type = action.capitalize()
+                break
     # Try to get a clean CWE title as a secondary fallback
     cwe_title = None
-    for adp in adp_list:
-        for pt in adp.get('problemTypes', []):
-            for desc in pt.get('descriptions', []):
-                if desc.get('lang') == 'en' and desc.get('description') and desc.get('description').lower() != "n/a":
-                    cwe_title = re.sub(r'^CWE-\d+\s+', '', desc.get('description'), flags=re.IGNORECASE)
-                    break
-            if cwe_title: break
+    all_problem_types = cna.get('problemTypes', []) + [pt for adp in adp_list for pt in adp.get('problemTypes', [])]
+    for pt in all_problem_types:
+        for desc in pt.get('descriptions', []):
+            if desc.get('lang') == 'en' and desc.get('description') and desc.get('description').lower() != "n/a":
+                cwe_title = re.sub(r'^CWE-\d+\s+', '', desc.get('description'), flags=re.IGNORECASE)
+                break
         if cwe_title: break
 
-    current_title_lower = str(title).lower()
-    if not title or title == "N/A" or any(gv in current_title_lower for gv in generic_vulns):
+    current_title = normalize_text(title)
+    if not title or current_title == "N/A" or any(gv in current_title.lower() for gv in generic_vulns):
+        # Generate a better title
         if product:
-            base = f"{product}"
-            if aka_title:
-                title = f"{base}: {aka_title}"
-            elif title and title != "N/A":
-                title = f"{base}: {title}"
-            else:
-                title = f"Vulnerability in {base}"
-        elif aka_title:
-            title = aka_title
-        elif cwe_title:
-            title = cwe_title
+            base = product
+            detail = aka_title or vuln_type or (current_title if current_title != "N/A" else None) or cwe_title
+            
+            # If description starts with "FILE.c in SERVICE", use that as detail
+            file_match = re.match(r"^([a-zA-Z0-9_\-\./]+\.[a-z]{1,4}(?:\s+in\s+[a-zA-Z0-9_\-]+)?)", description)
+            if file_match and not aka_title:
+                detail = file_match.group(1)
 
+            if detail:
+                detail = clean_noise(detail)
+                if detail.lower() in base.lower(): current_title = base
+                else: current_title = f"{base}: {detail}"
+            else:
+                current_title = f"Vulnerability in {base}"
+        elif aka_title:
+            current_title = aka_title
+        elif vuln_type:
+            current_title = vuln_type
+        elif cwe_title:
+            current_title = cwe_title
+    
     affected_structured = []
     if not affected_raw or (len(affected_raw) == 1 and affected_raw[0].get('product', '').lower() in ['n/a', '']):
         if detected_products:
+            # ... (extract versions logic)
+            # Ensure detected products are also cleaned
+            for i in range(len(detected_products)):
+                if detected_products[i].lower().startswith('in '):
+                    detected_products[i] = detected_products[i][3:].strip()
+            
             # Try to extract versions from description: "X.Y before Z.W" or "X.Y through Z.W"
             all_versions = re.findall(r"(\d+(?:\.\d+)* (?:before|through) (?:build )?\d+(?:\.\d+)*)", description)
             if not all_versions:
@@ -315,7 +401,7 @@ def get_cve_data(session: requests.Session, cve_id: str, github_token: Optional[
     exploitability = "Exploited in the wild" if cisa_kev == "Yes" else "PoC Available" if poc_available != "No" else "Theoretical / Unknown"
 
     return {
-        "cve_id": cve_id, "title": normalize_text(title), "description": description, "affected": affected_structured,
+        "cve_id": cve_id, "title": current_title, "description": description, "affected": affected_structured,
         "cisa_kev": cisa_kev, "cvss_score": cvss_score, "exploitability": exploitability,
         "poc_available": poc_available, "poc_link": poc_link, "user_interaction": user_interaction,
         "epss_score": epss_score, "attack_complexity": attack_complexity, "references": combined_refs
