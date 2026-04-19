@@ -399,11 +399,43 @@ def get_cve_data(session: requests.Session, cve_id: str, github_token: Optional[
 
     exploitability = "Exploited in the wild" if cisa_kev == "Yes" else "PoC Available" if poc_available != "No" else "Theoretical / Unknown"
 
+    # Extract Remediation / Mitigation
+    remediation = "Apply the latest security patches from the vendor."
+    
+    # 1. Check for explicit solution/mitigation fields in the record
+    solutions = cna.get('solutions', [])
+    if solutions and isinstance(solutions, list) and solutions[0].get('value'):
+        remediation = solutions[0]['value']
+    
+    # 2. Try to extract from description (common pattern)
+    if remediation == "Apply the latest security patches from the vendor.":
+        # Matches: "Users are recommended to upgrade to version X", "fixed in version X", "Patch is available at X"
+        rem_patterns = [
+            r"recommended to upgrade to ([^,\.\(;]+)",
+            r"fixed in (?:version )?([^,\.\(;]+)",
+            r"update to (?:version )?([^,\.\(;]+)",
+            r"mitigated by ([^,\.\(;]+)"
+        ]
+        for pattern in rem_patterns:
+            rem_match = re.search(pattern, description, re.IGNORECASE)
+            if rem_match:
+                version = rem_match.group(1).strip()
+                remediation = f"Upgrade to {version} or later."
+                break
+    
+    # 3. Check references for 'advisory' or 'patch'
+    if remediation == "Apply the latest security patches from the vendor.":
+        for ref in combined_refs:
+            if any(k in ref.lower() for k in ['advisory', 'patch', 'fix', 'update']):
+                remediation = f"Review vendor advisory and apply available patches: {ref}"
+                break
+
     return {
         "cve_id": cve_id, "title": current_title, "description": description, "affected": affected_structured,
         "cisa_kev": cisa_kev, "cvss_score": cvss_score, "exploitability": exploitability,
         "poc_available": poc_available, "poc_link": poc_link, "user_interaction": user_interaction,
-        "epss_score": epss_score, "attack_complexity": attack_complexity, "references": combined_refs
+        "epss_score": epss_score, "attack_complexity": attack_complexity, "references": combined_refs,
+        "remediation": remediation
     }
 
 def print_pretty(data: Dict[str, Any], use_colors: bool, minimal: bool = False):

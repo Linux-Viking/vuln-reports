@@ -202,7 +202,7 @@ def generate_report(scan_file: str, output_file: str, group_by: str, github_toke
         "IP", "Hostname (FQDN)", "CVE ID", "Port", "Service",
         "Title", "Description", "CVSS Score", "CISA KEV", "EPSS Score",
         "Exploitability", "PoC Available", "PoC Link", "User Interaction", "Complexity", 
-        "Affected Products", "References"
+        "Affected Products", "Remediation", "References"
     ]
 
     # Prepare host mapping for reporting
@@ -233,6 +233,7 @@ def generate_report(scan_file: str, output_file: str, group_by: str, github_toke
                                 d.get('poc_available', 'N/A'), d.get('poc_link', 'N/A'), d.get('user_interaction', 'N/A'),
                                 d.get('attack_complexity', 'N/A'),
                                 "; ".join([f"{a['product']} ({', '.join(a['versions'])})" for a in d.get('affected', [])]),
+                                d.get('remediation', 'N/A'),
                                 "; ".join(d.get('references', []))
                             ])
             else: # group by cve
@@ -246,6 +247,7 @@ def generate_report(scan_file: str, output_file: str, group_by: str, github_toke
                             d.get('poc_available', 'N/A'), d.get('poc_link', 'N/A'), d.get('user_interaction', 'N/A'),
                             d.get('attack_complexity', 'N/A'),
                             "; ".join([f"{a['product']} ({', '.join(a['versions'])})" for a in d.get('affected', [])]),
+                            d.get('remediation', 'N/A'),
                             "; ".join(d.get('references', []))
                         ])
         print(f"[+] Detailed report saved to: {output_file}")
