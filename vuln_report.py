@@ -51,14 +51,17 @@ from datetime import datetime
 try:
     from jinja2 import Environment, FileSystemLoader
     HAS_JINJA = True
-except ImportError:
+except Exception:
     HAS_JINJA = False
 
 try:
     from weasyprint import HTML
     HAS_WEASYPRINT = True
-except ImportError:
+except Exception as e:
     HAS_WEASYPRINT = False
+    # If it's a DLL loading error (common on Windows), we still want to continue but skip PDF
+    if "cannot load library" in str(e).lower():
+        pass 
 
 try:
     import openpyxl
@@ -416,7 +419,9 @@ def save_markdown_report(vulnerabilities, cve_to_hosts, scanner_type, target_fil
 
 def save_pdf_report(vulnerabilities, cve_to_hosts, scanner_type, target_file, output_file):
     if not HAS_WEASYPRINT or not HAS_JINJA:
-        print("[!] WeasyPrint or Jinja2 not installed. PDF report skipped.")
+        print("[!] PDF generation requires WeasyPrint and Jinja2.")
+        print("[*] Note: On Windows, WeasyPrint also requires the GTK+ runtime installed and in your PATH.")
+        print("[!] PDF report skipped.")
         return
 
     # Generate HTML first (temporarily or in memory)

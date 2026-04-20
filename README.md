@@ -110,3 +110,15 @@ The Word report is optimized for pentest deliverables with a logical section ord
 ### ⚙️ Scale & Fidelity
 - **Host Limiting**: High-fidelity reports intelligently limit host displays to 5 items to maintain layout integrity, while CSV/XLSX preserve 100% of audit data.
 - **FQDN Support**: Seamlessly handles environments where hosts are identified only by their DNS names, ensuring FQDNs are treated as primary identifiers when IPs are absent.
+
+---
+
+## 🛠️ Troubleshooting (Windows)
+
+### PDF Generation Error (`OSError: cannot load library 'libgobject-2.0-0'`)
+If you see this error when generating PDFs, it means **WeasyPrint** cannot find its required C libraries (GTK+).
+1.  Download the **GTK for Windows Runtime** (e.g., from [GTK-for-Windows-Runtime-Environment-Installer](https://github.com/tschoonj/GTK-for-Windows-Runtime-Environment-Installer/releases)).
+2.  Install it and ensure you check the box to **add the GTK bin folder to your System PATH**.
+3.  Restart your terminal/IDE.
+
+*Alternatively, you can skip PDF generation and use HTML, DOCX, or XLSX formats which do not have this dependency.*
