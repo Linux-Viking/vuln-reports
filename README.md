@@ -59,13 +59,20 @@ pip install -r requirements.txt
 ### End-to-End Reporting
 Generate comprehensive reports in all supported formats:
 ```bash
-python3 vuln_report.py my_scan.nessus -o report.csv -H report.html -P report.pdf -M report.md -X report.xlsx -D report.docx
+# Generate all formats at once with a base filename
+python3 vuln_report.py my_scan.nessus -A report
+
+# Or specify individual formats
+python3 vuln_report.py my_scan.nessus -C report.csv -H report.html -P report.pdf -M report.md -X report.xlsx -D report.docx
 ```
 
 ### Standalone CVE Research
 ```bash
 # Research a single CVE with PoC filtering
 python3 cve_lookup.py CVE-2023-48795 -p
+
+# Generate all research formats for a list of CVEs
+python3 cve_lookup.py CVE-2023-48795 CVE-2024-1234 -A results
 ```
 
 ---
@@ -74,12 +81,13 @@ python3 cve_lookup.py CVE-2023-48795 -p
 
 | Format | Description | Command Flag |
 | :--- | :--- | :--- |
-| **HTML** | Interactive dark-themed dashboard | `-H` (vuln_report) |
-| **PDF** | High-fidelity intelligence report for delivery | `-P` (vuln_report) |
-| **DOCX** | Assessment-ready Word doc with technical workflow | `-D` (vuln_report) |
-| **XLSX** | Multi-sheet workbook (one sheet per CVE) | `-X` (vuln_report) |
-| **Markdown**| Technical documentation and Wiki integration | `-M` (vuln_report) |
-| **CSV** | Professional spreadsheet for raw data | `-o` (vuln_report) |
+| **All** | Generate all available formats using a base name | `-A` / `--all` |
+| **CSV** | Professional spreadsheet for raw data | `-C` / `--csv` |
+| **HTML** | Interactive dark-themed dashboard | `-H` / `--html` |
+| **PDF** | High-fidelity intelligence report for delivery | `-P` / `--pdf` |
+| **DOCX** | Assessment-ready Word doc with technical workflow | `-D` / `--docx` |
+| **XLSX** | Multi-sheet workbook (one sheet per CVE) | `-X` / `--xlsx` |
+| **Markdown**| Technical documentation and Wiki integration | `-M` / `--markdown` |
 
 ---
 

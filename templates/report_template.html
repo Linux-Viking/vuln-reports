@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vulnerability Intelligence Report</title>
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --accent: #3b82f6;
+            --critical: #ef4444;
+            --high: #f97316;
+            --medium: #eab308;
+            --low: #22c55e;
+            --info: #3b82f6;
+            --kev: #db2777;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            border-bottom: 1px solid #334155;
+            padding-bottom: 2rem;
+            margin-bottom: 2rem;
+            display: block;
+        }
+
+        h1 { margin: 0; font-size: 2.5rem; letter-spacing: -0.025em; }
+        .metadata { color: var(--text-dim); font-size: 0.9rem; }
+
+        .summary-grid {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            width: 100%;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            border: 1px solid #334155;
+            text-align: center;
+            flex: 1;
+            box-sizing: border-box;
+        }
+
+        .stat-value { font-size: 2rem; font-weight: 700; display: block; }
+        .stat-label { color: var(--text-dim); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; }
+
+        .vulnerability-list { display: block; }
+
+        .vuln-card {
+            background: var(--bg-card);
+            border-radius: 1rem;
+            border: 1px solid #334155;
+            overflow: hidden;
+            margin-bottom: 2rem;
+            page-break-inside: avoid;
+            display: block;
+        }
+
+        .vuln-header {
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-bottom: 1px solid #334155;
+            display: block;
+            position: relative;
+            min-height: 80px;
+        }
+
+        .severity-badge {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.2rem;
+            vertical-align: middle;
+            margin-right: 1.5rem;
+        }
+
+        .vuln-header-text {
+            display: inline-block;
+            vertical-align: middle;
+            width: 70%;
+        }
+
+        .vuln-header-right {
+            position: absolute;
+            right: 1.5rem;
+            top: 1.5rem;
+            text-align: right;
+            font-size: 0.8rem;
+            color: var(--text-dim);
+        }
+
+        .sev-critical { background: rgba(239, 68, 68, 0.1); color: var(--critical); border: 2px solid var(--critical); }
+        .sev-high { background: rgba(249, 115, 22, 0.1); color: var(--high); border: 2px solid var(--high); }
+        .sev-medium { background: rgba(234, 179, 8, 0.1); color: var(--medium); border: 2px solid var(--medium); }
+        .sev-low { background: rgba(34, 197, 94, 0.1); color: var(--low); border: 2px solid var(--low); }
+
+        .vuln-id { font-weight: 700; color: var(--accent); margin-bottom: 0.25rem; }
+        .vuln-title { font-size: 1.1rem; font-weight: 600; margin: 0; word-wrap: break-word; }
+
+        .badge-container { display: block; margin-top: 0.5rem; }
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            display: inline-block;
+            margin-right: 0.5rem;
+        }
+
+        .badge-kev { background: var(--kev); color: white; }
+        .badge-poc { background: #6366f1; color: white; }
+        .badge-exploited { background: #dc2626; color: white; }
+
+        .vuln-body { padding: 1.5rem; display: block; }
+        .vuln-desc { color: var(--text-dim); margin-bottom: 1.5rem; font-size: 0.95rem; display: block; }
+
+        .section-header {
+            margin: 1.5rem 0 0.75rem 0;
+            font-size: 0.8rem;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 700;
+        }
+
+        .affected-list, .reference-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            font-size: 0.85rem;
+        }
+
+        .affected-list li { margin-bottom: 0.5rem; }
+        .reference-list li {
+            margin-bottom: 0.25rem;
+            word-wrap: break-word;
+        }
+
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        .host-list {
+            margin-top: 0.5rem;
+            display: block;
+            width: 100%;
+        }
+
+        .host-item {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.2rem 0.6rem;
+            border-radius: 0.25rem;
+            font-family: monospace;
+            font-size: 0.8rem;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        @page {
+            background: var(--bg-dark);
+            margin: 1cm;
+        }
+
+        * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div style="display: inline-block; width: 70%;">
+                <h1>Vulnerability Intelligence Report</h1>
+                <div class="metadata">
+                    Generated on: {{ date }} | Scanner: {{ scanner_type }} | Target: {{ target_file }}
+                </div>
+            </div>
+            <div style="display: inline-block; width: 28%; text-align: right; vertical-align: top;">
+                <span style="font-weight: 800; font-size: 1.5rem; color: var(--accent);">VULN-REPORTS</span>
+            </div>
+        </header>
+
+        <section class="summary-grid">
+            <div class="stat-card">
+                <span class="stat-value">{{ stats.total_hosts }}</span>
+                <span class="stat-label">Hosts Scanned</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value">{{ stats.total_cves }}</span>
+                <span class="stat-label">Unique CVEs</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value" style="color: var(--critical)">{{ stats.critical_count }}</span>
+                <span class="stat-label">Critical Risks</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value" style="color: var(--kev)">{{ stats.kev_count }}</span>
+                <span class="stat-label">KEV Exploited</span>
+            </div>
+        </section>
+
+        <div class="vulnerability-list">
+            {% for cve_id, d in vulnerabilities.items() %}
+            <div class="vuln-card">
+                <div class="vuln-header">
+                    <div class="severity-badge {% if d.cvss_score|float >= 9 %}sev-critical{% elif d.cvss_score|float >= 7 %}sev-high{% elif d.cvss_score|float >= 4 %}sev-medium{% else %}sev-low{% endif %}">
+                        {{ d.cvss_score }}
+                    </div>
+                    <div class="vuln-header-text">
+                        <div class="vuln-id">{{ cve_id }}</div>
+                        <h3 class="vuln-title">{{ d.title }}</h3>
+                        <div class="badge-container">
+                            {% if d.cisa_kev == 'Yes' %}<span class="badge badge-kev">CISA KEV</span>{% endif %}
+                            {% if d.exploitability == 'Exploited in the wild' %}<span class="badge badge-exploited">Active Exploitation</span>{% endif %}
+                            {% if 'PoC' in d.exploitability %}<span class="badge badge-poc">PoC Available</span>{% endif %}
+                        </div>
+                    </div>
+                    <div class="vuln-header-right">
+                        EPSS: {{ d.epss_score }}<br>
+                        Complexity: {{ d.attack_complexity }}
+                    </div>
+                </div>
+                <div class="vuln-body">
+                    <!-- 1. Description -->
+                    <div class="section-header">Description</div>
+                    <div class="vuln-desc">{{ d.description }}</div>
+                    
+                    <!-- 2. Affected Products -->
+                    <div class="section-header">Affected Products</div>
+                    <ul class="affected-list" style="margin-bottom: 1.5rem;">
+                        {% for a in d.affected %}
+                        <li><strong>{{ a.product }}</strong> ({{ a.versions|join(', ') }})</li>
+                        {% endfor %}
+                        {% if not d.affected %}<li>N/A</li>{% endif %}
+                    </ul>
+
+                    <!-- 3. Affected Hosts -->
+                    <div class="section-header">Affected Hosts</div>
+                    {% if cve_to_hosts[cve_id] %}
+                    <div class="host-list" style="margin-bottom: 1.5rem;">
+                        {% for host in cve_to_hosts[cve_id][:5] %}
+                        <span class="host-item">{{ host[0] }} ({{ host[2] }})</span>
+                        {% endfor %}
+                        {% if cve_to_hosts[cve_id]|length > 5 %}
+                        <span class="host-item" style="background: rgba(59, 130, 246, 0.2); color: var(--accent); font-weight: bold;">
+                            ({{ cve_to_hosts[cve_id]|length - 5 }}+ more)
+                        </span>
+                        {% endif %}
+                    </div>
+                    {% else %}
+                    <div class="vuln-desc">N/A</div>
+                    {% endif %}
+
+                    <!-- 4. Remediation Recommendation -->
+                    <div style="background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.2); padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
+                        <h4 style="margin: 0 0 0.5rem 0; font-size: 0.8rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em;">🛡️ Remediation Recommendation</h4>
+                        <div style="font-size: 0.9rem; font-weight: 700;">{{ d.remediation }}</div>
+                    </div>
+
+                    <!-- 5. Intelligence & References -->
+                    <div class="section-header">Intelligence & References</div>
+                    <ul class="reference-list">
+                        {% if d.poc_link != 'N/A' %}
+                        <li>🚀 <a href="{{ d.poc_link }}" target="_blank">Exploit PoC Link</a></li>
+                        {% endif %}
+                        {% for ref in d.references[:4] %}
+                        <li>🔗 <a href="{{ ref }}" target="_blank">{{ ref }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>
