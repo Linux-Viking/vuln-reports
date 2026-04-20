@@ -121,4 +121,6 @@ If you see this error when generating PDFs, it means **WeasyPrint** cannot find 
 2.  Install it and ensure you check the box to **add the GTK bin folder to your System PATH**.
 3.  Restart your terminal/IDE.
 
+*Note: The suite now automatically suppresses noisy `GLib-GIO-WARNING` messages regarding UWP apps by forcing the local VFS backend on Windows.*
+
 *Alternatively, you can skip PDF generation and use HTML, DOCX, or XLSX formats which do not have this dependency.*

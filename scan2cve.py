@@ -4,6 +4,12 @@ Scan2CVE: Unified scanner parser (Nmap, Nessus, Qualys) to extract CVEs for cve_
 """
 
 import sys
+import os
+
+# Suppress GLib-GIO warnings on Windows (e.g., UWP app extension/verb warnings)
+if os.name == 'nt':
+    os.environ["GIO_USE_VFS"] = "local"
+
 import requests
 import argparse
 import time

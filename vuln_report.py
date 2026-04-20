@@ -6,6 +6,12 @@ Combines Scan2CVE (parsing) and CVE-Lookup (enrichment) to produce a detailed CS
 
 import sys
 import os
+
+# Suppress GLib-GIO warnings on Windows (e.g., UWP app extension/verb warnings)
+# This must be set before GIO/GTK-based libraries like WeasyPrint are loaded.
+if os.name == 'nt':
+    os.environ["GIO_USE_VFS"] = "local"
+
 import csv
 import argparse
 import requests

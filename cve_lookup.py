@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
 import sys
+import os
+
+# Suppress GLib-GIO warnings on Windows (e.g., UWP app extension/verb warnings)
+if os.name == 'nt':
+    os.environ["GIO_USE_VFS"] = "local"
+
 import json
 import csv
 import requests
