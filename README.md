@@ -9,7 +9,7 @@ A unified vulnerability reporting toolkit for pentesters. This suite combines sc
     - Extracts Host IPs and FQDNs with intelligent fallback.
     - Enriches findings with CVSS scores, CISA KEV status, and exploit links.
     - **Remediation Intelligence**: Autonomously extracts patching and upgrade advice.
-    - Generates professional reports in **CSV, HTML, PDF, Markdown, and XLSX**.
+    - Generates professional reports in **CSV, HTML, PDF, Markdown, XLSX, and DOCX**.
 2.  **`scan2cve.py` (The Parser)**:
     - Parses XML/CSV exports from major scanners.
     - Translates Nmap CPEs to CVEs via the NVD API.
@@ -59,7 +59,7 @@ pip install -r requirements.txt
 ### End-to-End Reporting
 Generate comprehensive reports in all supported formats:
 ```bash
-python3 vuln_report.py my_scan.nessus -o report.csv -H report.html -P report.pdf -M report.md -X report.xlsx
+python3 vuln_report.py my_scan.nessus -o report.csv -H report.html -P report.pdf -M report.md -X report.xlsx -D report.docx
 ```
 
 ### Standalone CVE Research
@@ -76,15 +76,29 @@ python3 cve_lookup.py CVE-2023-48795 -p
 | :--- | :--- | :--- |
 | **HTML** | Interactive dark-themed dashboard | `-H` (vuln_report) |
 | **PDF** | High-fidelity intelligence report for delivery | `-P` (vuln_report) |
+| **DOCX** | Assessment-ready Word doc with technical workflow | `-D` (vuln_report) |
 | **XLSX** | Multi-sheet workbook (one sheet per CVE) | `-X` (vuln_report) |
 | **Markdown**| Technical documentation and Wiki integration | `-M` (vuln_report) |
 | **CSV** | Professional spreadsheet for raw data | `-o` (vuln_report) |
-| **JSON** | Machine-readable data for automation | `--json` (cve_lookup) |
 
 ---
 
 ## 🛡️ Intelligence-Led Reporting
-This suite is designed for large-scale security assessments. 
-- **Host Limiting**: High-fidelity reports (PDF/HTML) intelligently limit host displays to maintain layout integrity while preserving full data in CSV/XLSX.
-- **Actionable Advice**: Every report includes a **Remediation Recommendation** section, providing a direct path to resolution for stakeholders.
-- **FQDN Support**: Seamlessly handles environments where hosts are identified only by their DNS names.
+This suite is designed for large-scale technical assessments. 
+
+### 📝 Technical Storytelling (Word DOCX)
+The Word report is optimized for pentest deliverables with a logical section order:
+1. **Description** (Context)
+2. **Affected Products** (Scope)
+3. **Validation Evidence** (Proof - includes screenshot placeholders & captions)
+4. **Affected Hosts** (Targets)
+5. **Remediation Recommendation** (The Fix)
+6. **Intelligence & References** (Deep Dive)
+
+### 🎨 Custom Branding & Templates
+- **Dark Theme**: HTML, PDF, and DOCX reports are fully synchronized with a professional dark aesthetic (Slate/Blue).
+- **External Templates**: Drop your own branded Word file at `templates/report_template.docx` to preserve custom headers, footers, and logos. The tool will automatically detect it and append findings to your template.
+
+### ⚙️ Scale & Fidelity
+- **Host Limiting**: High-fidelity reports intelligently limit host displays to 5 items to maintain layout integrity, while CSV/XLSX preserve 100% of audit data.
+- **FQDN Support**: Seamlessly handles environments where hosts are identified only by their DNS names, ensuring FQDNs are treated as primary identifiers when IPs are absent.

@@ -4,3 +4,4 @@ keyring
 jinja2
 weasyprint
 openpyxl
+python-docx
