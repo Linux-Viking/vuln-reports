@@ -518,6 +518,32 @@ def get_output_path(base_name: Optional[str], extension: str) -> str:
         counter += 1
     return f"{base_name}_{counter}.{extension}"
 
+def get_keys(args_token=None, args_nvd=None):
+    """Retrieve GitHub and NVD keys from args, env, config, or keyring."""
+    config_dir = get_config_dir()
+    config_file = config_dir / "config.json"
+    local_config = {}
+    if config_file.exists():
+        try:
+            with open(config_file, 'r') as f: local_config = json.load(f)
+        except Exception: pass
+
+    # GitHub Token
+    github_token = args_token or os.getenv("GITHUB_TOKEN") or local_config.get("github_token")
+    if not github_token:
+        try:
+            github_token = keyring.get_password("cve-lookup-tool", "github-token")
+        except Exception: github_token = None
+    
+    # NVD Key
+    nvd_key = args_nvd or os.getenv("NVD_API_KEY") or local_config.get("nvd_key")
+    if not nvd_key:
+        try:
+            nvd_key = keyring.get_password("cve-lookup-tool", "nvd-key")
+        except Exception: nvd_key = None
+
+    return github_token, nvd_key, local_config
+
 def main():
     p = argparse.ArgumentParser(description="CVE Lookup Tool Pro - Intelligence Edition")
     p.add_argument("cve_ids", nargs="*", help="CVE IDs")
@@ -543,18 +569,7 @@ def main():
     
     config_dir = get_config_dir()
     config_file = config_dir / "config.json"
-    local_config = {}
-    if config_file.exists():
-        try:
-            with open(config_file, 'r') as f: local_config = json.load(f)
-        except Exception: pass
-
-    # GitHub Token Retrieval
-    github_token = args.token or os.getenv("GITHUB_TOKEN") or local_config.get("github_token")
-    if not github_token:
-        try:
-            github_token = keyring.get_password("cve-lookup-tool", "github-token")
-        except Exception: github_token = None
+    github_token, nvd_key, local_config = get_keys(args.token, args.nvd_key)
             
     if not github_token and not args.poc:
         github_token = getpass.getpass("[?] GitHub Token not found. Enter Token (optional, press Enter to skip): ").strip()
@@ -570,13 +585,6 @@ def main():
                 local_config["github_token"] = github_token
                 with open(config_file, 'w') as f: json.dump(local_config, f)
                 print(f"[+] Token saved to {config_file}")
-
-    # NVD Key Retrieval
-    nvd_key = args.nvd_key or os.getenv("NVD_API_KEY") or local_config.get("nvd_key")
-    if not nvd_key:
-        try:
-            nvd_key = keyring.get_password("cve-lookup-tool", "nvd-key")
-        except Exception: nvd_key = None
 
     if not nvd_key and not args.poc:
         nvd_key = getpass.getpass("[?] NVD API Key not found. Enter Key (optional, press Enter to skip): ").strip()

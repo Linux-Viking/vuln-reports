@@ -617,6 +617,12 @@ def main():
     p.add_argument("-N", "--nvd-key", help="NVD API Key")
     args = p.parse_args()
     if not os.path.exists(args.file): print(f"[!] File not found: {args.file}"); return
-    generate_report(args.file, args.csv, args.group_by, args.token, args.nvd_key, args.html, args.markdown, args.pdf, args.xlsx, args.docx, args.all)
+
+    # Automatic key discovery
+    github_token, nvd_key, _ = cve_lookup.get_keys(args.token, args.nvd_key)
+    if nvd_key: print("[*] Using NVD API Key for accelerated lookups.")
+    if github_token: print("[*] Using GitHub Token for PoC research.")
+
+    generate_report(args.file, args.csv, args.group_by, github_token, nvd_key, args.html, args.markdown, args.pdf, args.xlsx, args.docx, args.all)
 
 if __name__ == "__main__": main()
