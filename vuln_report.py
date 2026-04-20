@@ -490,7 +490,21 @@ def save_html_report(vulnerabilities, cve_to_hosts, scanner_type, target_file, o
     except Exception as e:
         print(f"[!] Error generating HTML report: {e}")
 
-def generate_report(scan_file: str, output_file: str, group_by: str, github_token: str = None, nvd_key: str = None, html_file: str = None, md_file: str = None, pdf_file: str = None, xlsx_file: str = None, docx_file: str = None):
+def generate_report(scan_file: str, csv_file: str = None, group_by: str = 'host', github_token: str = None, nvd_key: str = None, html_file: str = None, md_file: str = None, pdf_file: str = None, xlsx_file: str = None, docx_file: str = None, all_base: str = None):
+    # Handle the --all (-A) logic
+    if all_base:
+        csv_file = f"{all_base}.csv"
+        html_file = f"{all_base}.html"
+        md_file = f"{all_base}.md"
+        pdf_file = f"{all_base}.pdf"
+        xlsx_file = f"{all_base}.xlsx"
+        docx_file = f"{all_base}.docx"
+    
+    # Smart Fallback: If absolutely no output is specified, default to CSV
+    if not any([csv_file, html_file, md_file, pdf_file, xlsx_file, docx_file]):
+        csv_file = "vulnerability_report.csv"
+        print(f"[*] No output format specified. Defaulting to CSV: {csv_file}")
+
     scanner_type = scan2cve.detect_scanner(scan_file)
     if not scanner_type: print(f"[!] Could not detect scanner type for {scan_file}"); return
     print(f"[*] Detected scanner type: {scanner_type}")
@@ -533,19 +547,34 @@ def generate_report(scan_file: str, output_file: str, group_by: str, github_toke
                 if cve_id not in cve_to_hosts: cve_to_hosts[cve_id] = []
                 cve_to_hosts[cve_id].append((display_name, hostname, port_proto, s['name']))
 
-    try:
-        with open(output_file, 'w', newline='', encoding='utf-8') as f:
-            writer = csv.writer(f)
-            writer.writerow(headers)
-            if group_by == 'host':
-                for _, host_data in sorted(parser.hosts.items()):
-                    ip, hostname = host_data.get('ip', ''), host_data.get('hostname', '')
-                    for s in host_data["services"]:
-                        port_proto = f"{s['port']}/{s['proto']}" if s['port'] != "0" else "Host-level"
-                        for cve_id in sorted(list(s['cves'])):
-                            d = cve_enrichment.get(cve_id, {})
+    if csv_file:
+        try:
+            with open(csv_file, 'w', newline='', encoding='utf-8') as f:
+                writer = csv.writer(f)
+                writer.writerow(headers)
+                if group_by == 'host':
+                    for _, host_data in sorted(parser.hosts.items()):
+                        ip, hostname = host_data.get('ip', ''), host_data.get('hostname', '')
+                        for s in host_data["services"]:
+                            port_proto = f"{s['port']}/{s['proto']}" if s['port'] != "0" else "Host-level"
+                            for cve_id in sorted(list(s['cves'])):
+                                d = cve_enrichment.get(cve_id, {})
+                                writer.writerow([
+                                    ip, hostname, cve_id, port_proto, s['name'],
+                                    d.get('title', 'N/A'), d.get('description', 'N/A'), d.get('cvss_score', 'N/A'),
+                                    d.get('cisa_kev', 'N/A'), d.get('epss_score', 'N/A'), d.get('exploitability', 'N/A'),
+                                    d.get('poc_available', 'N/A'), d.get('poc_link', 'N/A'), d.get('user_interaction', 'N/A'),
+                                    d.get('attack_complexity', 'N/A'),
+                                    "; ".join([f"{a['product']} ({', '.join(a['versions'])})" for a in d.get('affected', [])]),
+                                    d.get('remediation', 'N/A'),
+                                    "; ".join(d.get('references', []))
+                                ])
+                else: # group by cve
+                    for cve_id in sorted(list(all_cve_ids)):
+                        d = cve_enrichment.get(cve_id, {})
+                        for ip, hostname, port, svc in sorted(cve_to_hosts.get(cve_id, [])):
                             writer.writerow([
-                                ip, hostname, cve_id, port_proto, s['name'],
+                                ip, hostname, cve_id, port, svc,
                                 d.get('title', 'N/A'), d.get('description', 'N/A'), d.get('cvss_score', 'N/A'),
                                 d.get('cisa_kev', 'N/A'), d.get('epss_score', 'N/A'), d.get('exploitability', 'N/A'),
                                 d.get('poc_available', 'N/A'), d.get('poc_link', 'N/A'), d.get('user_interaction', 'N/A'),
@@ -554,49 +583,35 @@ def generate_report(scan_file: str, output_file: str, group_by: str, github_toke
                                 d.get('remediation', 'N/A'),
                                 "; ".join(d.get('references', []))
                             ])
-            else: # group by cve
-                for cve_id in sorted(list(all_cve_ids)):
-                    d = cve_enrichment.get(cve_id, {})
-                    for ip, hostname, port, svc in sorted(cve_to_hosts.get(cve_id, [])):
-                        writer.writerow([
-                            ip, hostname, cve_id, port, svc,
-                            d.get('title', 'N/A'), d.get('description', 'N/A'), d.get('cvss_score', 'N/A'),
-                            d.get('cisa_kev', 'N/A'), d.get('epss_score', 'N/A'), d.get('exploitability', 'N/A'),
-                            d.get('poc_available', 'N/A'), d.get('poc_link', 'N/A'), d.get('user_interaction', 'N/A'),
-                            d.get('attack_complexity', 'N/A'),
-                            "; ".join([f"{a['product']} ({', '.join(a['versions'])})" for a in d.get('affected', [])]),
-                            d.get('remediation', 'N/A'),
-                            "; ".join(d.get('references', []))
-                        ])
-        print(f"[+] Detailed report saved to: {output_file}")
-        
-        if html_file:
-            save_html_report(cve_enrichment, cve_to_hosts, scanner_type, scan_file, html_file)
-        if md_file:
-            save_markdown_report(cve_enrichment, cve_to_hosts, scanner_type, scan_file, md_file)
-        if pdf_file:
-            save_pdf_report(cve_enrichment, cve_to_hosts, scanner_type, scan_file, pdf_file)
-        if xlsx_file:
-            save_xlsx_report(cve_enrichment, cve_to_hosts, xlsx_file)
-        if docx_file:
-            save_docx_report(cve_enrichment, cve_to_hosts, scanner_type, scan_file, docx_file)
-            
-    except Exception as e: print(f"[!] Error writing CSV: {e}")
+            print(f"[+] Detailed CSV report saved to: {csv_file}")
+        except Exception as e: print(f"[!] Error writing CSV: {e}")
+
+    if html_file:
+        save_html_report(cve_enrichment, cve_to_hosts, scanner_type, scan_file, html_file)
+    if md_file:
+        save_markdown_report(cve_enrichment, cve_to_hosts, scanner_type, scan_file, md_file)
+    if pdf_file:
+        save_pdf_report(cve_enrichment, cve_to_hosts, scanner_type, scan_file, pdf_file)
+    if xlsx_file:
+        save_xlsx_report(cve_enrichment, cve_to_hosts, xlsx_file)
+    if docx_file:
+        save_docx_report(cve_enrichment, cve_to_hosts, scanner_type, scan_file, docx_file)
 
 def main():
     p = argparse.ArgumentParser(description="VulnReport - Unified Scan Reporting Tool")
     p.add_argument("file", help="Input scan file (Nmap/Nessus/Qualys)")
-    p.add_argument("-o", "--output", default="vulnerability_report.csv", help="Output CSV filename")
+    p.add_argument("-c", "-C", "--csv", help="Output CSV filename")
     p.add_argument("-H", "--html", help="Output HTML report filename")
     p.add_argument("-M", "--markdown", help="Output Markdown report filename")
     p.add_argument("-P", "--pdf", help="Output PDF report filename")
     p.add_argument("-X", "--xlsx", help="Output XLSX report filename")
     p.add_argument("-D", "--docx", help="Output Word DOCX report filename")
+    p.add_argument("-A", "--all", help="Generate ALL formats using this base filename")
     p.add_argument("-g", "--group-by", choices=['host', 'cve'], default='host', help="Group rows by host or CVE")
     p.add_argument("-T", "--token", help="GitHub Token for PoC lookup")
     p.add_argument("-N", "--nvd-key", help="NVD API Key")
     args = p.parse_args()
     if not os.path.exists(args.file): print(f"[!] File not found: {args.file}"); return
-    generate_report(args.file, args.output, args.group_by, args.token, args.nvd_key, args.html, args.markdown, args.pdf, args.xlsx, args.docx)
+    generate_report(args.file, args.csv, args.group_by, args.token, args.nvd_key, args.html, args.markdown, args.pdf, args.xlsx, args.docx, args.all)
 
 if __name__ == "__main__": main()
