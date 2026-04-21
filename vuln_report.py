@@ -7,29 +7,74 @@ Combines Scan2CVE (parsing) and CVE-Lookup (enrichment) to produce a detailed CS
 import sys
 import os
 
-# Suppress GLib-GIO warnings (e.g., UWP/gvfs metadata warnings)
-# This must be set before GIO/GTK-based libraries like WeasyPrint are loaded.
+# --- Aggressive GLib/GIO Warning Suppression ---
+# These must be set BEFORE any GIO/GTK-based libraries are loaded.
 os.environ["GIO_USE_VFS"] = "local"
-# Also suppress general GLib/GObject noise
-if "G_MESSAGES_DEBUG" not in os.environ:
-    os.environ["G_MESSAGES_DEBUG"] = "none"
+os.environ["GIO_USE_DESKTOP_APP_INFO"] = "none"
+os.environ["GIO_USE_VOLUME_MONITOR"] = "none"
+os.environ["G_MESSAGES_DEBUG"] = "none"
 
-import csv
-import argparse
-import requests
-import time
-from typing import List, Dict, Any
+# Function to suppress C-level stderr (to catch persistent GLib warnings on Windows)
+def suppress_gio_noise():
+    if os.name != 'nt': return None
+    try:
+        null_fd = os.open(os.devnull, os.O_RDWR)
+        old_stderr = os.dup(sys.stderr.fileno())
+        os.dup2(null_fd, sys.stderr.fileno())
+        os.close(null_fd)
+        return old_stderr
+    except: return None
 
-# Dynamic imports are no longer needed as all files live in the same directory
+def restore_gio_noise(old_stderr):
+    if old_stderr is not None:
+        os.dup2(old_stderr, sys.stderr.fileno())
+        os.close(old_stderr)
+
+# Suppress noise during initialization imports
+_gio_stderr = suppress_gio_noise()
 try:
+    import csv
+    import argparse
+    import requests
+    import time
+    from typing import List, Dict, Any
+
+    # Dynamic imports
     import scan2cve
     import cve_lookup
-except ImportError as e:
-    print(f"[!] Error: Could not import scan2cve or cve_lookup. Ensure they are in the same folder.")
-    print(f"    Missing module: {e.name}")
-    sys.exit(1)
 
-from concurrent.futures import ThreadPoolExecutor, as_completed
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+    from datetime import datetime
+
+    try:
+        from jinja2 import Environment, FileSystemLoader
+        HAS_JINJA = True
+    except Exception:
+        HAS_JINJA = False
+
+    try:
+        from weasyprint import HTML
+        HAS_WEASYPRINT = True
+    except Exception as e:
+        HAS_WEASYPRINT = False
+
+    try:
+        import openpyxl
+        from openpyxl.styles import Font, Alignment, PatternFill
+        from openpyxl.utils import get_column_letter
+        HAS_OPENPYXL = True
+    except ImportError:
+        HAS_OPENPYXL = False
+
+    try:
+        from docx import Document
+        from docx.shared import Pt, RGBColor
+        from docx.enum.text import WD_ALIGN_PARAGRAPH
+        HAS_DOCX = True
+    except ImportError:
+        HAS_DOCX = False
+finally:
+    restore_gio_noise(_gio_stderr)
 
 def get_detailed_cve_info(cve_ids: List[str], github_token: str = None, nvd_key: str = None, max_workers: int = 10) -> Dict[str, Dict[str, Any]]:
     """Fetch details for a list of CVEs using cve_lookup logic with concurrency."""
@@ -52,39 +97,6 @@ def get_detailed_cve_info(cve_ids: List[str], github_token: str = None, nvd_key:
                 print(f"  [!] Exception enriching {cve_id}: {e}")
                 cve_details[cve_id] = {"cve_id": cve_id, "error": str(e)}
     return cve_details
-
-from datetime import datetime
-
-try:
-    from jinja2 import Environment, FileSystemLoader
-    HAS_JINJA = True
-except Exception:
-    HAS_JINJA = False
-
-try:
-    from weasyprint import HTML
-    HAS_WEASYPRINT = True
-except Exception as e:
-    HAS_WEASYPRINT = False
-    # If it's a DLL loading error (common on Windows), we still want to continue but skip PDF
-    if "cannot load library" in str(e).lower():
-        pass 
-
-try:
-    import openpyxl
-    from openpyxl.styles import Font, Alignment, PatternFill
-    from openpyxl.utils import get_column_letter
-    HAS_OPENPYXL = True
-except ImportError:
-    HAS_OPENPYXL = False
-
-try:
-    from docx import Document
-    from docx.shared import Pt, RGBColor
-    from docx.enum.text import WD_ALIGN_PARAGRAPH
-    HAS_DOCX = True
-except ImportError:
-    HAS_DOCX = False
 
 def save_docx_report(vulnerabilities, cve_to_hosts, scanner_type, target_file, output_file):
     if not HAS_DOCX:
