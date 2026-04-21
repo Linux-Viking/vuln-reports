@@ -41,6 +41,7 @@ class Colors:
 
 print_lock = Lock()
 nvd_lock = Lock()
+last_nvd_call = [0.0]
 
 def colorize(text: str, color_code: str, use_colors: bool) -> str:
     if not use_colors: return text
@@ -326,42 +327,47 @@ def get_cve_data(session: requests.Session, cve_id: str, github_token: Optional[
 
     # NVD Fallback for older CVEs
     if cvss_score == "N/A":
-        with nvd_lock:
-            max_retries = 3
-            for attempt in range(max_retries):
-                try:
-                    nvd_url = f"https://services.nvd.nist.gov/rest/json/cves/2.0?cveId={cve_id}"
-                    headers_nvd = {'User-Agent': USER_AGENT}
-                    if nvd_key: headers_nvd['X-ApiKey'] = nvd_key
-                    
-                    req = urllib.request.Request(nvd_url, headers=headers_nvd)
-                    with urllib.request.urlopen(req, timeout=15) as nvd_resp:
-                        code = nvd_resp.getcode()
-                        if code == 200:
-                            nvd_data = json.loads(nvd_resp.read().decode())
-                            vulnerabilities = nvd_data.get('vulnerabilities', [])
-                            if vulnerabilities:
-                                metrics = vulnerabilities[0].get('cve', {}).get('metrics', {})
-                                for m_type in ['cvssMetricV31', 'cvssMetricV30', 'cvssMetricV2']:
-                                    m_list = metrics.get(m_type, [])
-                                    if m_list:
-                                        cvss_data = m_list[0].get('cvssData', {})
-                                        cvss_score = cvss_data.get('baseScore', "N/A")
-                                        attack_complexity = cvss_data.get('attackComplexity', cvss_data.get('accessComplexity', "N/A"))
-                                        user_interaction = cvss_data.get('userInteraction', "N/A")
-                                        break
-                            break # Success
-                        else:
-                            if code == 503 or code == 429:
-                                time.sleep(2 * (attempt + 1))
-                                continue
-                            break
-                except Exception:
-                    time.sleep(1)
-                    continue
-            # Mandatory sleep between NVD calls to avoid rate limits
-            # Without key: ~0.6s (100 per 60s), With key: ~0.1s (50 per 1s)
-            time.sleep(0.1 if nvd_key else 0.6)
+        max_retries = 3
+        for attempt in range(max_retries):
+            # Optimized thread-safe rate limiting
+            with nvd_lock:
+                now = time.time()
+                elapsed = now - last_nvd_call[0]
+                delay = 0.65 if nvd_key else 6.5
+                if elapsed < delay:
+                    time.sleep(delay - elapsed)
+                last_nvd_call[0] = time.time()
+
+            try:
+                nvd_url = f"https://services.nvd.nist.gov/rest/json/cves/2.0?cveId={cve_id}"
+                headers_nvd = {'User-Agent': USER_AGENT}
+                if nvd_key: headers_nvd['X-ApiKey'] = nvd_key
+                
+                req = urllib.request.Request(nvd_url, headers=headers_nvd)
+                with urllib.request.urlopen(req, timeout=15) as nvd_resp:
+                    code = nvd_resp.getcode()
+                    if code == 200:
+                        nvd_data = json.loads(nvd_resp.read().decode())
+                        vulnerabilities = nvd_data.get('vulnerabilities', [])
+                        if vulnerabilities:
+                            metrics = vulnerabilities[0].get('cve', {}).get('metrics', {})
+                            for m_type in ['cvssMetricV31', 'cvssMetricV30', 'cvssMetricV2']:
+                                m_list = metrics.get(m_type, [])
+                                if m_list:
+                                    cvss_data = m_list[0].get('cvssData', {})
+                                    cvss_score = cvss_data.get('baseScore', "N/A")
+                                    attack_complexity = cvss_data.get('attackComplexity', cvss_data.get('accessComplexity', "N/A"))
+                                    user_interaction = cvss_data.get('userInteraction', "N/A")
+                                    break
+                        break # Success
+                    else:
+                        if code == 503 or code == 429:
+                            time.sleep(2 * (attempt + 1))
+                            continue
+                        break
+            except Exception:
+                time.sleep(1)
+                continue
 
     cisa_kev = "No"
     for m in all_metrics:

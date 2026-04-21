@@ -29,13 +29,12 @@ except ImportError as e:
 
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-def get_detailed_cve_info(cve_ids: List[str], github_token: str = None, nvd_key: str = None) -> Dict[str, Dict[str, Any]]:
+def get_detailed_cve_info(cve_ids: List[str], github_token: str = None, nvd_key: str = None, max_workers: int = 10) -> Dict[str, Dict[str, Any]]:
     """Fetch details for a list of CVEs using cve_lookup logic with concurrency."""
     session = requests.Session()
     cve_details = {}
     print(f"[*] Fetching enrichment data for {len(cve_ids)} unique CVEs...")
     
-    max_workers = 10
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
         futures = {executor.submit(cve_lookup.get_cve_data, session, cve_id, github_token, nvd_key): cve_id for cve_id in cve_ids}
         for future in as_completed(futures):
@@ -501,7 +500,20 @@ def save_html_report(vulnerabilities, cve_to_hosts, scanner_type, target_file, o
     except Exception as e:
         print(f"[!] Error generating HTML report: {e}")
 
-def generate_report(scan_file: str, csv_file: str = None, group_by: str = 'host', github_token: str = None, nvd_key: str = None, html_file: str = None, md_file: str = None, pdf_file: str = None, xlsx_file: str = None, docx_file: str = None, all_base: str = None):
+def get_severity(cvss_score) -> str:
+    """Map CVSS score to severity level."""
+    if cvss_score == "N/A": return "info"
+    try:
+        score = float(cvss_score)
+        if score >= 9.0: return "critical"
+        elif score >= 7.0: return "high"
+        elif score >= 4.0: return "medium"
+        elif score > 0.0: return "low"
+        else: return "info"
+    except (ValueError, TypeError):
+        return "info"
+
+def generate_report(scan_file: str, csv_file: str = None, group_by: str = 'host', github_token: str = None, nvd_key: str = None, html_file: str = None, md_file: str = None, pdf_file: str = None, xlsx_file: str = None, docx_file: str = None, all_base: str = None, threads: int = 10, severity: str = None):
     # Handle the --all (-A) logic
     if all_base:
         csv_file = f"{all_base}.csv"
@@ -511,6 +523,9 @@ def generate_report(scan_file: str, csv_file: str = None, group_by: str = 'host'
         xlsx_file = f"{all_base}.xlsx"
         docx_file = f"{all_base}.docx"
     
+    # Severity filter processing
+    allowed_severities = [s.strip().lower() for s in severity.split(',')] if severity else None
+
     # Smart Fallback: If absolutely no output is specified, default to CSV
     if not any([csv_file, html_file, md_file, pdf_file, xlsx_file, docx_file]):
         csv_file = "vulnerability_report.csv"
@@ -529,17 +544,63 @@ def generate_report(scan_file: str, csv_file: str = None, group_by: str = 'host'
 
     parser.parse()
     if not parser.hosts: print("[!] No scan data found."); return
+    
+    # Resolve CPEs to CVEs for Nmap (concurrently)
+    if scanner_type == 'nmap_xml':
+        unique_valid_cpes = set()
+        for _, host_data in parser.hosts.items():
+            for s in host_data["services"]:
+                for cpe in s.get('cpes', []):
+                    if not scan2cve.is_broad_cpe(cpe):
+                        unique_valid_cpes.add(cpe)
+                    else:
+                        print(f"  [-] Skipping broad/generic CPE: {cpe}")
+        
+        if unique_valid_cpes:
+            print(f"[*] Fetching CVEs for {len(unique_valid_cpes)} unique specific CPEs using {threads} threads...")
+            cpe_to_cves = {}
+            with ThreadPoolExecutor(max_workers=threads) as executor:
+                futures = {executor.submit(parser.get_cves_for_cpe, cpe, nvd_key): cpe for cpe in unique_valid_cpes}
+                for f in as_completed(futures):
+                    cpe = futures[f]
+                    try:
+                        cpe_to_cves[cpe] = f.result()
+                    except Exception as e:
+                        print(f"  [!] Error fetching {cpe}: {e}")
+                        cpe_to_cves[cpe] = []
+            
+            # Map resolved CVEs back to services
+            for _, host_data in parser.hosts.items():
+                for s in host_data["services"]:
+                    service_cves = []
+                    for cpe in s.get('cpes', []):
+                        if cpe in cpe_to_cves:
+                            service_cves.extend(cpe_to_cves[cpe])
+                    s['cves'] = set(service_cves)
+
     all_cve_ids = set()
     for _, host_data in parser.hosts.items():
         for s in host_data["services"]:
-            if scanner_type == 'nmap_xml':
-                service_cves = []
-                for cpe in s.get('cpes', []):
-                    ids = parser.get_cves_for_cpe(cpe); service_cves.extend(ids); time.sleep(scan2cve.NVD_API_DELAY)
-                s['cves'] = set(service_cves)
             all_cve_ids.update(s['cves'])
 
-    cve_enrichment = get_detailed_cve_info(list(all_cve_ids), github_token, nvd_key)
+    cve_enrichment = get_detailed_cve_info(list(all_cve_ids), github_token, nvd_key, max_workers=threads)
+    
+    # Apply Severity Filtering
+    if allowed_severities:
+        print(f"[*] Filtering results for severities: {', '.join(allowed_severities)}")
+        filtered_cves = set()
+        for cve_id, d in cve_enrichment.items():
+            if get_severity(d.get('cvss_score', 'N/A')) in allowed_severities:
+                filtered_cves.add(cve_id)
+        
+        # Prune services and enrichment
+        for _, host_data in parser.hosts.items():
+            for s in host_data["services"]:
+                s['cves'] = {cid for cid in s['cves'] if cid in filtered_cves}
+        
+        cve_enrichment = {cid: data for cid, data in cve_enrichment.items() if cid in filtered_cves}
+        all_cve_ids = filtered_cves
+
     headers = [
         "IP", "Hostname (FQDN)", "CVE ID", "Port", "Service",
         "Title", "Description", "CVSS Score", "CISA KEV", "EPSS Score",
@@ -621,6 +682,8 @@ def main():
     p.add_argument("-g", "--group-by", choices=['host', 'cve'], default='host', help="Group rows by host or CVE")
     p.add_argument("-T", "--token", help="GitHub Token for PoC lookup")
     p.add_argument("-N", "--nvd-key", help="NVD API Key")
+    p.add_argument("-t", "--threads", type=int, default=10, help="Number of concurrent threads (default: 10)")
+    p.add_argument("-s", "--severity", help="Filter by severity: Info, Low, Medium, High, Critical (comma-separated)")
     args = p.parse_args()
     if not os.path.exists(args.file): print(f"[!] File not found: {args.file}"); return
 
@@ -629,6 +692,6 @@ def main():
     if nvd_key: print("[*] Using NVD API Key for accelerated lookups.")
     if github_token: print("[*] Using GitHub Token for PoC research.")
 
-    generate_report(args.file, args.csv, args.group_by, github_token, nvd_key, args.html, args.markdown, args.pdf, args.xlsx, args.docx, args.all)
+    generate_report(args.file, args.csv, args.group_by, github_token, nvd_key, args.html, args.markdown, args.pdf, args.xlsx, args.docx, args.all, args.threads, args.severity)
 
 if __name__ == "__main__": main()

@@ -18,11 +18,17 @@ import logging
 import csv
 import os
 import re
+import threading
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import List, Dict, Any, Set
 
 # Configuration Constants
 USER_AGENT = "Scan2CVE-Tool/1.0 (Unified Parser)"
-NVD_API_DELAY = 0.6  # Seconds between NVD API calls to avoid rate limiting
+NVD_API_DELAY = 0.6  # Seconds between NVD API calls (accelerated with key)
+
+# Global rate limiting state for NVD API
+nvd_api_lock = threading.Lock()
+last_nvd_api_call = [0.0]
 
 # Setup Logging
 logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
@@ -45,6 +51,19 @@ def is_ip(string: str) -> bool:
     if not string: return False
     return bool(re.match(r"^\d{1,3}(\.\d{1,3}){3}$", string))
 
+def is_broad_cpe(cpe: str) -> bool:
+    """
+    Check if a CPE is too broad (lacks a specific version).
+    E.g., 'cpe:/a:adobe:acrobat_reader' matches everything if not versioned.
+    """
+    parts = cpe.split(':')
+    if len(parts) < 5:
+        return True
+    version = parts[4]
+    if not version or version in ['-', '*']:
+        return True
+    return False
+
 class BaseParser:
     def __init__(self, file_path: str, use_colors: bool = True):
         self.file_path = file_path
@@ -59,12 +78,26 @@ class NmapParser(BaseParser):
         super().__init__(file_path, use_colors)
         self.session = session
 
-    def get_cves_for_cpe(self, cpe: str) -> List[str]:
+    def get_cves_for_cpe(self, cpe: str, nvd_key: str = None) -> List[str]:
         if cpe.startswith("cpe:/"):
             cpe = cpe.replace("cpe:/", "cpe:2.3:")
         url = "https://services.nvd.nist.gov/rest/json/cves/2.0"
         params = {"virtualMatchString": cpe}
         headers = {'User-Agent': USER_AGENT}
+        if nvd_key:
+            headers['X-ApiKey'] = nvd_key
+
+        # Thread-safe NVD Rate Limiting
+        # Without key: 5 requests / 30s (~6s delay)
+        # With key: 50 requests / 30s (~0.6s delay)
+        with nvd_api_lock:
+            now = time.time()
+            elapsed = now - last_nvd_api_call[0]
+            delay = 0.65 if nvd_key else 6.5
+            if elapsed < delay:
+                time.sleep(delay - elapsed)
+            last_nvd_api_call[0] = time.time()
+
         try:
             resp = self.session.get(url, params=params, headers=headers, timeout=30)
             if resp.status_code == 200:
@@ -292,8 +325,35 @@ def main():
     else: print("[!] Unsupported scanner type."); return
     p.parse()
     if not p.hosts: print("[!] No scan data found or parsing failed."); return
+    # Analysis
     global_cves = set()
+    nvd_key = os.getenv("NVD_API_KEY")
     print(f"[*] Analyzing {len(p.hosts)} hosts...\n")
+
+    # Step 1: Collect unique valid CPEs for concurrent lookup
+    unique_valid_cpes = set()
+    if scanner_type == 'nmap_xml':
+        for val, data in p.hosts.items():
+            for s in data["services"]:
+                for cpe in s.get('cpes', []):
+                    if not is_broad_cpe(cpe):
+                        unique_valid_cpes.add(cpe)
+                    else:
+                        logger.debug(f"Skipping broad CPE: {cpe}")
+
+        print(f"[*] Fetching CVEs for {len(unique_valid_cpes)} unique specific CPEs...")
+        cpe_to_cves = {}
+        with ThreadPoolExecutor(max_workers=10) as executor:
+            futures = {executor.submit(p.get_cves_for_cpe, cpe, nvd_key): cpe for cpe in unique_valid_cpes}
+            for f in as_completed(futures):
+                cpe = futures[f]
+                try:
+                    cpe_to_cves[cpe] = f.result()
+                except Exception as e:
+                    print(f"  [!] Error fetching {cpe}: {e}")
+                    cpe_to_cves[cpe] = []
+
+    # Step 2: Display results
     for val, data in sorted(p.hosts.items()):
         if not data["services"]: continue
         h_info = []
@@ -306,7 +366,8 @@ def main():
             if scanner_type == 'nmap_xml':
                 service_cve_ids = []
                 for cpe in s.get('cpes', []):
-                    ids = p.get_cves_for_cpe(cpe); service_cve_ids.extend(ids); time.sleep(NVD_API_DELAY)
+                    if cpe in cpe_to_cves:
+                        service_cve_ids.extend(cpe_to_cves[cpe])
                 s['cves'] = set(service_cve_ids)
             unique_ids = sorted(list(s['cves']))
             if unique_ids:

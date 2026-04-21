@@ -12,12 +12,43 @@ A unified vulnerability reporting toolkit for pentesters. This suite combines sc
     - Generates professional reports in **CSV, HTML, PDF, Markdown, XLSX, and DOCX**.
 2.  **`scan2cve.py` (The Parser)**:
     - Parses XML/CSV exports from major scanners.
-    - Translates Nmap CPEs to CVEs via the NVD API.
+    - **Multi-threaded Resolution**: Translates Nmap CPEs to CVEs via concurrent NVD API calls.
+    - **False Positive Reduction**: Automatically filters out broad/generic CPEs (like unversioned Adobe Reader) to ensure high-fidelity results.
     - High-fidelity host identification (handles IP and FQDN-only environments).
 3.  **`cve_lookup.py` (The Enricher)**:
     - Researches specific CVEs for intelligence and PoCs.
     - Sophisticated title generation for sparse records.
-    - Concurrent enrichment with retry logic for high reliability.
+    - **Optimized Concurrency**: Concurrent enrichment with non-blocking rate limiting for maximum throughput.
+
+---
+
+## ⚡ Performance & Scale
+
+The suite is optimized for large datasets (1000s of CVEs) through deep multi-threading.
+
+- **Concurrent CVE Discovery**: `scan2cve.py` resolves unique CPEs in parallel.
+- **Concurrent Enrichment**: `vuln_report.py` fetches detailed intelligence for all unique CVEs simultaneously.
+- **Configurable Threads**: Use the `-t` or `--threads` flag to set the worker count (default: 10).
+- **Intelligent Rate Limiting**: Automatically scales request timing based on the presence of an NVD API Key.
+
+---
+
+## 🔍 Advanced Filtering
+
+Focus your reports on what matters most with the severity filter.
+
+### Severity Filtering (`-s` / `--severity`)
+Filter the final report by one or more severity levels (comma-separated):
+- `Info`: CVSS 0.0 or N/A
+- `Low`: CVSS 0.1 - 3.9
+- `Medium`: CVSS 4.0 - 6.9
+- `High`: CVSS 7.0 - 8.9
+- `Critical`: CVSS 9.0 - 10.0
+
+Example:
+```bash
+python3 vuln_report.py scan.xml -A final_report -s High,Critical
+```
 
 ---
 
