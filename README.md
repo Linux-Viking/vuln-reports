@@ -44,16 +44,6 @@ Filter the final report by one or more severity levels (comma-separated):
 - `Low`: CVSS 0.1 - 3.9 (Blue)
 - `Info`: CVSS 0.0 or N/A (Green)
 
-### Output Grouping (`-g` / `--group-by`)
-Customize the structure of your **XLSX** reports:
-- `host`: Creates one sheet per Host, listing all associated CVEs (Default).
-- `cve`: Creates one sheet per CVE, listing all affected hosts.
-
-Example:
-```bash
-python3 vuln_report.py scan.xml -X report.xlsx -g host
-```
-
 ---
 
 ## 🔑 API Key Configuration
@@ -121,7 +111,7 @@ python3 cve_lookup.py CVE-2023-48795 CVE-2024-1234 -A results
 | **HTML** | Interactive dark-themed dashboard with severity charts | `-H` / `--html` |
 | **PDF** | High-fidelity intelligence report with summary and charts | `-P` / `--pdf` |
 | **DOCX** | Assessment-ready Word doc with टेक्निकल technical workflow and charts | `-D` / `--docx` |
-| **XLSX** | Multi-sheet workbook (grouped by Host or CVE) | `-X` / `--xlsx` |
+| **XLSX** | Multi-sheet workbook (one sheet per CVE) | `-X` / `--xlsx` |
 | **Markdown**| Technical documentation and Wiki integration | `-M` / `--markdown` |
 
 ---

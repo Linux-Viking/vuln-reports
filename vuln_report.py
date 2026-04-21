@@ -411,7 +411,7 @@ def save_docx_report(vulnerabilities, cve_to_hosts, scanner_type, target_file, o
     doc.save(output_file)
     print(f"[+] Word (DOCX) intelligence report saved to: {output_file}")
 
-def save_xlsx_report(vulnerabilities, cve_to_hosts, parser_hosts, output_file, group_by='host'):
+def save_xlsx_report(vulnerabilities, cve_to_hosts, output_file):
     if not HAS_OPENPYXL:
         print("[!] openpyxl not installed. XLSX report skipped.")
         return
@@ -439,7 +439,7 @@ def save_xlsx_report(vulnerabilities, cve_to_hosts, parser_hosts, output_file, g
     
     sorted_cves = sorted(vulnerabilities.keys(), key=lambda cid: get_score(vulnerabilities[cid]), reverse=True)
 
-    for i, cve_id in enumerate(sorted_cves):
+    for cve_id in sorted_cves:
         d = vulnerabilities[cve_id]
         hosts_count = len(cve_to_hosts.get(cve_id, []))
         ws_summary.append([
@@ -447,86 +447,44 @@ def save_xlsx_report(vulnerabilities, cve_to_hosts, parser_hosts, output_file, g
             d.get('cisa_kev', 'N/A'), d.get('exploitability', 'N/A'), hosts_count
         ])
 
-    if group_by == 'host':
-        # 2. Individual Host Sheets
-        for host_ip, host_data in sorted(parser_hosts.items()):
-            display_name = host_ip if host_ip else host_data.get('hostname', 'Unknown')
-            # Excel sheet names limited to 31 chars, remove forbidden chars
-            import re
-            sheet_name = re.sub(r'[\\/\?\*\[\]]', '_', display_name)[:31]
-            ws = wb.create_sheet(title=sheet_name)
+    # 2. Individual CVE Sheets
+    for cve_id in sorted_cves:
+        d = vulnerabilities[cve_id]
+        # Excel sheet names limited to 31 chars
+        sheet_name = cve_id[:31]
+        ws = wb.create_sheet(title=sheet_name)
+        
+        # CVE Metadata Table
+        metadata = [
+            ("CVE ID", cve_id),
+            ("Title", d.get('title', 'N/A')),
+            ("Description", d.get('description', 'N/A')),
+            ("CVSS Score", d.get('cvss_score', 'N/A')),
+            ("CISA KEV", d.get('cisa_kev', 'N/A')),
+            ("Exploitability", d.get('exploitability', 'N/A')),
+            ("EPSS Score", d.get('epss_score', 'N/A')),
+            ("Remediation", d.get('remediation', 'N/A'))
+        ]
+        
+        for i, (label, val) in enumerate(metadata, 1):
+            ws.cell(row=i, column=1, value=label).font = Font(bold=True)
+            ws.cell(row=i, column=2, value=str(val)).alignment = Alignment(wrap_text=True)
+        
+        # Affected Hosts Table
+        start_row = len(metadata) + 2
+        ws.cell(row=start_row, column=1, value="Affected Hosts").font = Font(bold=True, size=12)
+        host_headers = ["IP Address", "Hostname", "Port/Proto", "Service Name"]
+        for col, h_text in enumerate(host_headers, 1):
+            cell = ws.cell(row=start_row+1, column=col, value=h_text)
+            cell.fill = header_fill
+            cell.font = header_font
             
-            ws.cell(row=1, column=1, value="IP").font = Font(bold=True)
-            ws.cell(row=1, column=2, value=host_data.get('ip', 'N/A'))
-            ws.cell(row=2, column=1, value="Hostname").font = Font(bold=True)
-            ws.cell(row=2, column=2, value=host_data.get('hostname', 'N/A'))
+        for i, (ip, host, port, svc) in enumerate(sorted(cve_to_hosts.get(cve_id, [])), 1):
+            ws.append([ip, host, port, svc]) 
 
-            headers = ["CVE ID", "Port/Proto", "Service", "Title", "CVSS", "CISA KEV", "Exploitability"]
-            for col, h_text in enumerate(headers, 1):
-                cell = ws.cell(row=4, column=col, value=h_text)
-                cell.fill = header_fill
-                cell.font = header_font
-
-            # Collect all CVEs for this host
-            host_vulns = []
-            for s in host_data["services"]:
-                port_proto = f"{s['port']}/{s['proto']}" if s['port'] != "0" else "Host-level"
-                for cve_id in s['cves']:
-                    if cve_id in vulnerabilities:
-                        d = vulnerabilities[cve_id]
-                        host_vulns.append((cve_id, port_proto, s['name'], d))
-            
-            # Sort by CVSS
-            host_vulns.sort(key=lambda x: get_score(x[3]), reverse=True)
-            
-            for i, (cve_id, port, svc, d) in enumerate(host_vulns, 5):
-                ws.append([
-                    cve_id, port, svc, d.get('title', 'N/A'), 
-                    d.get('cvss_score', 'N/A'), d.get('cisa_kev', 'N/A'), 
-                    d.get('exploitability', 'N/A')
-                ])
-            
-            ws.column_dimensions['A'].width = 15
-            ws.column_dimensions['D'].width = 60
-    else:
-        # 2. Individual CVE Sheets
-        for cve_id in sorted_cves:
-            d = vulnerabilities[cve_id]
-            # Excel sheet names limited to 31 chars
-            sheet_name = cve_id[:31]
-            ws = wb.create_sheet(title=sheet_name)
-            
-            # CVE Metadata Table
-            metadata = [
-                ("CVE ID", cve_id),
-                ("Title", d.get('title', 'N/A')),
-                ("CVSS Score", d.get('cvss_score', 'N/A')),
-                ("CISA KEV", d.get('cisa_kev', 'N/A')),
-                ("Exploitability", d.get('exploitability', 'N/A')),
-                ("EPSS Score", d.get('epss_score', 'N/A')),
-                ("Remediation", d.get('remediation', 'N/A')),
-                ("Description", d.get('description', 'N/A'))
-            ]
-            
-            for i, (label, val) in enumerate(metadata, 1):
-                ws.cell(row=i, column=1, value=label).font = Font(bold=True)
-                ws.cell(row=i, column=2, value=str(val)).alignment = Alignment(wrap_text=True)
-            
-            # Affected Hosts Table
-            start_row = len(metadata) + 2
-            ws.cell(row=start_row, column=1, value="Affected Hosts").font = Font(bold=True, size=12)
-            host_headers = ["IP Address", "Hostname", "Port/Proto", "Service Name"]
-            for col, h_text in enumerate(host_headers, 1):
-                cell = ws.cell(row=start_row+1, column=col, value=h_text)
-                cell.fill = header_fill
-                cell.font = header_font
-                
-            for i, (ip, host, port, svc) in enumerate(sorted(cve_to_hosts.get(cve_id, [])), 1):
-                ws.append([ip, host, port, svc]) 
-
-            # Adjust columns
-            ws.column_dimensions['A'].width = 20
-            ws.column_dimensions['B'].width = 80
+        # Adjust columns
+        ws.column_dimensions['A'].width = 20
+        ws.column_dimensions['B'].width = 80
 
     wb.save(output_file)
     print(f"[+] XLSX intelligence report saved to: {output_file}")
@@ -677,7 +635,7 @@ def get_severity(cvss_score) -> str:
     except (ValueError, TypeError):
         return "info"
 
-def generate_report(scan_file: str, csv_file: str = None, group_by: str = 'host', github_token: str = None, nvd_key: str = None, html_file: str = None, md_file: str = None, pdf_file: str = None, xlsx_file: str = None, docx_file: str = None, all_base: str = None, threads: int = 10, severity: str = None):
+def generate_report(scan_file: str, csv_file: str = None, github_token: str = None, nvd_key: str = None, html_file: str = None, md_file: str = None, pdf_file: str = None, xlsx_file: str = None, docx_file: str = None, all_base: str = None, threads: int = 10, severity: str = None):
     # Handle the --all (-A) logic
     if all_base:
         csv_file = f"{all_base}.csv"
@@ -791,29 +749,15 @@ def generate_report(scan_file: str, csv_file: str = None, group_by: str = 'host'
             with open(csv_file, 'w', newline='', encoding='utf-8') as f:
                 writer = csv.writer(f)
                 writer.writerow(headers)
-                if group_by == 'host':
-                    for _, host_data in sorted(parser.hosts.items()):
-                        ip, hostname = host_data.get('ip', ''), host_data.get('hostname', '')
-                        for s in host_data["services"]:
-                            port_proto = f"{s['port']}/{s['proto']}" if s['port'] != "0" else "Host-level"
-                            for cve_id in sorted(list(s['cves'])):
-                                d = cve_enrichment.get(cve_id, {})
-                                writer.writerow([
-                                    ip, hostname, cve_id, port_proto, s['name'],
-                                    d.get('title', 'N/A'), d.get('description', 'N/A'), d.get('cvss_score', 'N/A'),
-                                    d.get('cisa_kev', 'N/A'), d.get('epss_score', 'N/A'), d.get('exploitability', 'N/A'),
-                                    d.get('poc_available', 'N/A'), d.get('poc_link', 'N/A'), d.get('user_interaction', 'N/A'),
-                                    d.get('attack_complexity', 'N/A'),
-                                    "; ".join([f"{a['product']} ({', '.join(a['versions'])})" for a in d.get('affected', [])]),
-                                    d.get('remediation', 'N/A'),
-                                    "; ".join(d.get('references', []))
-                                ])
-                else: # group by cve
-                    for cve_id in sorted(list(all_cve_ids)):
-                        d = cve_enrichment.get(cve_id, {})
-                        for ip, hostname, port, svc in sorted(cve_to_hosts.get(cve_id, [])):
+                # CSV always defaults to host-based rows
+                for _, host_data in sorted(parser.hosts.items()):
+                    ip, hostname = host_data.get('ip', ''), host_data.get('hostname', '')
+                    for s in host_data["services"]:
+                        port_proto = f"{s['port']}/{s['proto']}" if s['port'] != "0" else "Host-level"
+                        for cve_id in sorted(list(s['cves'])):
+                            d = cve_enrichment.get(cve_id, {})
                             writer.writerow([
-                                ip, hostname, cve_id, port, svc,
+                                ip, hostname, cve_id, port_proto, s['name'],
                                 d.get('title', 'N/A'), d.get('description', 'N/A'), d.get('cvss_score', 'N/A'),
                                 d.get('cisa_kev', 'N/A'), d.get('epss_score', 'N/A'), d.get('exploitability', 'N/A'),
                                 d.get('poc_available', 'N/A'), d.get('poc_link', 'N/A'), d.get('user_interaction', 'N/A'),
@@ -832,7 +776,7 @@ def generate_report(scan_file: str, csv_file: str = None, group_by: str = 'host'
     if pdf_file:
         save_pdf_report(cve_enrichment, cve_to_hosts, scanner_type, scan_file, pdf_file)
     if xlsx_file:
-        save_xlsx_report(cve_enrichment, cve_to_hosts, parser.hosts, xlsx_file, group_by)
+        save_xlsx_report(cve_enrichment, cve_to_hosts, xlsx_file)
     if docx_file:
         save_docx_report(cve_enrichment, cve_to_hosts, scanner_type, scan_file, docx_file)
 
@@ -846,7 +790,6 @@ def main():
     p.add_argument("-X", "--xlsx", help="Output XLSX report filename")
     p.add_argument("-D", "--docx", help="Output Word DOCX report filename")
     p.add_argument("-A", "--all", help="Generate ALL formats using this base filename")
-    p.add_argument("-g", "--group-by", choices=['host', 'cve'], default='host', help="Group sheets by host or CVE (XLSX only)")
     p.add_argument("-T", "--token", help="GitHub Token for PoC lookup")
     p.add_argument("-N", "--nvd-key", help="NVD API Key")
     p.add_argument("-t", "--threads", type=int, default=10, help="Number of concurrent threads (default: 10)")
@@ -859,6 +802,6 @@ def main():
     if nvd_key: print("[*] Using NVD API Key for accelerated lookups.")
     if github_token: print("[*] Using GitHub Token for PoC research.")
 
-    generate_report(args.file, args.csv, args.group_by, github_token, nvd_key, args.html, args.markdown, args.pdf, args.xlsx, args.docx, args.all, args.threads, args.severity)
+    generate_report(args.file, args.csv, github_token, nvd_key, args.html, args.markdown, args.pdf, args.xlsx, args.docx, args.all, args.threads, args.severity)
 
 if __name__ == "__main__": main()
