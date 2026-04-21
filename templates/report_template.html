@@ -265,7 +265,7 @@
                     {% if cve_to_hosts[cve_id] %}
                     <div class="host-list" style="margin-bottom: 1.5rem;">
                         {% for host in cve_to_hosts[cve_id][:5] %}
-                        <span class="host-item">{{ host[0] }} ({{ host[2] }})</span>
+                        <span class="host-item">{{ host[1] if host[1] else host[0] }} ({{ host[2] }})</span>
                         {% endfor %}
                         {% if cve_to_hosts[cve_id]|length > 5 %}
                         <span class="host-item" style="background: rgba(59, 130, 246, 0.2); color: var(--accent); font-weight: bold;">
