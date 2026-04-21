@@ -8,6 +8,7 @@ A unified vulnerability reporting toolkit for pentesters. This suite combines sc
     - Automatically detects scan types (Nmap, Nessus, Qualys).
     - Extracts Host IPs and FQDNs with intelligent fallback.
     - Enriches findings with CVSS scores, CISA KEV status, and exploit links.
+    - **Visual Intelligence**: Generates severity distribution pie charts for HTML, PDF, and DOCX reports.
     - **Remediation Intelligence**: Autonomously extracts patching and upgrade advice.
     - Generates professional reports in **CSV, HTML, PDF, Markdown, XLSX, and DOCX**.
 2.  **`scan2cve.py` (The Parser)**:
@@ -33,21 +34,24 @@ The suite is optimized for large datasets (1000s of CVEs) through deep multi-thr
 
 ---
 
-## 🔍 Advanced Filtering
-
-Focus your reports on what matters most with the severity filter.
+## 🔍 Advanced Filtering & Grouping
 
 ### Severity Filtering (`-s` / `--severity`)
 Filter the final report by one or more severity levels (comma-separated):
-- `Info`: CVSS 0.0 or N/A
-- `Low`: CVSS 0.1 - 3.9
-- `Medium`: CVSS 4.0 - 6.9
-- `High`: CVSS 7.0 - 8.9
-- `Critical`: CVSS 9.0 - 10.0
+- `Critical`: CVSS 9.0 - 10.0 (Red)
+- `High`: CVSS 7.0 - 8.9 (Orange)
+- `Medium`: CVSS 4.0 - 6.9 (Amber)
+- `Low`: CVSS 0.1 - 3.9 (Blue)
+- `Info`: CVSS 0.0 or N/A (Green)
+
+### Output Grouping (`-g` / `--group-by`)
+Customize the structure of your **XLSX** reports:
+- `host`: Creates one sheet per Host, listing all associated CVEs (Default).
+- `cve`: Creates one sheet per CVE, listing all affected hosts.
 
 Example:
 ```bash
-python3 vuln_report.py scan.xml -A final_report -s High,Critical
+python3 vuln_report.py scan.xml -X report.xlsx -g host
 ```
 
 ---
@@ -114,10 +118,10 @@ python3 cve_lookup.py CVE-2023-48795 CVE-2024-1234 -A results
 | :--- | :--- | :--- |
 | **All** | Generate all available formats using a base name | `-A` / `--all` |
 | **CSV** | Professional spreadsheet for raw data | `-C` / `--csv` |
-| **HTML** | Interactive dark-themed dashboard | `-H` / `--html` |
-| **PDF** | High-fidelity intelligence report for delivery | `-P` / `--pdf` |
-| **DOCX** | Assessment-ready Word doc with technical workflow | `-D` / `--docx` |
-| **XLSX** | Multi-sheet workbook (one sheet per CVE) | `-X` / `--xlsx` |
+| **HTML** | Interactive dark-themed dashboard with severity charts | `-H` / `--html` |
+| **PDF** | High-fidelity intelligence report with summary and charts | `-P` / `--pdf` |
+| **DOCX** | Assessment-ready Word doc with टेक्निकल technical workflow and charts | `-D` / `--docx` |
+| **XLSX** | Multi-sheet workbook (grouped by Host or CVE) | `-X` / `--xlsx` |
 | **Markdown**| Technical documentation and Wiki integration | `-M` / `--markdown` |
 
 ---
@@ -125,14 +129,17 @@ python3 cve_lookup.py CVE-2023-48795 CVE-2024-1234 -A results
 ## 🛡️ Intelligence-Led Reporting
 This suite is designed for large-scale technical assessments. 
 
+### 📈 Executive Summary (PDF & HTML)
+The PDF and HTML reports feature a dedicated summary page:
+- **HOSTS**: Total unique hosts identified across all findings.
+- **Severity Distribution**: A professional pie chart visualizing risk levels.
+- **Logical Flow**: PDF reports force a page break so the detailed findings always start on page 2.
+
 ### 📝 Technical Storytelling (Word DOCX)
 The Word report is optimized for pentest deliverables with a logical section order:
-1. **Description** (Context)
-2. **Affected Products** (Scope)
-3. **Validation Evidence** (Proof - includes screenshot placeholders & captions)
-4. **Affected Hosts** (Targets)
-5. **Remediation Recommendation** (The Fix)
-6. **Intelligence & References** (Deep Dive)
+1. **Executive Summary** (Metadata & Summary Table)
+2. **Severity Chart** (Visual Risk Assessment)
+3. **Detailed Findings** (Technical deep-dive on new page)
 
 ### 🎨 Custom Branding & Templates
 - **Dark Theme**: HTML, PDF, and DOCX reports are fully synchronized with a professional dark aesthetic (Slate/Blue).

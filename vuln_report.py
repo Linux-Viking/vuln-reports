@@ -68,11 +68,21 @@ try:
 
     try:
         from docx import Document
-        from docx.shared import Pt, RGBColor
+        from docx.shared import Pt, RGBColor, Inches
         from docx.enum.text import WD_ALIGN_PARAGRAPH
         HAS_DOCX = True
     except ImportError:
         HAS_DOCX = False
+
+    try:
+        import matplotlib
+        matplotlib.use('Agg')
+        import matplotlib.pyplot as plt
+        import io
+        import base64
+        HAS_MATPLOTLIB = True
+    except ImportError:
+        HAS_MATPLOTLIB = False
 finally:
     restore_gio_noise(_gio_stderr)
 
@@ -97,6 +107,80 @@ def get_detailed_cve_info(cve_ids: List[str], github_token: str = None, nvd_key:
                 print(f"  [!] Exception enriching {cve_id}: {e}")
                 cve_details[cve_id] = {"cve_id": cve_id, "error": str(e)}
     return cve_details
+
+def generate_severity_chart(vulnerabilities: Dict[str, Any], return_bytes: bool = False):
+    """Generates a severity distribution pie chart and returns it as a base64 string or bytes."""
+    if not HAS_MATPLOTLIB:
+        return None
+
+    counts = {"Critical": 0, "High": 0, "Medium": 0, "Low": 0, "Info": 0}
+    
+    for v in vulnerabilities.values():
+        score = v.get('cvss_score')
+        if not isinstance(score, (int, float)):
+            try:
+                if score == "N/A" or score is None:
+                    score = 0
+                else:
+                    score = float(score)
+            except (ValueError, TypeError):
+                score = 0
+        
+        if score >= 9.0:
+            counts["Critical"] += 1
+        elif score >= 7.0:
+            counts["High"] += 1
+        elif score >= 4.0:
+            counts["Medium"] += 1
+        elif score >= 0.1:
+            counts["Low"] += 1
+        else:
+            counts["Info"] += 1
+
+    labels = [k for k in counts.keys() if counts[k] > 0]
+    sizes = [counts[k] for k in counts.keys() if counts[k] > 0]
+    
+    if not sizes:
+        return None
+
+    colors = {
+        "Critical": "#dc2626", # red-600
+        "High": "#ea580c",     # orange-600
+        "Medium": "#f59e0b",   # amber-500
+        "Low": "#3b82f6",      # blue-500
+        "Info": "#22c55e"      # green-500
+    }
+    chart_colors = [colors[l] for l in labels]
+
+    # Create figure with dark background to match report theme
+    plt.figure(figsize=(7, 5), facecolor='#0F172A')
+    plt.rcParams['text.color'] = 'white'
+    
+    patches, texts, autotexts = plt.pie(
+        sizes, 
+        labels=labels, 
+        autopct='%1.1f%%', 
+        startangle=140, 
+        colors=chart_colors,
+        textprops={'fontsize': 10, 'weight': 'bold'}
+    )
+    
+    for text in texts:
+        text.set_color('white')
+    for autotext in autotexts:
+        autotext.set_color('white')
+
+    plt.title("Severity Distribution", color='white', fontsize=14, fontweight='bold', pad=10)
+    plt.axis('equal')
+    
+    buf = io.BytesIO()
+    plt.savefig(buf, format='png', bbox_inches='tight', facecolor='#0F172A', dpi=150)
+    plt.close()
+    buf.seek(0)
+    
+    if return_bytes:
+        return buf
+    return base64.b64encode(buf.read()).decode('utf-8')
 
 def save_docx_report(vulnerabilities, cve_to_hosts, scanner_type, target_file, output_file):
     if not HAS_DOCX:
@@ -150,6 +234,13 @@ def save_docx_report(vulnerabilities, cve_to_hosts, scanner_type, target_file, o
     set_run_light(m_run2)
     m_run2.italic = True
 
+    # --- Severity Chart ---
+    chart_buf = generate_severity_chart(vulnerabilities, return_bytes=True)
+    if chart_buf:
+        doc.add_picture(chart_buf, width=Inches(5.5))
+        last_p = doc.paragraphs[-1]
+        last_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+
     # Summary Statistics
     doc.add_heading('Executive Summary', level=1)
     # Note: Headings need color fix too as they default to black
@@ -158,8 +249,8 @@ def save_docx_report(vulnerabilities, cve_to_hosts, scanner_type, target_file, o
             for run in p.runs: run.font.color.rgb = RGBColor(248, 250, 252)
 
     stats = {
-        "Total Hosts": len(set(h[0] for hosts in cve_to_hosts.values() for h in hosts)),
-        "Total Unique CVEs": len(vulnerabilities),
+        "HOSTS": len(set(h[0] for hosts in cve_to_hosts.values() for h in hosts)),
+        "Unique CVEs": len(vulnerabilities),
         "Critical Risks": sum(1 for v in vulnerabilities.values() if isinstance(v.get('cvss_score'), (int, float)) and v['cvss_score'] >= 9),
         "KEV Exploited": sum(1 for v in vulnerabilities.values() if v.get('cisa_kev') == 'Yes')
     }
@@ -185,7 +276,7 @@ def save_docx_report(vulnerabilities, cve_to_hosts, scanner_type, target_file, o
         run = row_cells[i].paragraphs[0].runs[0]
         run.font.color.rgb = RGBColor(248, 250, 252)
 
-    doc.add_paragraph("\n") # Spacer
+    doc.add_page_break()
 
     # Detailed Findings
     doc.add_heading('Detailed Findings', level=1)
@@ -320,7 +411,7 @@ def save_docx_report(vulnerabilities, cve_to_hosts, scanner_type, target_file, o
     doc.save(output_file)
     print(f"[+] Word (DOCX) intelligence report saved to: {output_file}")
 
-def save_xlsx_report(vulnerabilities, cve_to_hosts, output_file):
+def save_xlsx_report(vulnerabilities, cve_to_hosts, parser_hosts, output_file, group_by='host'):
     if not HAS_OPENPYXL:
         print("[!] openpyxl not installed. XLSX report skipped.")
         return
@@ -356,45 +447,86 @@ def save_xlsx_report(vulnerabilities, cve_to_hosts, output_file):
             d.get('cisa_kev', 'N/A'), d.get('exploitability', 'N/A'), hosts_count
         ])
 
-    # 2. Individual CVE Sheets
-    for cve_id in sorted_cves:
-        d = vulnerabilities[cve_id]
-        # Excel sheet names limited to 31 chars
-        sheet_name = cve_id[:31]
-        ws = wb.create_sheet(title=sheet_name)
-        
-        # CVE Metadata Table
-        metadata = [
-            ("CVE ID", cve_id),
-            ("Title", d.get('title', 'N/A')),
-            ("CVSS Score", d.get('cvss_score', 'N/A')),
-            ("CISA KEV", d.get('cisa_kev', 'N/A')),
-            ("Exploitability", d.get('exploitability', 'N/A')),
-            ("EPSS Score", d.get('epss_score', 'N/A')),
-            ("Remediation", d.get('remediation', 'N/A')),
-            ("Description", d.get('description', 'N/A'))
-        ]
-        
-        for i, (label, val) in enumerate(metadata, 1):
-            ws.cell(row=i, column=1, value=label).font = Font(bold=True)
-            ws.cell(row=i, column=2, value=str(val)).alignment = Alignment(wrap_text=True)
-        
-        # Affected Hosts Table
-        start_row = len(metadata) + 2
-        ws.cell(row=start_row, column=1, value="Affected Hosts").font = Font(bold=True, size=12)
-        host_headers = ["IP Address", "Hostname", "Port/Proto", "Service Name"]
-        for col, h_text in enumerate(host_headers, 1):
-            cell = ws.cell(row=start_row+1, column=col, value=h_text)
-            cell.fill = header_fill
-            cell.font = header_font
+    if group_by == 'host':
+        # 2. Individual Host Sheets
+        for host_ip, host_data in sorted(parser_hosts.items()):
+            display_name = host_ip if host_ip else host_data.get('hostname', 'Unknown')
+            # Excel sheet names limited to 31 chars, remove forbidden chars
+            import re
+            sheet_name = re.sub(r'[\\/\?\*\[\]]', '_', display_name)[:31]
+            ws = wb.create_sheet(title=sheet_name)
             
-        for i, (ip, host, port, svc) in enumerate(sorted(cve_to_hosts.get(cve_id, [])), 1):
-            ws.append([ip, host, port, svc]) # Note: this appends to end of sheet, may need careful row management if multiple tables
-            # Actually appending is fine if it's the last section.
+            ws.cell(row=1, column=1, value="IP").font = Font(bold=True)
+            ws.cell(row=1, column=2, value=host_data.get('ip', 'N/A'))
+            ws.cell(row=2, column=1, value="Hostname").font = Font(bold=True)
+            ws.cell(row=2, column=2, value=host_data.get('hostname', 'N/A'))
 
-        # Adjust columns
-        ws.column_dimensions['A'].width = 20
-        ws.column_dimensions['B'].width = 80
+            headers = ["CVE ID", "Port/Proto", "Service", "Title", "CVSS", "CISA KEV", "Exploitability"]
+            for col, h_text in enumerate(headers, 1):
+                cell = ws.cell(row=4, column=col, value=h_text)
+                cell.fill = header_fill
+                cell.font = header_font
+
+            # Collect all CVEs for this host
+            host_vulns = []
+            for s in host_data["services"]:
+                port_proto = f"{s['port']}/{s['proto']}" if s['port'] != "0" else "Host-level"
+                for cve_id in s['cves']:
+                    if cve_id in vulnerabilities:
+                        d = vulnerabilities[cve_id]
+                        host_vulns.append((cve_id, port_proto, s['name'], d))
+            
+            # Sort by CVSS
+            host_vulns.sort(key=lambda x: get_score(x[3]), reverse=True)
+            
+            for i, (cve_id, port, svc, d) in enumerate(host_vulns, 5):
+                ws.append([
+                    cve_id, port, svc, d.get('title', 'N/A'), 
+                    d.get('cvss_score', 'N/A'), d.get('cisa_kev', 'N/A'), 
+                    d.get('exploitability', 'N/A')
+                ])
+            
+            ws.column_dimensions['A'].width = 15
+            ws.column_dimensions['D'].width = 60
+    else:
+        # 2. Individual CVE Sheets
+        for cve_id in sorted_cves:
+            d = vulnerabilities[cve_id]
+            # Excel sheet names limited to 31 chars
+            sheet_name = cve_id[:31]
+            ws = wb.create_sheet(title=sheet_name)
+            
+            # CVE Metadata Table
+            metadata = [
+                ("CVE ID", cve_id),
+                ("Title", d.get('title', 'N/A')),
+                ("CVSS Score", d.get('cvss_score', 'N/A')),
+                ("CISA KEV", d.get('cisa_kev', 'N/A')),
+                ("Exploitability", d.get('exploitability', 'N/A')),
+                ("EPSS Score", d.get('epss_score', 'N/A')),
+                ("Remediation", d.get('remediation', 'N/A')),
+                ("Description", d.get('description', 'N/A'))
+            ]
+            
+            for i, (label, val) in enumerate(metadata, 1):
+                ws.cell(row=i, column=1, value=label).font = Font(bold=True)
+                ws.cell(row=i, column=2, value=str(val)).alignment = Alignment(wrap_text=True)
+            
+            # Affected Hosts Table
+            start_row = len(metadata) + 2
+            ws.cell(row=start_row, column=1, value="Affected Hosts").font = Font(bold=True, size=12)
+            host_headers = ["IP Address", "Hostname", "Port/Proto", "Service Name"]
+            for col, h_text in enumerate(host_headers, 1):
+                cell = ws.cell(row=start_row+1, column=col, value=h_text)
+                cell.fill = header_fill
+                cell.font = header_font
+                
+            for i, (ip, host, port, svc) in enumerate(sorted(cve_to_hosts.get(cve_id, [])), 1):
+                ws.append([ip, host, port, svc]) 
+
+            # Adjust columns
+            ws.column_dimensions['A'].width = 20
+            ws.column_dimensions['B'].width = 80
 
     wb.save(output_file)
     print(f"[+] XLSX intelligence report saved to: {output_file}")
@@ -407,13 +539,19 @@ def save_markdown_report(vulnerabilities, cve_to_hosts, scanner_type, target_fil
         "total_hosts": len(set(h[0] for hosts in cve_to_hosts.values() for h in hosts)),
         "total_cves": len(vulnerabilities),
         "critical_count": sum(1 for v in vulnerabilities.values() if isinstance(v.get('cvss_score'), (int, float)) and v['cvss_score'] >= 9),
+        "high_count": sum(1 for v in vulnerabilities.values() if isinstance(v.get('cvss_score'), (int, float)) and 7 <= v['cvss_score'] < 9),
+        "medium_count": sum(1 for v in vulnerabilities.values() if isinstance(v.get('cvss_score'), (int, float)) and 4 <= v['cvss_score'] < 7),
+        "low_count": sum(1 for v in vulnerabilities.values() if isinstance(v.get('cvss_score'), (int, float)) and 0.1 <= v['cvss_score'] < 4),
+        "info_count": sum(1 for v in vulnerabilities.values() if not isinstance(v.get('cvss_score'), (int, float)) or v['cvss_score'] < 0.1),
         "kev_count": sum(1 for v in vulnerabilities.values() if v.get('cisa_kev') == 'Yes')
     }
+
+    chart_b64 = generate_severity_chart(vulnerabilities)
 
     try:
         env = Environment(loader=FileSystemLoader(os.path.join(os.path.dirname(__file__), 'templates')))
         template = env.get_template('report_template.md')
-        
+
         # Sort vulnerabilities by CVSS score descending
         def get_score(v):
             s = v.get('cvss_score', 0)
@@ -425,11 +563,11 @@ def save_markdown_report(vulnerabilities, cve_to_hosts, scanner_type, target_fil
             vulnerabilities=sorted_vulns,
             cve_to_hosts=cve_to_hosts,
             stats=stats,
+            chart_b64=chart_b64,
             date=datetime.now().strftime("%Y-%m-%d %H:%M"),
             scanner_type=scanner_type,
             target_file=os.path.basename(target_file)
         )
-        
         with open(output_file, 'w', encoding='utf-8') as f:
             f.write(md_out)
         print(f"[+] Markdown report saved to: {output_file}")
@@ -448,13 +586,19 @@ def save_pdf_report(vulnerabilities, cve_to_hosts, scanner_type, target_file, ou
         "total_hosts": len(set(h[0] for hosts in cve_to_hosts.values() for h in hosts)),
         "total_cves": len(vulnerabilities),
         "critical_count": sum(1 for v in vulnerabilities.values() if isinstance(v.get('cvss_score'), (int, float)) and v['cvss_score'] >= 9),
+        "high_count": sum(1 for v in vulnerabilities.values() if isinstance(v.get('cvss_score'), (int, float)) and 7 <= v['cvss_score'] < 9),
+        "medium_count": sum(1 for v in vulnerabilities.values() if isinstance(v.get('cvss_score'), (int, float)) and 4 <= v['cvss_score'] < 7),
+        "low_count": sum(1 for v in vulnerabilities.values() if isinstance(v.get('cvss_score'), (int, float)) and 0.1 <= v['cvss_score'] < 4),
+        "info_count": sum(1 for v in vulnerabilities.values() if not isinstance(v.get('cvss_score'), (int, float)) or v['cvss_score'] < 0.1),
         "kev_count": sum(1 for v in vulnerabilities.values() if v.get('cisa_kev') == 'Yes')
     }
+
+    chart_b64 = generate_severity_chart(vulnerabilities)
 
     try:
         env = Environment(loader=FileSystemLoader(os.path.join(os.path.dirname(__file__), 'templates')))
         template = env.get_template('report_template.html')
-        
+
         def get_score(v):
             s = v.get('cvss_score', 0)
             return float(s) if s != 'N/A' else 0
@@ -465,11 +609,11 @@ def save_pdf_report(vulnerabilities, cve_to_hosts, scanner_type, target_file, ou
             vulnerabilities=sorted_vulns,
             cve_to_hosts=cve_to_hosts,
             stats=stats,
+            chart_b64=chart_b64,
             date=datetime.now().strftime("%Y-%m-%d %H:%M"),
             scanner_type=scanner_type,
             target_file=os.path.basename(target_file)
         )
-        
         HTML(string=html_out).write_pdf(output_file)
         print(f"[+] PDF intelligence report saved to: {output_file}")
     except Exception as e:
@@ -485,13 +629,19 @@ def save_html_report(vulnerabilities, cve_to_hosts, scanner_type, target_file, o
         "total_hosts": len(set(h[0] for hosts in cve_to_hosts.values() for h in hosts)),
         "total_cves": len(vulnerabilities),
         "critical_count": sum(1 for v in vulnerabilities.values() if isinstance(v.get('cvss_score'), (int, float)) and v['cvss_score'] >= 9),
+        "high_count": sum(1 for v in vulnerabilities.values() if isinstance(v.get('cvss_score'), (int, float)) and 7 <= v['cvss_score'] < 9),
+        "medium_count": sum(1 for v in vulnerabilities.values() if isinstance(v.get('cvss_score'), (int, float)) and 4 <= v['cvss_score'] < 7),
+        "low_count": sum(1 for v in vulnerabilities.values() if isinstance(v.get('cvss_score'), (int, float)) and 0.1 <= v['cvss_score'] < 4),
+        "info_count": sum(1 for v in vulnerabilities.values() if not isinstance(v.get('cvss_score'), (int, float)) or v['cvss_score'] < 0.1),
         "kev_count": sum(1 for v in vulnerabilities.values() if v.get('cisa_kev') == 'Yes')
     }
+
+    chart_b64 = generate_severity_chart(vulnerabilities)
 
     try:
         env = Environment(loader=FileSystemLoader(os.path.join(os.path.dirname(__file__), 'templates')))
         template = env.get_template('report_template.html')
-        
+
         # Sort vulnerabilities by CVSS score descending
         def get_score(v):
             s = v.get('cvss_score', 0)
@@ -503,11 +653,11 @@ def save_html_report(vulnerabilities, cve_to_hosts, scanner_type, target_file, o
             vulnerabilities=sorted_vulns,
             cve_to_hosts=cve_to_hosts,
             stats=stats,
+            chart_b64=chart_b64,
             date=datetime.now().strftime("%Y-%m-%d %H:%M"),
             scanner_type=scanner_type,
             target_file=os.path.basename(target_file)
         )
-        
         with open(output_file, 'w', encoding='utf-8') as f:
             f.write(html_out)
         print(f"[+] HTML intelligence report saved to: {output_file}")
@@ -682,21 +832,21 @@ def generate_report(scan_file: str, csv_file: str = None, group_by: str = 'host'
     if pdf_file:
         save_pdf_report(cve_enrichment, cve_to_hosts, scanner_type, scan_file, pdf_file)
     if xlsx_file:
-        save_xlsx_report(cve_enrichment, cve_to_hosts, xlsx_file)
+        save_xlsx_report(cve_enrichment, cve_to_hosts, parser.hosts, xlsx_file, group_by)
     if docx_file:
         save_docx_report(cve_enrichment, cve_to_hosts, scanner_type, scan_file, docx_file)
 
 def main():
     p = argparse.ArgumentParser(description="VulnReport - Unified Scan Reporting Tool")
     p.add_argument("file", help="Input scan file (Nmap/Nessus/Qualys)")
-    p.add_argument("-c", "-C", "--csv", help="Output CSV filename")
+    p.add_argument("-C", "--csv", help="Output CSV filename")
     p.add_argument("-H", "--html", help="Output HTML report filename")
     p.add_argument("-M", "--markdown", help="Output Markdown report filename")
     p.add_argument("-P", "--pdf", help="Output PDF report filename")
     p.add_argument("-X", "--xlsx", help="Output XLSX report filename")
     p.add_argument("-D", "--docx", help="Output Word DOCX report filename")
     p.add_argument("-A", "--all", help="Generate ALL formats using this base filename")
-    p.add_argument("-g", "--group-by", choices=['host', 'cve'], default='host', help="Group rows by host or CVE")
+    p.add_argument("-g", "--group-by", choices=['host', 'cve'], default='host', help="Group sheets by host or CVE (XLSX only)")
     p.add_argument("-T", "--token", help="GitHub Token for PoC lookup")
     p.add_argument("-N", "--nvd-key", help="NVD API Key")
     p.add_argument("-t", "--threads", type=int, default=10, help="Number of concurrent threads (default: 10)")

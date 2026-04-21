@@ -1,10 +1,11 @@
 # Vulnerability Intelligence Report
 **Generated on:** {{ date }} | **Scanner:** {{ scanner_type }} | **Target:** {{ target_file }}
 
+
 ## 📊 Summary Statistics
 | Metric | Value |
 | :--- | :--- |
-| **Total Hosts** | {{ stats.total_hosts }} |
+| **HOSTS** | {{ stats.total_hosts }} |
 | **Total Unique CVEs** | {{ stats.total_cves }} |
 | **Critical Risks (CVSS >= 9.0)** | {{ stats.critical_count }} |
 | **KEV Exploited (Active)** | {{ stats.kev_count }} |
@@ -26,6 +27,8 @@
 - N/A
 {% endif %}
 
+<div style="page-break-after: always;"></div>
+
 ### 3. Affected Hosts
 {% for host in cve_to_hosts[cve_id][:5] -%}
 - `{{ host[1] if host[1] else host[0] }}` ({{ host[2] }})
@@ -33,6 +36,8 @@
 {% if cve_to_hosts[cve_id]|length > 5 -%}
 - *({{ cve_to_hosts[cve_id]|length - 5 }}+ more hosts)*
 {% endif %}
+
+<div style="page-break-after: always;"></div>
 
 ### 4. Remediation Recommendation
 **{{ d.remediation }}**

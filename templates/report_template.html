@@ -14,8 +14,8 @@
             --critical: #ef4444;
             --high: #f97316;
             --medium: #eab308;
-            --low: #22c55e;
-            --info: #3b82f6;
+            --low: #3b82f6;
+            --info: #22c55e;
             --kev: #db2777;
         }
 
@@ -47,7 +47,7 @@
             display: flex;
             justify-content: space-between;
             gap: 1rem;
-            margin-bottom: 3rem;
+            margin-bottom: 2rem;
             width: 100%;
         }
 
@@ -64,7 +64,11 @@
         .stat-value { font-size: 2rem; font-weight: 700; display: block; }
         .stat-label { color: var(--text-dim); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; }
 
-        .vulnerability-list { display: block; }
+        .vulnerability-list { 
+            display: block;
+            page-break-before: always;
+            margin-top: 2rem;
+        }
 
         .vuln-card {
             background: var(--bg-card);
@@ -137,6 +141,7 @@
         .badge-exploited { background: #dc2626; color: white; }
 
         .vuln-body { padding: 1.5rem; display: block; }
+        .vuln-body h4 { margin-top: 0; }
         .vuln-desc { color: var(--text-dim); margin-bottom: 1.5rem; font-size: 0.95rem; display: block; }
 
         .section-header {
@@ -190,40 +195,69 @@
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
         }
+
+        .summary-page {
+            display: block;
+            page-break-after: always;
+        }
+
+        .chart-container {
+            text-align: center;
+            background: var(--bg-card);
+            padding: 1rem;
+            border-radius: 1rem;
+            border: 1px solid #334155;
+            display: block;
+            margin-bottom: 2rem;
+        }
+
+        .chart-container img {
+            max-width: 80%;
+            height: auto;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <header>
-            <div style="display: inline-block; width: 70%;">
-                <h1>Vulnerability Intelligence Report</h1>
-                <div class="metadata">
-                    Generated on: {{ date }} | Scanner: {{ scanner_type }} | Target: {{ target_file }}
+        <div class="summary-page">
+            <header>
+                <div style="display: inline-block; width: 70%;">
+                    <h1>Vulnerability Intelligence Report</h1>
+                    <div class="metadata">
+                        Generated on: {{ date }} | Scanner: {{ scanner_type }} | Target: {{ target_file }}
+                    </div>
                 </div>
-            </div>
-            <div style="display: inline-block; width: 28%; text-align: right; vertical-align: top;">
-                <span style="font-weight: 800; font-size: 1.5rem; color: var(--accent);">VULN-REPORTS</span>
-            </div>
-        </header>
+                <div style="display: inline-block; width: 28%; text-align: right; vertical-align: top;">
+                    <span style="font-weight: 800; font-size: 1.5rem; color: var(--accent);">VULN-REPORTS</span>
+                </div>
+            </header>
 
-        <section class="summary-grid">
-            <div class="stat-card">
-                <span class="stat-value">{{ stats.total_hosts }}</span>
-                <span class="stat-label">Hosts Scanned</span>
+            <section class="summary-grid">
+                <div class="stat-card">
+                    <span class="stat-value">{{ stats.total_hosts }}</span>
+                    <span class="stat-label">HOSTS</span>
+                </div>
+
+                <div class="stat-card">
+                    <span class="stat-value">{{ stats.total_cves }}</span>
+                    <span class="stat-label">Unique CVEs</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value" style="color: var(--critical)">{{ stats.critical_count }}</span>
+                    <span class="stat-label">Critical Risks</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value" style="color: var(--kev)">{{ stats.kev_count }}</span>
+                    <span class="stat-label">KEV Exploited</span>
+                </div>
+            </section>
+
+            {% if chart_b64 %}
+            <div class="chart-container">
+                <img src="data:image/png;base64,{{ chart_b64 }}" alt="Severity Distribution">
             </div>
-            <div class="stat-card">
-                <span class="stat-value">{{ stats.total_cves }}</span>
-                <span class="stat-label">Unique CVEs</span>
-            </div>
-            <div class="stat-card">
-                <span class="stat-value" style="color: var(--critical)">{{ stats.critical_count }}</span>
-                <span class="stat-label">Critical Risks</span>
-            </div>
-            <div class="stat-card">
-                <span class="stat-value" style="color: var(--kev)">{{ stats.kev_count }}</span>
-                <span class="stat-label">KEV Exploited</span>
-            </div>
-        </section>
+            {% endif %}
+        </div>
 
         <div class="vulnerability-list">
             {% for cve_id, d in vulnerabilities.items() %}
