@@ -7,10 +7,12 @@ Combines Scan2CVE (parsing) and CVE-Lookup (enrichment) to produce a detailed CS
 import sys
 import os
 
-# Suppress GLib-GIO warnings on Windows (e.g., UWP app extension/verb warnings)
+# Suppress GLib-GIO warnings (e.g., UWP/gvfs metadata warnings)
 # This must be set before GIO/GTK-based libraries like WeasyPrint are loaded.
-if os.name == 'nt':
-    os.environ["GIO_USE_VFS"] = "local"
+os.environ["GIO_USE_VFS"] = "local"
+# Also suppress general GLib/GObject noise
+if "G_MESSAGES_DEBUG" not in os.environ:
+    os.environ["G_MESSAGES_DEBUG"] = "none"
 
 import csv
 import argparse
