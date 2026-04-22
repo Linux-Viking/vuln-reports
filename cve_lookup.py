@@ -264,23 +264,32 @@ def get_cve_data(session: requests.Session, cve_id: str, github_token: Optional[
             current_title = cwe_title
     
     affected_structured = []
+    
+    # Try to extract versions from description: "X.Y before Z.W" or "X.Y through Z.W"
+    # Improved regex to handle various versioning formats
+    desc_version_patterns = [
+        r"(\d+(?:\.\d+)* (?:before|through|prior to) (?:build )?\d+(?:\.\d+)*)",
+        r"v(?:ersion)?\s?(\d+(?:\.\d+)*)",
+        r"(\d+(?:\.\d+)+)"
+    ]
+    all_versions_from_desc = []
+    for pattern in desc_version_patterns:
+        matches = re.findall(pattern, description)
+        if matches:
+            all_versions_from_desc.extend(matches)
+            break # Use the first pattern that yields results
+
     if not affected_raw or (len(affected_raw) == 1 and affected_raw[0].get('product', '').lower() in ['n/a', '']):
         if detected_products:
-            # ... (extract versions logic)
             # Ensure detected products are also cleaned
             for i in range(len(detected_products)):
                 if detected_products[i].lower().startswith('in '):
                     detected_products[i] = detected_products[i][3:].strip()
             
-            # Try to extract versions from description: "X.Y before Z.W" or "X.Y through Z.W"
-            all_versions = re.findall(r"(\d+(?:\.\d+)* (?:before|through) (?:build )?\d+(?:\.\d+)*)", description)
-            if not all_versions:
-                all_versions = re.findall(r"v(?:ersion)?\s?(\d+(?:\.\d+)*)", description)
-            
             for p in detected_products:
                 p_versions = ["N/A"]
-                if all_versions:
-                    p_versions = all_versions
+                if all_versions_from_desc:
+                    p_versions = all_versions_from_desc[:5] # Limit to top 5
                 elif "SDK" in description or "software development kit" in description.lower():
                     p_versions = ["SDK (All Versions)"]
                 
@@ -290,7 +299,9 @@ def get_cve_data(session: requests.Session, cve_id: str, github_token: Optional[
                     "versions": p_versions
                 })
         elif product:
-            affected_structured.append({"vendor": "Unknown", "product": product, "versions": ["N/A"]})
+            p_versions = ["N/A"]
+            if all_versions_from_desc: p_versions = all_versions_from_desc[:5]
+            affected_structured.append({"vendor": "Unknown", "product": product, "versions": p_versions})
     
     if not affected_structured:
         for a in affected_raw:
@@ -304,9 +315,15 @@ def get_cve_data(session: requests.Session, cve_id: str, github_token: Optional[
                     ver = f"{ver} to <{lt}"
                 elif ltoe and ltoe != 'n/a':
                     ver = f"{ver} to {ltoe}"
-                versions.append(ver)
+                if ver != 'N/A':
+                    versions.append(ver)
+            
+            # If we still have N/A from structured data, try description
+            if not versions and all_versions_from_desc:
+                versions = all_versions_from_desc[:5]
             
             if not versions: versions = ["N/A"]
+            
             affected_structured.append({
                 "vendor": a.get('vendor', 'Unknown'),
                 "product": a.get('product', 'Unknown'),

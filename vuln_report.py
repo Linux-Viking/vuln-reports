@@ -312,9 +312,13 @@ def save_docx_report(vulnerabilities, cve_to_hosts, scanner_type, target_file, o
         score = str(d.get('cvss_score', 'N/A'))
         s_run = p2.add_run(score)
         s_run.bold = True
-        if get_score(d) >= 9: s_run.font.color.rgb = RGBColor(239, 68, 68)
-        elif get_score(d) >= 7: s_run.font.color.rgb = RGBColor(249, 115, 22)
-        else: s_run.font.color.rgb = RGBColor(59, 130, 246)
+        
+        cvss_val = get_score(d)
+        if cvss_val >= 9.0: s_run.font.color.rgb = RGBColor(220, 38, 38)   # Red (Critical)
+        elif cvss_val >= 7.0: s_run.font.color.rgb = RGBColor(234, 88, 12) # Orange (High)
+        elif cvss_val >= 4.0: s_run.font.color.rgb = RGBColor(245, 158, 11) # Amber (Medium)
+        elif cvss_val >= 0.1: s_run.font.color.rgb = RGBColor(59, 130, 246) # Blue (Low)
+        else: s_run.font.color.rgb = RGBColor(34, 197, 94)                # Green (Info/NA)
         
         p2.add_run(" | KEV: ").font.color.rgb = RGBColor(148, 163, 184)
         kev_run = p2.add_run(d.get('cisa_kev', 'N/A'))

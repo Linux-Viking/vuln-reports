@@ -120,7 +120,8 @@
         .sev-critical { background: rgba(239, 68, 68, 0.1); color: var(--critical); border: 2px solid var(--critical); }
         .sev-high { background: rgba(249, 115, 22, 0.1); color: var(--high); border: 2px solid var(--high); }
         .sev-medium { background: rgba(234, 179, 8, 0.1); color: var(--medium); border: 2px solid var(--medium); }
-        .sev-low { background: rgba(34, 197, 94, 0.1); color: var(--low); border: 2px solid var(--low); }
+        .sev-low { background: rgba(59, 130, 246, 0.1); color: var(--low); border: 2px solid var(--low); }
+        .sev-info { background: rgba(34, 197, 94, 0.1); color: var(--info); border: 2px solid var(--info); }
 
         .vuln-id { font-weight: 700; color: var(--accent); margin-bottom: 0.25rem; }
         .vuln-title { font-size: 1.1rem; font-weight: 600; margin: 0; word-wrap: break-word; }
@@ -263,7 +264,7 @@
             {% for cve_id, d in vulnerabilities.items() %}
             <div class="vuln-card">
                 <div class="vuln-header">
-                    <div class="severity-badge {% if d.cvss_score|float >= 9 %}sev-critical{% elif d.cvss_score|float >= 7 %}sev-high{% elif d.cvss_score|float >= 4 %}sev-medium{% else %}sev-low{% endif %}">
+                    <div class="severity-badge {% if d.cvss_score|float >= 9 %}sev-critical{% elif d.cvss_score|float >= 7 %}sev-high{% elif d.cvss_score|float >= 4 %}sev-medium{% elif d.cvss_score|float >= 0.1 %}sev-low{% else %}sev-info{% endif %}">
                         {{ d.cvss_score }}
                     </div>
                     <div class="vuln-header-text">
