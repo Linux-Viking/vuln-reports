@@ -48,7 +48,7 @@ Filter the final report by one or more severity levels (comma-separated):
 
 ## 🔑 API Key Configuration
 
-To get the most out of the suite, you should configure API keys for **GitHub** (PoC discovery) and **NVD** (faster vulnerability lookups).
+To get the most out of the suite, you should configure API keys for **GitHub** (PoC discovery), **NVD** (faster vulnerability lookups), and **Vulners** (high-fidelity intelligence and description enrichment).
 
 ### 1. GitHub Token (PoC Research)
 Used to search for public exploits and Proof of Concepts.
@@ -58,13 +58,17 @@ Used to search for public exploits and Proof of Concepts.
 Significantly increases rate limits for large-scale scan parsing.
 - **How to get:** Request a free key at [NVD API Request](https://nvd.nist.gov/developers/request-an-api-key).
 
+### 3. Vulners API Key (Enhanced Intelligence)
+Prioritizes high-quality vulnerability titles, descriptions, and cleanly parsed affected versions (e.g. resolving raw Linux Kernel git hashes to semver ranges).
+- **How to get:** Register at [Vulners](https://vulners.com/) and generate an API key in your profile.
+
 ### Configuration Methods
-| Method | GitHub Variable | NVD Variable |
-| :--- | :--- | :--- |
-| **Command Line** | `-T <token>` | `-N <key>` |
-| **Environment** | `export GITHUB_TOKEN=...` | `export NVD_API_KEY=...` |
-| **System Keyring** | Saved interactive prompt | Saved interactive prompt |
-| **Config File** | `~/.config/cve-lookup/config.json` | `~/.config/cve-lookup/config.json` |
+| Method | GitHub Variable | NVD Variable | Vulners Variable |
+| :--- | :--- | :--- | :--- |
+| **Command Line** | `-T <token>` | `-N <key>` | `-V <key>` |
+| **Environment** | `export GITHUB_TOKEN=...` | `export NVD_API_KEY=...` | `export VULNERS_API_KEY=...` |
+| **System Keyring** | Saved interactive prompt | Saved interactive prompt | Saved interactive prompt |
+| **Config File** | `~/.config/cve-lookup/config.json` | `~/.config/cve-lookup/config.json` | `~/.config/cve-lookup/config.json` |
 
 ---
 

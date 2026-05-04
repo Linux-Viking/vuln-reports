@@ -97,8 +97,24 @@ def normalize_text(text: Any) -> str:
     text = text.replace('\u00a0', ' ').replace('\\n', ' ')
     return re.sub(r'\s+', ' ', text).strip()
 
-def get_cve_data(session: requests.Session, cve_id: str, github_token: Optional[str], nvd_key: Optional[str] = None) -> Dict[str, Any]:
+def get_cve_data(session: requests.Session, cve_id: str, github_token: Optional[str], nvd_key: Optional[str] = None, vulners_key: Optional[str] = None) -> Dict[str, Any]:
     if not validate_cve_id(cve_id): return {"cve_id": cve_id, "error": f"Invalid format: {cve_id}"}
+    
+    vulners_data_list = []
+    if vulners_key:
+        try:
+            v_resp = session.post("https://vulners.com/api/v3/search/lucene/", 
+                                 json={"query": f"id:{cve_id}"}, 
+                                 headers={'User-Agent': USER_AGENT, 'X-Api-Key': vulners_key}, 
+                                 timeout=DEFAULT_TIMEOUT)
+            if v_resp.status_code == 200:
+                v_json = v_resp.json()
+                if v_json.get('result') == 'OK':
+                    search_results = v_json.get('data', {}).get('search', [])
+                    for res in search_results:
+                        vulners_data_list.append(res.get('_source', {}))
+        except Exception: pass
+
     circl_url = f"https://cve.circl.lu/api/cve/{cve_id}"
     epss_url = "https://api.first.org/data/v1/epss"
     headers = {'User-Agent': USER_AGENT}
@@ -239,7 +255,12 @@ def get_cve_data(session: requests.Session, cve_id: str, github_token: Optional[
         if cwe_title: break
 
     current_title = normalize_text(title)
-    if not title or current_title == "N/A" or any(gv in current_title.lower() for gv in generic_vulns):
+    
+    # Improved Title Heuristic: catch commit messages like "crypto: algif_aead - ..."
+    is_commit_msg = ":" in current_title and " - " in current_title
+    is_generic = any(gv in current_title.lower() for gv in generic_vulns) or current_title.lower().startswith("vulnerability in") or current_title.endswith(": Privilege Escalation")
+    
+    if not title or current_title == "N/A" or is_generic or is_commit_msg:
         # Generate a better title
         if product:
             base = product
@@ -262,9 +283,57 @@ def get_cve_data(session: requests.Session, cve_id: str, github_token: Optional[
             current_title = vuln_type
         elif cwe_title:
             current_title = cwe_title
-    
-    affected_structured = []
-    
+
+    # Vulners Enrichment: Prefer high-quality titles and descriptions from any matched record
+    if vulners_data_list:
+        # Sort Vulners records to prioritize cisa_kev and nvd
+        def type_priority(v):
+            t = v.get('type', '').lower()
+            if t == 'cisa_kev': return 0
+            if t == 'nvd': return 1
+            if t == 'osv': return 2
+            return 3
+        
+        sorted_v = sorted(vulners_data_list, key=type_priority)
+        
+        for v in sorted_v:
+            v_title = v.get('title')
+            # If our current title is ID, commit message, or generic, and Vulners has something better
+            v_is_good = v_title and len(v_title) > len(cve_id)
+            curr_is_weak = "resolved" in str(current_title).lower() or "N/A" in str(current_title) or str(current_title) == cve_id or is_generic or is_commit_msg
+            
+            if v_is_good and curr_is_weak:
+                current_title = v_title
+            
+            v_desc = v.get('description')
+            if v_desc and len(v_desc) > 20 and ("resolved" in description.lower() or "N/A" in description):
+                description = normalize_text(v_desc)
+                break # Take the best description found
+
+    # Vulners Affected Parsing: Aggregate from all records
+    vulners_affected = []
+    seen_sw = set()
+    for v in vulners_data_list:
+        if v.get('affectedSoftware'):
+            for sw in v['affectedSoftware']:
+                product_name = sw.get('name', 'Unknown')
+                version_range = sw.get('version', 'N/A')
+                operator = sw.get('operator', '')
+                
+                sw_key = (product_name, version_range, operator)
+                if sw_key in seen_sw: continue
+                seen_sw.add(sw_key)
+                
+                display_version = version_range
+                if operator == 'lt': display_version = f"before {version_range}"
+                elif operator == 'le': display_version = f"up to {version_range}"
+                
+                vulners_affected.append({
+                    "vendor": "Unknown",
+                    "product": product_name,
+                    "versions": [display_version]
+                })
+
     # Try to extract versions from description: "X.Y before Z.W" or "X.Y through Z.W"
     # Improved regex to handle various versioning formats
     desc_version_patterns = [
@@ -279,6 +348,7 @@ def get_cve_data(session: requests.Session, cve_id: str, github_token: Optional[
             all_versions_from_desc.extend(matches)
             break # Use the first pattern that yields results
 
+    affected_structured = []
     if not affected_raw or (len(affected_raw) == 1 and affected_raw[0].get('product', '').lower() in ['n/a', '']):
         if detected_products:
             # Ensure detected products are also cleaned
@@ -304,31 +374,77 @@ def get_cve_data(session: requests.Session, cve_id: str, github_token: Optional[
             affected_structured.append({"vendor": "Unknown", "product": product, "versions": p_versions})
     
     if not affected_structured:
+        # Group by product to merge git and semver records
+        product_map = {}
         for a in affected_raw:
-            versions = []
+            prod = a.get('product', 'Unknown')
+            if prod not in product_map:
+                product_map[prod] = {"vendor": a.get('vendor', 'Unknown'), "versions": [], "has_semver": False}
+            
             for v in a.get('versions', []):
-                if v.get('status') == 'unaffected': continue
+                v_type = v.get('versionType', '')
+                status = v.get('status', 'unknown')
                 ver = v.get('version', 'N/A')
                 lt = v.get('lessThan')
                 ltoe = v.get('lessThanOrEqual')
-                if lt and lt != 'n/a':
-                    ver = f"{ver} to <{lt}"
-                elif ltoe and ltoe != 'n/a':
-                    ver = f"{ver} to {ltoe}"
-                if ver != 'N/A':
-                    versions.append(ver)
+                
+                # Heuristic for version vs git hash
+                looks_like_version = re.match(r"^\d+(\.\d+)*", str(ver))
+                if v_type == 'semver' or (not v_type and looks_like_version):
+                    product_map[prod]["has_semver"] = True
+                    item_type = 'semver'
+                else:
+                    item_type = v_type
+                
+                if status == 'affected':
+                    if lt and lt != 'n/a': ver = f"{ver} to <{lt}"
+                    elif ltoe and ltoe != 'n/a': ver = f"{ver} to {ltoe}"
+                    
+                    if ver != 'N/A':
+                        product_map[prod]["versions"].append({"ver": ver, "type": item_type, "status": "affected"})
+                elif status == 'unaffected':
+                    if ver and ver != '0' and ver != 'N/A' and not str(ver).startswith('*'):
+                        product_map[prod]["versions"].append({"ver": ver, "type": item_type, "status": "unaffected"})
+        
+        for prod, info in product_map.items():
+            # If we have semver, filter out the git hashes for the same product
+            all_vers = info["versions"]
+            if info["has_semver"]:
+                all_vers = [v for v in all_vers if v["type"] == "semver"]
             
-            # If we still have N/A from structured data, try description
-            if not versions and all_versions_from_desc:
-                versions = all_versions_from_desc[:5]
+            # Identify affected ranges vs fixed versions
+            affected_display = []
+            affected_items = [v["ver"] for v in all_vers if v["status"] == "affected"]
+            unaffected_items = [v["ver"] for v in all_vers if v["status"] == "unaffected"]
             
-            if not versions: versions = ["N/A"]
+            if affected_items:
+                if unaffected_items:
+                    # Group patches
+                    patched_str = ", ".join(unaffected_items[:5])
+                    if len(unaffected_items) > 5: patched_str += ", ..."
+                    for a in affected_items:
+                        if "to " not in a:
+                            affected_display.append(f"{a} and later (Patched in: {patched_str})")
+                        else:
+                            affected_display.append(a)
+                else:
+                    affected_display.extend(affected_items)
+            
+            if not affected_display: 
+                # Fallback to description versions if still empty
+                if all_versions_from_desc: affected_display = all_versions_from_desc[:5]
+                else: affected_display = ["N/A"]
             
             affected_structured.append({
-                "vendor": a.get('vendor', 'Unknown'),
-                "product": a.get('product', 'Unknown'),
-                "versions": versions
+                "vendor": info["vendor"],
+                "product": prod,
+                "versions": affected_display[:10]
             })
+
+    # Final Affected Sanity Check: Prefer Vulners if we have Git hashes or empty results
+    has_git_hashes = any(any(len(v) > 30 for v in a['versions']) for a in affected_structured)
+    if (not affected_structured or has_git_hashes) and vulners_affected:
+        affected_structured = vulners_affected
 
     cvss_score, attack_complexity, user_interaction = "N/A", "N/A", "N/A"
     all_metrics = cna.get('metrics', []) + [m for adp in adp_list for m in adp.get('metrics', [])]
@@ -455,9 +571,9 @@ def get_cve_data(session: requests.Session, cve_id: str, github_token: Optional[
     
     # 3. Check references for 'advisory' or 'patch'
     if remediation == "Apply the latest security patches from the vendor.":
-        for ref in combined_refs:
-            if any(k in ref.lower() for k in ['advisory', 'patch', 'fix', 'update']):
-                remediation = f"Review vendor advisory and apply available patches: {ref}"
+        for f_ref in combined_refs:
+            if any(k in f_ref.lower() for k in ['advisory', 'patch', 'fix', 'update']):
+                remediation = f"Review vendor advisory and apply available patches: {f_ref}"
                 break
 
     return {
@@ -471,7 +587,10 @@ def get_cve_data(session: requests.Session, cve_id: str, github_token: Optional[
 def print_pretty(data: Dict[str, Any], use_colors: bool, minimal: bool = False):
     with print_lock:
         if "error" in data:
-            if not minimal: print(f"\n[!] {colorize(f'Error for {data.get(r'cve_id')}: {data[r'error']}', Colors.RED, use_colors)}")
+            if not minimal:
+                c_id = data.get("cve_id", "Unknown")
+                err = data.get("error", "Unknown error")
+                print(f"\n[!] {colorize(f'Error for {c_id}: {err}', Colors.RED, use_colors)}")
             return
         
         if minimal:
@@ -548,8 +667,8 @@ def get_output_path(base_name: Optional[str], extension: str) -> str:
         counter += 1
     return f"{base_name}_{counter}.{extension}"
 
-def get_keys(args_token=None, args_nvd=None):
-    """Retrieve GitHub and NVD keys from args, env, config, or keyring."""
+def get_keys(args_token=None, args_nvd=None, args_vulners=None):
+    """Retrieve GitHub, NVD, and Vulners keys from args, env, config, or keyring."""
     config_dir = get_config_dir()
     config_file = config_dir / "config.json"
     local_config = {}
@@ -572,7 +691,14 @@ def get_keys(args_token=None, args_nvd=None):
             nvd_key = keyring.get_password("cve-lookup-tool", "nvd-key")
         except Exception: nvd_key = None
 
-    return github_token, nvd_key, local_config
+    # Vulners Key
+    vulners_key = args_vulners or os.getenv("VULNERS_API_KEY") or local_config.get("vulners_key")
+    if not vulners_key:
+        try:
+            vulners_key = keyring.get_password("cve-lookup-tool", "vulners-key")
+        except Exception: vulners_key = None
+
+    return github_token, nvd_key, vulners_key, local_config
 
 def main():
     p = argparse.ArgumentParser(description="CVE Lookup Tool Pro - Intelligence Edition")
@@ -580,6 +706,7 @@ def main():
     p.add_argument("-f", "--file", help="Input file")
     p.add_argument("-T", "--token", help="GitHub Token")
     p.add_argument("-N", "--nvd-key", help="NVD API Key")
+    p.add_argument("-V", "--vulners-key", help="Vulners API Key")
     p.add_argument("-p", "--poc", action="store_true", help="PoC Mode: Filter for results with exploits and show minimal output")
     p.add_argument("-j", "--json", nargs="?", const="results", help="JSON export (default: results.json)")
     p.add_argument("-c", "--csv", nargs="?", const="results", help="CSV export (default: results.csv)")
@@ -599,7 +726,7 @@ def main():
     
     config_dir = get_config_dir()
     config_file = config_dir / "config.json"
-    github_token, nvd_key, local_config = get_keys(args.token, args.nvd_key)
+    github_token, nvd_key, vulners_key, local_config = get_keys(args.token, args.nvd_key, args.vulners_key)
             
     if not github_token and not args.poc:
         github_token = getpass.getpass("[?] GitHub Token not found. Enter Token (optional, press Enter to skip): ").strip()
@@ -631,6 +758,21 @@ def main():
                 with open(config_file, 'w') as f: json.dump(local_config, f)
                 print(f"[+] Key saved to {config_file}")
 
+    if not vulners_key and not args.poc:
+        vulners_key = getpass.getpass("[?] Vulners API Key not found. Enter Key (optional, press Enter to skip): ").strip()
+        if vulners_key:
+            save = input("[?] Save this key? (k: keyring, f: config file, n: don't save): ").lower().strip()
+            if save == 'k':
+                try:
+                    keyring.set_password("cve-lookup-tool", "vulners-key", vulners_key)
+                    print("[+] Key saved to keyring.")
+                except Exception as e: print(f"[!] Failed: {e}")
+            elif save == 'f':
+                config_dir.mkdir(parents=True, exist_ok=True)
+                local_config["vulners_key"] = vulners_key
+                with open(config_file, 'w') as f: json.dump(local_config, f)
+                print(f"[+] Key saved to {config_file}")
+
     cve_list = list(dict.fromkeys([c.strip().upper() for c in args.cve_ids]))
     if args.file:
         try:
@@ -646,7 +788,7 @@ def main():
     print(f"[*] Analyzing {len(cve_list)} CVEs...")
 
     with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
-        futures = {executor.submit(get_cve_data, session, cid, github_token, nvd_key): cid for cid in cve_list}
+        futures = {executor.submit(get_cve_data, session, cid, github_token, nvd_key, vulners_key): cid for cid in cve_list}
         for f in as_completed(futures):
             data = f.result()
             # Filter Logic: Include anything exploited in the wild OR with a PoC

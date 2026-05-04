@@ -86,14 +86,14 @@ try:
 finally:
     restore_gio_noise(_gio_stderr)
 
-def get_detailed_cve_info(cve_ids: List[str], github_token: str = None, nvd_key: str = None, max_workers: int = 10) -> Dict[str, Dict[str, Any]]:
+def get_detailed_cve_info(cve_ids: List[str], github_token: str = None, nvd_key: str = None, vulners_key: str = None, max_workers: int = 10) -> Dict[str, Dict[str, Any]]:
     """Fetch details for a list of CVEs using cve_lookup logic with concurrency."""
     session = requests.Session()
     cve_details = {}
     print(f"[*] Fetching enrichment data for {len(cve_ids)} unique CVEs...")
     
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
-        futures = {executor.submit(cve_lookup.get_cve_data, session, cve_id, github_token, nvd_key): cve_id for cve_id in cve_ids}
+        futures = {executor.submit(cve_lookup.get_cve_data, session, cve_id, github_token, nvd_key, vulners_key): cve_id for cve_id in cve_ids}
         for future in as_completed(futures):
             cve_id = futures[future]
             try:
@@ -639,7 +639,7 @@ def get_severity(cvss_score) -> str:
     except (ValueError, TypeError):
         return "info"
 
-def generate_report(scan_file: str, csv_file: str = None, github_token: str = None, nvd_key: str = None, html_file: str = None, md_file: str = None, pdf_file: str = None, xlsx_file: str = None, docx_file: str = None, all_base: str = None, threads: int = 10, severity: str = None):
+def generate_report(scan_file: str, csv_file: str = None, github_token: str = None, nvd_key: str = None, vulners_key: str = None, html_file: str = None, md_file: str = None, pdf_file: str = None, xlsx_file: str = None, docx_file: str = None, all_base: str = None, threads: int = 10, severity: str = None):
     # Handle the --all (-A) logic
     if all_base:
         csv_file = f"{all_base}.csv"
@@ -709,7 +709,7 @@ def generate_report(scan_file: str, csv_file: str = None, github_token: str = No
         for s in host_data["services"]:
             all_cve_ids.update(s['cves'])
 
-    cve_enrichment = get_detailed_cve_info(list(all_cve_ids), github_token, nvd_key, max_workers=threads)
+    cve_enrichment = get_detailed_cve_info(list(all_cve_ids), github_token, nvd_key, vulners_key, max_workers=threads)
     
     # Apply Severity Filtering
     if allowed_severities:
@@ -796,16 +796,18 @@ def main():
     p.add_argument("-A", "--all", help="Generate ALL formats using this base filename")
     p.add_argument("-T", "--token", help="GitHub Token for PoC lookup")
     p.add_argument("-N", "--nvd-key", help="NVD API Key")
+    p.add_argument("-V", "--vulners-key", help="Vulners API Key")
     p.add_argument("-t", "--threads", type=int, default=10, help="Number of concurrent threads (default: 10)")
     p.add_argument("-s", "--severity", help="Filter by severity: Info, Low, Medium, High, Critical (comma-separated)")
     args = p.parse_args()
     if not os.path.exists(args.file): print(f"[!] File not found: {args.file}"); return
 
     # Automatic key discovery
-    github_token, nvd_key, _ = cve_lookup.get_keys(args.token, args.nvd_key)
+    github_token, nvd_key, vulners_key, _ = cve_lookup.get_keys(args.token, args.nvd_key, args.vulners_key)
     if nvd_key: print("[*] Using NVD API Key for accelerated lookups.")
     if github_token: print("[*] Using GitHub Token for PoC research.")
+    if vulners_key: print("[*] Using Vulners API Key for enhanced intelligence.")
 
-    generate_report(args.file, args.csv, github_token, nvd_key, args.html, args.markdown, args.pdf, args.xlsx, args.docx, args.all, args.threads, args.severity)
+    generate_report(args.file, args.csv, github_token, nvd_key, vulners_key, args.html, args.markdown, args.pdf, args.xlsx, args.docx, args.all, args.threads, args.severity)
 
 if __name__ == "__main__": main()
