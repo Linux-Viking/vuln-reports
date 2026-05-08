@@ -359,7 +359,7 @@ def get_cve_data(session: requests.Session, cve_id: str, github_token: Optional[
             for p in detected_products:
                 p_versions = ["N/A"]
                 if all_versions_from_desc:
-                    p_versions = all_versions_from_desc[:5] # Limit to top 5
+                    p_versions = all_versions_from_desc # Include all matches
                 elif "SDK" in description or "software development kit" in description.lower():
                     p_versions = ["SDK (All Versions)"]
                 
@@ -370,7 +370,7 @@ def get_cve_data(session: requests.Session, cve_id: str, github_token: Optional[
                 })
         elif product:
             p_versions = ["N/A"]
-            if all_versions_from_desc: p_versions = all_versions_from_desc[:5]
+            if all_versions_from_desc: p_versions = all_versions_from_desc
             affected_structured.append({"vendor": "Unknown", "product": product, "versions": p_versions})
     
     if not affected_structured:
@@ -420,8 +420,7 @@ def get_cve_data(session: requests.Session, cve_id: str, github_token: Optional[
             if affected_items:
                 if unaffected_items:
                     # Group patches
-                    patched_str = ", ".join(unaffected_items[:5])
-                    if len(unaffected_items) > 5: patched_str += ", ..."
+                    patched_str = ", ".join(unaffected_items)
                     for a in affected_items:
                         if "to " not in a:
                             affected_display.append(f"{a} and later (Patched in: {patched_str})")
@@ -432,13 +431,13 @@ def get_cve_data(session: requests.Session, cve_id: str, github_token: Optional[
             
             if not affected_display: 
                 # Fallback to description versions if still empty
-                if all_versions_from_desc: affected_display = all_versions_from_desc[:5]
+                if all_versions_from_desc: affected_display = all_versions_from_desc
                 else: affected_display = ["N/A"]
             
             affected_structured.append({
                 "vendor": info["vendor"],
                 "product": prod,
-                "versions": affected_display[:10]
+                "versions": affected_display
             })
 
     # Final Affected Sanity Check: Prefer Vulners if we have Git hashes or empty results
