@@ -66,27 +66,34 @@ def get_poc_from_github(session: requests.Session, cve_id: str, github_token: Op
     for q in queries:
         current_headers = headers.copy()
         if token_to_use: current_headers['Authorization'] = f'Bearer {token_to_use}'
-        try:
-            params = {'q': f"{q} exploit OR poc", 'sort': 'stars', 'order': 'desc'}
-            resp = session.get("https://api.github.com/search/repositories", headers=current_headers, params=params, timeout=5)
-            if resp.status_code in [401, 403] and token_to_use:
-                resp = session.get("https://api.github.com/search/repositories", headers=headers, params=params, timeout=5)
-            if resp.status_code == 200:
-                results = resp.json()
-                if results.get('total_count', 0) > 0:
-                    for item in results['items']:
-                        name = item.get('name', '').lower()
-                        desc = (item.get('description', '') or "").lower()
-                        
-                        # Filter out analysis, scanners, and checkers
-                        exclude_keywords = ['analysis', 'scanner', 'checker', 'detect', 'nuclei', 'overview']
-                        if any(k in name or k in desc for k in exclude_keywords):
-                            continue
+        for attempt in range(3):
+            try:
+                params = {'q': f"{q} exploit OR poc", 'sort': 'stars', 'order': 'desc'}
+                resp = session.get("https://api.github.com/search/repositories", headers=current_headers, params=params, timeout=5)
+                if resp.status_code in [401, 403] and token_to_use and attempt == 0:
+                    resp = session.get("https://api.github.com/search/repositories", headers=headers, params=params, timeout=5)
+                if resp.status_code == 200:
+                    results = resp.json()
+                    if results.get('total_count', 0) > 0:
+                        for item in results['items']:
+                            name = item.get('name', '').lower()
+                            desc = (item.get('description', '') or "").lower()
                             
-                        if cve_id.lower() in name or cve_id.lower() in desc:
-                            return item.get('html_url')
-            elif resp.status_code == 403: break
-        except requests.RequestException: continue
+                            # Filter out analysis, scanners, and checkers
+                            exclude_keywords = ['analysis', 'scanner', 'checker', 'detect', 'nuclei', 'overview']
+                            if any(k in name or k in desc for k in exclude_keywords):
+                                continue
+                                
+                            if cve_id.lower() in name or cve_id.lower() in desc:
+                                return item.get('html_url')
+                    break # Success but no poc
+                elif resp.status_code in [403, 429]:
+                    time.sleep(3 * (attempt + 1))
+                    continue
+                else: break
+            except requests.RequestException:
+                time.sleep(2)
+                continue
     return None
 
 def normalize_text(text: Any) -> str:
@@ -122,7 +129,7 @@ def get_cve_data(session: requests.Session, cve_id: str, github_token: Optional[
         circl_headers['Authorization'] = f"Token {circl_key}"
         circl_headers['X-API-KEY'] = circl_key
 
-    max_retries = 4
+    max_retries = 8
     circl_data = None
     for attempt in range(max_retries):
         with circl_lock:
@@ -138,14 +145,14 @@ def get_cve_data(session: requests.Session, cve_id: str, github_token: Optional[
             circl_resp = session.get(circl_url, headers=circl_headers, timeout=DEFAULT_TIMEOUT)
             if circl_resp.status_code == 429:
                 if attempt == max_retries - 1: return {"cve_id": cve_id, "error": "HTTP 429: Too Many Requests"}
-                time.sleep(2 * (attempt + 1))
+                time.sleep(5 * (attempt + 1)) # Wait longer before retrying
                 continue
             circl_resp.raise_for_status()
             circl_data = circl_resp.json()
             break
         except Exception as e:
             if attempt == max_retries - 1: return {"cve_id": cve_id, "error": str(e)}
-            time.sleep(1)
+            time.sleep(2 * (attempt + 1))
 
     epss_data = {}
     try:
@@ -476,7 +483,7 @@ def get_cve_data(session: requests.Session, cve_id: str, github_token: Optional[
 
     # NVD Fallback for older CVEs
     if cvss_score == "N/A":
-        max_retries = 3
+        max_retries = 6
         for attempt in range(max_retries):
             # Optimized thread-safe rate limiting
             with nvd_lock:
@@ -511,11 +518,11 @@ def get_cve_data(session: requests.Session, cve_id: str, github_token: Optional[
                         break # Success
                     else:
                         if code == 503 or code == 429:
-                            time.sleep(2 * (attempt + 1))
+                            time.sleep(5 * (attempt + 1)) # Longer delay for rate limits
                             continue
                         break
             except Exception:
-                time.sleep(1)
+                time.sleep(2 * (attempt + 1))
                 continue
 
     cisa_kev = "No"
