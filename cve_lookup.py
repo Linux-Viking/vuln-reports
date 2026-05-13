@@ -127,7 +127,7 @@ def get_cve_data(session: requests.Session, cve_id: str, github_token: Optional[
         with circl_lock:
             now = time.time()
             elapsed = now - last_circl_call[0]
-            delay = 0.5
+            delay = 6.5
             if elapsed < delay:
                 time.sleep(delay - elapsed)
             last_circl_call[0] = time.time()
