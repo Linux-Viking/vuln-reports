@@ -43,6 +43,8 @@ class Colors:
 print_lock = Lock()
 nvd_lock = Lock()
 last_nvd_call = [0.0]
+circl_lock = Lock()
+last_circl_call = [0.0]
 
 def colorize(text: str, color_code: str, use_colors: bool) -> str:
     if not use_colors: return text
@@ -119,11 +121,23 @@ def get_cve_data(session: requests.Session, cve_id: str, github_token: Optional[
     epss_url = "https://api.first.org/data/v1/epss"
     headers = {'User-Agent': USER_AGENT}
     
-    max_retries = 3
+    max_retries = 4
     circl_data = None
     for attempt in range(max_retries):
+        with circl_lock:
+            now = time.time()
+            elapsed = now - last_circl_call[0]
+            delay = 0.5
+            if elapsed < delay:
+                time.sleep(delay - elapsed)
+            last_circl_call[0] = time.time()
+
         try:
             circl_resp = session.get(circl_url, headers=headers, timeout=DEFAULT_TIMEOUT)
+            if circl_resp.status_code == 429:
+                if attempt == max_retries - 1: return {"cve_id": cve_id, "error": "HTTP 429: Too Many Requests"}
+                time.sleep(2 * (attempt + 1))
+                continue
             circl_resp.raise_for_status()
             circl_data = circl_resp.json()
             break
