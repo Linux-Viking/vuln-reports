@@ -58,11 +58,6 @@ def csv_safe(value: Any) -> str:
     if val.startswith(('=', '+', '-', '@')): return f"'{val}"
     return val
 
-def get_config_dir() -> Path:
-    if os.name == 'nt':
-        return Path(os.environ.get('APPDATA', '~')).expanduser() / 'cve-lookup'
-    return Path.home() / '.config' / 'cve-lookup'
-
 def get_poc_from_github(session: requests.Session, cve_id: str, github_token: Optional[str]) -> Optional[str]:
     queries = [f'"{cve_id}"', f'"{cve_id.replace("CVE-", "")}"']
     headers = {'Accept': 'application/vnd.github.v3+json', 'User-Agent': USER_AGENT}
@@ -99,7 +94,7 @@ def normalize_text(text: Any) -> str:
     text = text.replace('\u00a0', ' ').replace('\\n', ' ')
     return re.sub(r'\s+', ' ', text).strip()
 
-def get_cve_data(session: requests.Session, cve_id: str, github_token: Optional[str], nvd_key: Optional[str] = None, vulners_key: Optional[str] = None) -> Dict[str, Any]:
+def get_cve_data(session: requests.Session, cve_id: str, github_token: Optional[str], nvd_key: Optional[str] = None, vulners_key: Optional[str] = None, circl_key: Optional[str] = None) -> Dict[str, Any]:
     if not validate_cve_id(cve_id): return {"cve_id": cve_id, "error": f"Invalid format: {cve_id}"}
     
     vulners_data_list = []
@@ -120,20 +115,27 @@ def get_cve_data(session: requests.Session, cve_id: str, github_token: Optional[
     circl_url = f"https://cve.circl.lu/api/cve/{cve_id}"
     epss_url = "https://api.first.org/data/v1/epss"
     headers = {'User-Agent': USER_AGENT}
-    
+    circl_headers = headers.copy()
+    if circl_key:
+        # Some endpoints/instances use Authorization, some X-API-KEY.
+        # We supply both to maximize compatibility with the CIRCL backend.
+        circl_headers['Authorization'] = f"Token {circl_key}"
+        circl_headers['X-API-KEY'] = circl_key
+
     max_retries = 4
     circl_data = None
     for attempt in range(max_retries):
         with circl_lock:
             now = time.time()
             elapsed = now - last_circl_call[0]
-            delay = 6.5
+            # Reduce delay significantly if we have an API key
+            delay = 0.65 if circl_key else 6.5
             if elapsed < delay:
                 time.sleep(delay - elapsed)
             last_circl_call[0] = time.time()
 
         try:
-            circl_resp = session.get(circl_url, headers=headers, timeout=DEFAULT_TIMEOUT)
+            circl_resp = session.get(circl_url, headers=circl_headers, timeout=DEFAULT_TIMEOUT)
             if circl_resp.status_code == 429:
                 if attempt == max_retries - 1: return {"cve_id": cve_id, "error": "HTTP 429: Too Many Requests"}
                 time.sleep(2 * (attempt + 1))
@@ -680,46 +682,42 @@ def get_output_path(base_name: Optional[str], extension: str) -> str:
         counter += 1
     return f"{base_name}_{counter}.{extension}"
 
-def get_keys(args_token=None, args_nvd=None, args_vulners=None):
-    """Retrieve GitHub, NVD, and Vulners keys from args, env, config, or keyring."""
-    config_dir = get_config_dir()
-    config_file = config_dir / "config.json"
-    local_config = {}
-    if config_file.exists():
-        try:
-            with open(config_file, 'r') as f: local_config = json.load(f)
-        except Exception: pass
-
+def get_keys():
+    """Retrieve GitHub, NVD, Vulners, and CIRCL keys from env or keyring."""
     # GitHub Token
-    github_token = args_token or os.getenv("GITHUB_TOKEN") or local_config.get("github_token")
+    github_token = os.getenv("GITHUB_TOKEN")
     if not github_token:
         try:
             github_token = keyring.get_password("cve-lookup-tool", "github-token")
         except Exception: github_token = None
     
     # NVD Key
-    nvd_key = args_nvd or os.getenv("NVD_API_KEY") or local_config.get("nvd_key")
+    nvd_key = os.getenv("NVD_API_KEY")
     if not nvd_key:
         try:
             nvd_key = keyring.get_password("cve-lookup-tool", "nvd-key")
         except Exception: nvd_key = None
 
     # Vulners Key
-    vulners_key = args_vulners or os.getenv("VULNERS_API_KEY") or local_config.get("vulners_key")
+    vulners_key = os.getenv("VULNERS_API_KEY")
     if not vulners_key:
         try:
             vulners_key = keyring.get_password("cve-lookup-tool", "vulners-key")
         except Exception: vulners_key = None
 
-    return github_token, nvd_key, vulners_key, local_config
+    # CIRCL Key
+    circl_key = os.getenv("CIRCL_API_KEY")
+    if not circl_key:
+        try:
+            circl_key = keyring.get_password("cve-lookup-tool", "circl-key")
+        except Exception: circl_key = None
+
+    return github_token, nvd_key, vulners_key, circl_key
 
 def main():
     p = argparse.ArgumentParser(description="CVE Lookup Tool Pro - Intelligence Edition")
     p.add_argument("cve_ids", nargs="*", help="CVE IDs")
     p.add_argument("-f", "--file", help="Input file")
-    p.add_argument("-T", "--token", help="GitHub Token")
-    p.add_argument("-N", "--nvd-key", help="NVD API Key")
-    p.add_argument("-V", "--vulners-key", help="Vulners API Key")
     p.add_argument("-p", "--poc", action="store_true", help="PoC Mode: Filter for results with exploits and show minimal output")
     p.add_argument("-j", "--json", nargs="?", const="results", help="JSON export (default: results.json)")
     p.add_argument("-c", "--csv", nargs="?", const="results", help="CSV export (default: results.csv)")
@@ -732,60 +730,53 @@ def main():
     args = p.parse_args()
 
     use_colors = not args.no_color and sys.stdout.isatty()
-    
+
     if not args.poc:
         banner = f"--- CVE Lookup Tool Pro v{VERSION} (Intelligence Edition) ---"
         print(colorize(banner, Colors.BLUE + Colors.BOLD, use_colors))
-    
-    config_dir = get_config_dir()
-    config_file = config_dir / "config.json"
-    github_token, nvd_key, vulners_key, local_config = get_keys(args.token, args.nvd_key, args.vulners_key)
-            
+
+    github_token, nvd_key, vulners_key, circl_key = get_keys()
+
     if not github_token and not args.poc:
         github_token = getpass.getpass("[?] GitHub Token not found. Enter Token (optional, press Enter to skip): ").strip()
         if github_token:
-            save = input("[?] Save this token? (k: keyring, f: config file, n: don't save): ").lower().strip()
-            if save == 'k':
+            save = input("[?] Save this token to keyring/credential manager? (y/N): ").lower().strip()
+            if save == 'y':
                 try:
                     keyring.set_password("cve-lookup-tool", "github-token", github_token)
                     print("[+] Token saved to keyring.")
                 except Exception as e: print(f"[!] Failed: {e}")
-            elif save == 'f':
-                config_dir.mkdir(parents=True, exist_ok=True)
-                local_config["github_token"] = github_token
-                with open(config_file, 'w') as f: json.dump(local_config, f)
-                print(f"[+] Token saved to {config_file}")
 
     if not nvd_key and not args.poc:
         nvd_key = getpass.getpass("[?] NVD API Key not found. Enter Key (optional, press Enter to skip): ").strip()
         if nvd_key:
-            save = input("[?] Save this key? (k: keyring, f: config file, n: don't save): ").lower().strip()
-            if save == 'k':
+            save = input("[?] Save this key to keyring/credential manager? (y/N): ").lower().strip()
+            if save == 'y':
                 try:
                     keyring.set_password("cve-lookup-tool", "nvd-key", nvd_key)
                     print("[+] Key saved to keyring.")
                 except Exception as e: print(f"[!] Failed: {e}")
-            elif save == 'f':
-                config_dir.mkdir(parents=True, exist_ok=True)
-                local_config["nvd_key"] = nvd_key
-                with open(config_file, 'w') as f: json.dump(local_config, f)
-                print(f"[+] Key saved to {config_file}")
 
     if not vulners_key and not args.poc:
         vulners_key = getpass.getpass("[?] Vulners API Key not found. Enter Key (optional, press Enter to skip): ").strip()
         if vulners_key:
-            save = input("[?] Save this key? (k: keyring, f: config file, n: don't save): ").lower().strip()
-            if save == 'k':
+            save = input("[?] Save this key to keyring/credential manager? (y/N): ").lower().strip()
+            if save == 'y':
                 try:
                     keyring.set_password("cve-lookup-tool", "vulners-key", vulners_key)
                     print("[+] Key saved to keyring.")
                 except Exception as e: print(f"[!] Failed: {e}")
-            elif save == 'f':
-                config_dir.mkdir(parents=True, exist_ok=True)
-                local_config["vulners_key"] = vulners_key
-                with open(config_file, 'w') as f: json.dump(local_config, f)
-                print(f"[+] Key saved to {config_file}")
 
+    if not circl_key and not args.poc:
+        circl_key = getpass.getpass("[?] CIRCL API Key not found. Enter Key (optional, press Enter to skip): ").strip()
+        if circl_key:
+            save = input("[?] Save this key to keyring/credential manager? (y/N): ").lower().strip()
+            if save == 'y':
+                try:
+                    keyring.set_password("cve-lookup-tool", "circl-key", circl_key)
+                    print("[+] Key saved to keyring.")
+                except Exception as e: print(f"[!] Failed: {e}")
+    
     cve_list = list(dict.fromkeys([c.strip().upper() for c in args.cve_ids]))
     if args.file:
         try:
@@ -801,7 +792,7 @@ def main():
     print(f"[*] Analyzing {len(cve_list)} CVEs...")
 
     with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
-        futures = {executor.submit(get_cve_data, session, cid, github_token, nvd_key, vulners_key): cid for cid in cve_list}
+        futures = {executor.submit(get_cve_data, session, cid, github_token, nvd_key, vulners_key, circl_key): cid for cid in cve_list}
         for f in as_completed(futures):
             data = f.result()
             # Filter Logic: Include anything exploited in the wild OR with a PoC
