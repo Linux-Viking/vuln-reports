@@ -82,33 +82,53 @@ class NmapParser(BaseParser):
     def get_cves_for_cpe(self, cpe: str, nvd_key: str = None) -> List[str]:
         if cpe.startswith("cpe:/"):
             cpe = cpe.replace("cpe:/", "cpe:2.3:")
-        url = "https://services.nvd.nist.gov/rest/json/cves/2.0"
-        params = {"virtualMatchString": cpe}
-        headers = {'User-Agent': USER_AGENT}
-        if nvd_key:
-            headers['X-ApiKey'] = nvd_key
-
-        # Thread-safe NVD Rate Limiting
-        # Without key: 5 requests / 30s (~6s delay)
-        # With key: 50 requests / 30s (~0.6s delay)
-        with nvd_api_lock:
-            now = time.time()
-            elapsed = now - last_nvd_api_call[0]
-            delay = 0.65 if nvd_key else 6.5
-            if elapsed < delay:
-                time.sleep(delay - elapsed)
-            last_nvd_api_call[0] = time.time()
-
-        try:
-            resp = self.session.get(url, params=params, headers=headers, timeout=30)
-            if resp.status_code == 200:
-                data = resp.json()
-                return [v['cve']['id'] for v in data.get('vulnerabilities', []) if 'cve' in v]
-            elif resp.status_code == 403:
-                print(colorize(f"\n  [!] NVD Rate Limit (403). Use an API key for higher limits.", Colors.RED, self.use_colors))
-        except Exception as e:
-            logger.debug(f"NVD API Error for {cpe}: {e}")
-        return []
+            
+        cpe_aliases = [cpe]
+        if ":igor_sysoev:nginx:" in cpe:
+            cpe_aliases.append(cpe.replace(":igor_sysoev:nginx:", ":f5:nginx:"))
+            cpe_aliases.append(cpe.replace(":igor_sysoev:nginx:", ":nginx:nginx:"))
+            
+        # Local Overrides for 0-days / Awaiting Analysis CVEs
+        LOCAL_OVERRIDES = {
+            "cpe:2.3:a:igor_sysoev:nginx:1.29.8": ["CVE-2026-42945"],
+            "cpe:2.3:a:f5:nginx:1.29.8": ["CVE-2026-42945"],
+            "cpe:2.3:a:nginx:nginx:1.29.8": ["CVE-2026-42945"],
+        }
+        
+        all_cves = set()
+        for base_cpe in cpe_aliases:
+            # Check local overrides first
+            for override_cpe, cves in LOCAL_OVERRIDES.items():
+                if base_cpe.startswith(override_cpe):
+                    all_cves.update(cves)
+                    
+            url = "https://services.nvd.nist.gov/rest/json/cves/2.0"
+            params = {"virtualMatchString": base_cpe}
+            headers = {'User-Agent': USER_AGENT}
+            if nvd_key:
+                headers['X-ApiKey'] = nvd_key
+    
+            # Thread-safe NVD Rate Limiting
+            with nvd_api_lock:
+                now = time.time()
+                elapsed = now - last_nvd_api_call[0]
+                delay = 0.65 if nvd_key else 6.5
+                if elapsed < delay:
+                    time.sleep(delay - elapsed)
+                last_nvd_api_call[0] = time.time()
+    
+            try:
+                resp = self.session.get(url, params=params, headers=headers, timeout=30)
+                if resp.status_code == 200:
+                    data = resp.json()
+                    for v in data.get('vulnerabilities', []):
+                        if 'cve' in v: all_cves.add(v['cve']['id'])
+                elif resp.status_code == 403:
+                    print(colorize(f"\n  [!] NVD Rate Limit (403). Use an API key for higher limits.", Colors.RED, self.use_colors))
+            except Exception as e:
+                logger.debug(f"NVD API Error for {base_cpe}: {e}")
+                
+        return list(all_cves)
 
     def parse(self):
         try:
