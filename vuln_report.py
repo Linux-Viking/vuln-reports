@@ -375,7 +375,7 @@ def save_docx_report(vulnerabilities, cve_to_hosts, scanner_type, target_file, o
         # 4. Affected Hosts
         add_themed_para('Affected Hosts', level=3, color=RGBColor(59, 130, 246))
         hosts = cve_to_hosts.get(cve_id, [])
-        hosts_str = ", ".join([f"{h[1] if h[1] else h[0]} ({h[2]})" for h in hosts[:5]])
+        hosts_str = ", ".join([f"{h[1]} ({h[0]}) ({h[2]})" if h[1] and h[0] else f"{h[1] or h[0]} ({h[2]})" for h in hosts[:5]])
         if len(hosts) > 5: hosts_str += f" (+{len(hosts)-5} more)"
         add_themed_para(hosts_str if hosts_str else "N/A")
 
@@ -738,13 +738,12 @@ def generate_report(scan_file: str, csv_file: str = None, github_token: str = No
     cve_to_hosts = {}
     for _, host_data in parser.hosts.items():
         ip, hostname = host_data.get('ip', ''), host_data.get('hostname', '')
-        display_name = ip if ip else hostname
         for s in host_data["services"]:
             port_proto = f"{s['port']}/{s['proto']}" if s['port'] != "0" else "Host-level"
             for cve_id in s['cves']:
                 if cve_id not in cve_to_hosts: cve_to_hosts[cve_id] = []
-                # Avoid duplicate (display_name, hostname, port_proto, s['name']) for the same CVE
-                host_entry = (display_name, hostname, port_proto, s['name'])
+                # Avoid duplicate (ip, hostname, port_proto, s['name']) for the same CVE
+                host_entry = (ip, hostname, port_proto, s['name'])
                 if host_entry not in cve_to_hosts[cve_id]:
                     cve_to_hosts[cve_id].append(host_entry)
 

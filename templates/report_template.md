@@ -31,7 +31,7 @@
 
 ### 3. Affected Hosts
 {% for host in cve_to_hosts[cve_id][:5] -%}
-- `{{ host[1] if host[1] else host[0] }}` ({{ host[2] }})
+- `{{ host[1] ~ ' (' ~ host[0] ~ ')' if host[1] and host[0] else host[1] or host[0] }}` ({{ host[2] }})
 {% endfor -%}
 {% if cve_to_hosts[cve_id]|length > 5 -%}
 - *({{ cve_to_hosts[cve_id]|length - 5 }}+ more hosts)*
