@@ -58,8 +58,13 @@ def csv_safe(value: Any) -> str:
     if val.startswith(('=', '+', '-', '@')): return f"'{val}"
     return val
 
-def get_poc_from_github(session: requests.Session, cve_id: str, github_token: Optional[str]) -> Optional[str]:
+def get_poc_from_github(session: requests.Session, cve_id: str, github_token: Optional[str], aliases: Optional[list] = None) -> Optional[str]:
     queries = [f'"{cve_id}"', f'"{cve_id.replace("CVE-", "")}"']
+    if aliases:
+        for alias in aliases:
+            if alias and len(alias) > 3 and alias not in queries:
+                queries.append(f'"{alias}"')
+                
     headers = {'Accept': 'application/vnd.github.v3+json', 'User-Agent': USER_AGENT}
     token_to_use = github_token.strip() if github_token else None
     
@@ -84,9 +89,16 @@ def get_poc_from_github(session: requests.Session, cve_id: str, github_token: Op
                             if any(k in name or k in desc for k in exclude_keywords):
                                 continue
                                 
-                            if cve_id.lower() in name or cve_id.lower() in desc:
+                            match_found = cve_id.lower() in name or cve_id.lower() in desc
+                            if not match_found and aliases:
+                                for alias in aliases:
+                                    if alias and (alias.lower() in name or alias.lower() in desc):
+                                        match_found = True
+                                        break
+                                        
+                            if match_found:
                                 return item.get('html_url')
-                    break # Success but no poc
+                    break # Success but no poc in repos
                 elif resp.status_code in [403, 429]:
                     time.sleep(3 * (attempt + 1))
                     continue
@@ -94,6 +106,35 @@ def get_poc_from_github(session: requests.Session, cve_id: str, github_token: Op
             except requests.RequestException:
                 time.sleep(2)
                 continue
+                
+        # Fallback to code search if aliases are present and we have a token
+        if token_to_use and aliases and any(a in q for a in aliases):
+            for attempt in range(3):
+                try:
+                    # Code search requires path or language or simpler query
+                    params = {'q': f"{q} in:path"} 
+                    resp = session.get("https://api.github.com/search/code", headers=current_headers, params=params, timeout=5)
+                    if resp.status_code == 200:
+                        results = resp.json()
+                        if results.get('total_count', 0) > 0:
+                             for item in results['items']:
+                                 repo_url = item.get('repository', {}).get('html_url')
+                                 if repo_url:
+                                     path = item.get('path', '')
+                                     if path:
+                                        dir_path = '/'.join(path.split('/')[:-1])
+                                        if dir_path:
+                                            return f"{repo_url}/tree/main/{dir_path}"
+                                     return repo_url
+                        break
+                    elif resp.status_code in [403, 429]:
+                         time.sleep(3 * (attempt + 1))
+                         continue
+                    else:
+                         break
+                except requests.RequestException:
+                    time.sleep(2)
+                    continue
     return None
 
 def normalize_text(text: Any) -> str:
@@ -562,7 +603,16 @@ def get_cve_data(session: requests.Session, cve_id: str, github_token: Optional[
         epss_score = epss_data['data'][0].get('epss', 'N/A')
     
     if poc_available == "No":
-        gh_poc = get_poc_from_github(session, cve_id, github_token)
+        aliases_to_search = []
+        if aka_title:
+            aliases_to_search.append(aka_title)
+        if current_title and current_title != "N/A" and not is_generic and not is_commit_msg:
+            # Add short/distinct titles as potential aliases (e.g., DirtyDecrypt)
+            if len(current_title.split()) <= 3 and len(current_title) < 30:
+                if current_title not in aliases_to_search:
+                    aliases_to_search.append(current_title)
+                    
+        gh_poc = get_poc_from_github(session, cve_id, github_token, aliases=aliases_to_search)
         if gh_poc: poc_available = "Yes (GitHub)"; poc_link = gh_poc; combined_refs.append(gh_poc)
 
     exploitability = "Exploited in the wild" if cisa_kev == "Yes" else "PoC Available" if poc_available != "No" else "Theoretical / Unknown"
