@@ -509,7 +509,7 @@ def get_cve_data(session: requests.Session, cve_id: str, github_token: Optional[
     if (not affected_structured or has_git_hashes) and vulners_affected:
         affected_structured = vulners_affected
 
-    cvss_score, attack_complexity, user_interaction = "N/A", "N/A", "N/A"
+    cvss_score, attack_complexity, user_interaction, threat_vector = "N/A", "N/A", "N/A", "N/A"
     all_metrics = cna.get('metrics', []) + [m for adp in adp_list for m in adp.get('metrics', [])]
     
     # Prioritize CVSS v4.0 -> v3.1 -> v3.0, using ADP (CVE.org) as a fallback
@@ -520,6 +520,7 @@ def get_cve_data(session: requests.Session, cve_id: str, github_token: Optional[
                 cvss_score = v.get('baseScore', "N/A")
                 attack_complexity = v.get('attackComplexity', "N/A")
                 user_interaction = v.get('userInteraction', "N/A")
+                threat_vector = v.get('attackVector', "N/A")
         if cvss_score != "N/A": break
 
     # NVD Fallback for older CVEs
@@ -555,6 +556,7 @@ def get_cve_data(session: requests.Session, cve_id: str, github_token: Optional[
                                     cvss_score = cvss_data.get('baseScore', "N/A")
                                     attack_complexity = cvss_data.get('attackComplexity', cvss_data.get('accessComplexity', "N/A"))
                                     user_interaction = cvss_data.get('userInteraction', "N/A")
+                                    threat_vector = cvss_data.get('attackVector', cvss_data.get('accessVector', "N/A"))
                                     break
                         break # Success
                     else:
@@ -651,7 +653,7 @@ def get_cve_data(session: requests.Session, cve_id: str, github_token: Optional[
     return {
         "cve_id": cve_id, "title": current_title, "description": description, "affected": affected_structured,
         "cisa_kev": cisa_kev, "cvss_score": cvss_score, "exploitability": exploitability,
-        "poc_available": poc_available, "poc_link": poc_link, "user_interaction": user_interaction,
+        "poc_available": poc_available, "poc_link": poc_link, "threat_vector": threat_vector, "user_interaction": user_interaction,
         "epss_score": epss_score, "attack_complexity": attack_complexity, "references": combined_refs,
         "remediation": remediation
     }
@@ -694,6 +696,7 @@ def print_pretty(data: Dict[str, Any], use_colors: bool, minimal: bool = False):
         print(f"Exploitability: {data['exploitability']}")
         print(f"PoC Available: {data['poc_available']}")
         print(f"PoC Link: {colorize(data['poc_link'], Colors.YELLOW, use_colors)}")
+        print(f"Threat Vector: {data.get('threat_vector', 'N/A')}")
         print(f"User Interaction: {data['user_interaction']}")
         print(f"EPSS Score: {data['epss_score']}")
         print(f"Attack Complexity: {data['attack_complexity']}")
@@ -708,7 +711,7 @@ def save_text(results: List[Dict[str, Any]], filename: str):
             f.write(f"{'='*60}\nCVE ID: {d['cve_id']}\nTitle: {d['title']}\nDescription: {d['description']}\n")
             f.write(f"CVSS: {d['cvss_score']} | KEV: {d['cisa_kev']} | EPSS: {d['epss_score']}\n")
             f.write(f"Exploitability: {d['exploitability']} | PoC: {d['poc_link']}\n")
-            f.write(f"User Interaction: {d['user_interaction']} | Complexity: {d['attack_complexity']}\n")
+            f.write(f"Threat Vector: {d['threat_vector']} | User Interaction: {d['user_interaction']} | Complexity: {d['attack_complexity']}\n")
             
             aff_list = []
             for a in d['affected']:
@@ -720,11 +723,11 @@ def save_text(results: List[Dict[str, Any]], filename: str):
 def save_csv(results: List[Dict[str, Any]], filename: str):
     with open(filename, 'w', newline='', encoding='utf-8') as f:
         w = csv.writer(f)
-        w.writerow(["CVE ID", "Title", "Description", "CVSS", "KEV", "EPSS", "Exploitability", "PoC Link", "User Interaction", "Complexity", "Affected", "References"])
+        w.writerow(["CVE ID", "Title", "Description", "CVSS", "KEV", "EPSS", "Exploitability", "PoC Link", "Threat Vector", "User Interaction", "Complexity", "Affected", "References"])
         for d in results:
             if "error" in d: continue
             aff = "; ".join([f"{a['product']} ({', '.join(a['versions'])})" for a in d['affected']])
-            w.writerow([csv_safe(d['cve_id']), csv_safe(d['title']), csv_safe(d['description']), d['cvss_score'], d['cisa_kev'], d['epss_score'], d['exploitability'], d['poc_link'], d['user_interaction'], d['attack_complexity'], csv_safe(aff), csv_safe("; ".join(d['references']))])
+            w.writerow([csv_safe(d['cve_id']), csv_safe(d['title']), csv_safe(d['description']), d['cvss_score'], d['cisa_kev'], d['epss_score'], d['exploitability'], d['poc_link'], d['threat_vector'], d['user_interaction'], d['attack_complexity'], csv_safe(aff), csv_safe("; ".join(d['references']))])
 
 def get_output_path(base_name: Optional[str], extension: str) -> str:
     if not base_name: base_name = "results"
@@ -888,11 +891,11 @@ def main():
                 ref_str = "; ".join(d['references'])
                 
                 # Ordered fields: 1.ID, 2.Title, 3.Description, 4.CVSS, 5.KEV, 6.EPSS, 7.Exploitability, 
-                # 8.PoC, 9.Interaction, 10.Complexity, 11.Affected, 12.References, 13.PoC_Link
+                # 8.PoC, 9.Threat Vector, 10.Interaction, 11.Complexity, 12.Affected, 13.References, 14.PoC_Link
                 line = [
                     s(d['cve_id']), s(d['title']), s(d['description']), s(d['cvss_score']),
                     s(d['cisa_kev']), s(d['epss_score']), s(d['exploitability']), s(d['poc_available']),
-                    s(d['user_interaction']), s(d['attack_complexity']), s(aff_str), s(ref_str), s(d['poc_link'])
+                    s(d['threat_vector']), s(d['user_interaction']), s(d['attack_complexity']), s(aff_str), s(ref_str), s(d['poc_link'])
                 ]
                 f.write(f"{'|'.join(line)}\n")
         print(f"[+] Grep report saved to: {fname}")

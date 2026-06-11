@@ -105,7 +105,7 @@
         .vuln-header-text {
             display: inline-block;
             vertical-align: middle;
-            width: 70%;
+            width: 55%;
         }
 
         .vuln-header-right {
@@ -222,7 +222,7 @@
     <div class="container">
         <div class="summary-page">
             <header>
-                <div style="display: inline-block; width: 70%;">
+                <div style="display: inline-block; width: 55%;">
                     <h1>Vulnerability Intelligence Report</h1>
                     <div class="metadata">
                         Generated on: {{ date }} | Scanner: {{ scanner_type }} | Target: {{ target_file }}
@@ -278,6 +278,7 @@
                     </div>
                     <div class="vuln-header-right">
                         EPSS: {{ d.epss_score }}<br>
+                        Threat Vector: {{ d.threat_vector }}<br>
                         Complexity: {{ d.attack_complexity }}
                     </div>
                 </div>

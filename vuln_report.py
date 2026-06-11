@@ -326,6 +326,9 @@ def save_docx_report(vulnerabilities, cve_to_hosts, scanner_type, target_file, o
         
         p2.add_run(" | Exploitability: ").font.color.rgb = RGBColor(148, 163, 184)
         p2.add_run(d.get('exploitability', 'N/A')).font.color.rgb = RGBColor(255, 255, 255)
+        
+        p2.add_run(" | Threat Vector: ").font.color.rgb = RGBColor(148, 163, 184)
+        p2.add_run(d.get('threat_vector', 'N/A')).font.color.rgb = RGBColor(255, 255, 255)
 
         # Content - Manual color fix for every paragraph
         def add_themed_para(text, level=None, color=RGBColor(248, 250, 252), bold=False):
@@ -730,7 +733,7 @@ def generate_report(scan_file: str, csv_file: str = None, github_token: str = No
     headers = [
         "IP", "Hostname (FQDN)", "CVE ID", "Port", "Service",
         "Title", "Description", "CVSS Score", "CISA KEV", "EPSS Score",
-        "Exploitability", "PoC Available", "PoC Link", "User Interaction", "Complexity", 
+        "Exploitability", "PoC Available", "PoC Link", "Threat Vector", "User Interaction", "Complexity", 
         "Affected Products", "Remediation", "References"
     ]
 
@@ -763,7 +766,7 @@ def generate_report(scan_file: str, csv_file: str = None, github_token: str = No
                                 ip, hostname, cve_id, port_proto, s['name'],
                                 d.get('title', 'N/A'), d.get('description', 'N/A'), d.get('cvss_score', 'N/A'),
                                 d.get('cisa_kev', 'N/A'), d.get('epss_score', 'N/A'), d.get('exploitability', 'N/A'),
-                                d.get('poc_available', 'N/A'), d.get('poc_link', 'N/A'), d.get('user_interaction', 'N/A'),
+                                d.get('poc_available', 'N/A'), d.get('poc_link', 'N/A'), d.get('threat_vector', 'N/A'), d.get('user_interaction', 'N/A'),
                                 d.get('attack_complexity', 'N/A'),
                                 "; ".join([f"{a['product']} ({', '.join(a['versions'])})" for a in d.get('affected', [])]),
                                 d.get('remediation', 'N/A'),

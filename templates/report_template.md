@@ -14,7 +14,7 @@
 
 {% for cve_id, d in vulnerabilities.items() %}
 ## [{{ cve_id }}] {{ d.title }}
-**CVSS Score:** `{{ d.cvss_score }}` | **KEV:** `{{ d.cisa_kev }}` | **Exploitability:** `{{ d.exploitability }}`
+**CVSS Score:** `{{ d.cvss_score }}` | **KEV:** `{{ d.cisa_kev }}` | **Exploitability:** `{{ d.exploitability }}` | **Threat Vector:** `{{ d.threat_vector }}`
 
 ### 1. Description
 {{ d.description }}
