@@ -841,10 +841,13 @@ def main():
     cve_list = list(dict.fromkeys([c.strip().upper() for c in args.cve_ids]))
     if args.file:
         try:
-            with open(args.file, 'r') as f:
-                for line in f:
-                    c = line.strip().upper()
-                    if c and c not in cve_list: cve_list.append(c)
+            with open(args.file, 'r', encoding='utf-8', errors='ignore') as f:
+                content = f.read()
+                found_cves = re.findall(r"\bCVE-\d{4}-\d{4,7}\b", content, re.IGNORECASE)
+                for c in found_cves:
+                    c_upper = c.upper()
+                    if c_upper not in cve_list:
+                        cve_list.append(c_upper)
         except Exception as e: print(f"Error: {e}"); sys.exit(1)
 
     if not cve_list: p.print_help(); sys.exit(0)
