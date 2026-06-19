@@ -838,7 +838,12 @@ def main():
                         print("[+] Key saved to keyring.")
                     except Exception as e: print(f"[!] Failed: {e}")
     
-    cve_list = list(dict.fromkeys([c.strip().upper() for c in args.cve_ids]))
+    cve_list = []
+    for arg in args.cve_ids:
+        for c in re.findall(r"\bCVE-\d{4}-\d{4,7}\b", arg, re.IGNORECASE):
+            c_upper = c.upper()
+            if c_upper not in cve_list:
+                cve_list.append(c_upper)
     if args.file:
         try:
             with open(args.file, 'r', encoding='utf-8', errors='ignore') as f:
