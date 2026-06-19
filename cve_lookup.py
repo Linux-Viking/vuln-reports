@@ -797,45 +797,46 @@ def main():
 
     github_token, nvd_key, vulners_key, circl_key = get_keys()
 
-    if not github_token and not args.poc:
-        github_token = getpass.getpass("[?] GitHub Token not found. Enter Token (optional, press Enter to skip): ").strip()
-        if github_token:
-            save = input("[?] Save this token to keyring/credential manager? (y/N): ").lower().strip()
-            if save == 'y':
-                try:
-                    keyring.set_password("cve-lookup-tool", "github-token", github_token)
-                    print("[+] Token saved to keyring.")
-                except Exception as e: print(f"[!] Failed: {e}")
+    if sys.stdin.isatty():
+        if not github_token and not args.poc:
+            github_token = getpass.getpass("[?] GitHub Token not found. Enter Token (optional, press Enter to skip): ").strip()
+            if github_token:
+                save = input("[?] Save this token to keyring/credential manager? (y/N): ").lower().strip()
+                if save == 'y':
+                    try:
+                        keyring.set_password("cve-lookup-tool", "github-token", github_token)
+                        print("[+] Token saved to keyring.")
+                    except Exception as e: print(f"[!] Failed: {e}")
 
-    if not nvd_key and not args.poc:
-        nvd_key = getpass.getpass("[?] NVD API Key not found. Enter Key (optional, press Enter to skip): ").strip()
-        if nvd_key:
-            save = input("[?] Save this key to keyring/credential manager? (y/N): ").lower().strip()
-            if save == 'y':
-                try:
-                    keyring.set_password("cve-lookup-tool", "nvd-key", nvd_key)
-                    print("[+] Key saved to keyring.")
-                except Exception as e: print(f"[!] Failed: {e}")
+        if not nvd_key and not args.poc:
+            nvd_key = getpass.getpass("[?] NVD API Key not found. Enter Key (optional, press Enter to skip): ").strip()
+            if nvd_key:
+                save = input("[?] Save this key to keyring/credential manager? (y/N): ").lower().strip()
+                if save == 'y':
+                    try:
+                        keyring.set_password("cve-lookup-tool", "nvd-key", nvd_key)
+                        print("[+] Key saved to keyring.")
+                    except Exception as e: print(f"[!] Failed: {e}")
 
-    if not vulners_key and not args.poc:
-        vulners_key = getpass.getpass("[?] Vulners API Key not found. Enter Key (optional, press Enter to skip): ").strip()
-        if vulners_key:
-            save = input("[?] Save this key to keyring/credential manager? (y/N): ").lower().strip()
-            if save == 'y':
-                try:
-                    keyring.set_password("cve-lookup-tool", "vulners-key", vulners_key)
-                    print("[+] Key saved to keyring.")
-                except Exception as e: print(f"[!] Failed: {e}")
+        if not vulners_key and not args.poc:
+            vulners_key = getpass.getpass("[?] Vulners API Key not found. Enter Key (optional, press Enter to skip): ").strip()
+            if vulners_key:
+                save = input("[?] Save this key to keyring/credential manager? (y/N): ").lower().strip()
+                if save == 'y':
+                    try:
+                        keyring.set_password("cve-lookup-tool", "vulners-key", vulners_key)
+                        print("[+] Key saved to keyring.")
+                    except Exception as e: print(f"[!] Failed: {e}")
 
-    if not circl_key and not args.poc:
-        circl_key = getpass.getpass("[?] CIRCL API Key not found. Enter Key (optional, press Enter to skip): ").strip()
-        if circl_key:
-            save = input("[?] Save this key to keyring/credential manager? (y/N): ").lower().strip()
-            if save == 'y':
-                try:
-                    keyring.set_password("cve-lookup-tool", "circl-key", circl_key)
-                    print("[+] Key saved to keyring.")
-                except Exception as e: print(f"[!] Failed: {e}")
+        if not circl_key and not args.poc:
+            circl_key = getpass.getpass("[?] CIRCL API Key not found. Enter Key (optional, press Enter to skip): ").strip()
+            if circl_key:
+                save = input("[?] Save this key to keyring/credential manager? (y/N): ").lower().strip()
+                if save == 'y':
+                    try:
+                        keyring.set_password("cve-lookup-tool", "circl-key", circl_key)
+                        print("[+] Key saved to keyring.")
+                    except Exception as e: print(f"[!] Failed: {e}")
     
     cve_list = list(dict.fromkeys([c.strip().upper() for c in args.cve_ids]))
     if args.file:
