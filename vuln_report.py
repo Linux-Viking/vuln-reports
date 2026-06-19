@@ -199,54 +199,63 @@ def save_docx_report(vulnerabilities, cve_to_hosts, scanner_type, target_file, o
     else:
         doc = Document()
     
-    # --- GLOBAL DARK THEME (Fallback/Base) ---
+    # Configure page margins for a cleaner dashboard look (0.75 in margins)
+    for section in doc.sections:
+        section.top_margin = Inches(0.75)
+        section.bottom_margin = Inches(0.75)
+        section.left_margin = Inches(0.75)
+        section.right_margin = Inches(0.75)
+
+    # --- GLOBAL DARK THEME ---
     # 1. Set Page Background Color (#0F172A)
     shading_elm_2 = parse_xml(r'<w:background {} w:color="0F172A"/>'.format(nsdecls('w')))
     doc.element.insert(0, shading_elm_2)
     
     # 2. Enable background color display in Word settings
-    section = doc.sections[0]
     settings = doc.settings.element
     display_bg = parse_xml(r'<w:displayBackgroundShape {}/>'.format(nsdecls('w')))
     settings.append(display_bg)
 
-    # 3. Helper for light text by default
-    def set_run_light(run, size=None, bold=False):
-        run.font.color.rgb = RGBColor(248, 250, 252) # text-main
-        if size: run.font.size = Pt(size)
-        if bold: run.bold = True
+    # Helper to set cell shading (background color)
+    def set_cell_shading(cell, color_hex):
+        shading = parse_xml(r'<w:shd {} w:fill="{}"/>'.format(nsdecls('w'), color_hex))
+        cell._tc.get_or_add_tcPr().append(shading)
+
+    # Helper to set cell borders
+    def set_cell_borders(cell, color_hex="334155", sz="4", val="single"):
+        borders = parse_xml(
+            r'<w:tcBorders {}><w:top w:val="{val}" w:sz="{sz}" w:space="0" w:color="{color}"/><w:left w:val="{val}" w:sz="{sz}" w:space="0" w:color="{color}"/><w:bottom w:val="{val}" w:sz="{sz}" w:space="0" w:color="{color}"/><w:right w:val="{val}" w:sz="{sz}" w:space="0" w:color="{color}"/></w:tcBorders>'
+            .format(nsdecls('w'), val=val, sz=sz, color=color_hex)
+        )
+        cell._tc.get_or_add_tcPr().append(borders)
+
+    # Helper to format fonts and colors
+    def format_run(run, font_name="Segoe UI", size_pt=10, bold=False, italic=False, color_rgb=(248, 250, 252)):
+        run.font.name = font_name
+        # Apply ASCII/Hansi/CS font settings in oxml to prevent fallback
+        rPr = run._r.get_or_add_rPr()
+        rFonts = parse_xml(r'<w:rFonts {} w:ascii="{f}" w:hAnsi="{f}" w:cs="{f}"/>'.format(nsdecls('w'), f=font_name))
+        rPr.append(rFonts)
+        run.font.size = Pt(size_pt)
+        run.bold = bold
+        run.italic = italic
+        run.font.color.rgb = RGBColor(*color_rgb)
         return run
 
-    # Title
+    # Header / Title Block
     title_p = doc.add_paragraph()
-    title_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    title_run = title_p.add_run('Vulnerability Intelligence Report')
-    title_run.font.size = Pt(24)
-    title_run.font.color.rgb = RGBColor(59, 130, 246) # blue-500
-    title_run.bold = True
+    title_p.paragraph_format.space_before = Pt(10)
+    title_p.paragraph_format.space_after = Pt(2)
+    format_run(title_p.add_run('Vulnerability Intelligence Report'), font_name="Segoe UI", size_pt=24, bold=True, color_rgb=(59, 130, 246))
     
-    # Metadata
-    meta = doc.add_paragraph()
-    meta.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    m_run = meta.add_run(f"Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M')} | ")
-    set_run_light(m_run)
-    m_run2 = meta.add_run(f"Scanner: {scanner_type} | Target: {os.path.basename(target_file)}")
-    set_run_light(m_run2)
-    m_run2.italic = True
+    meta_p = doc.add_paragraph()
+    meta_p.paragraph_format.space_after = Pt(20)
+    format_run(meta_p.add_run(f"Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M')} | Scanner: {scanner_type} | Target: {os.path.basename(target_file)}"), font_name="Segoe UI", size_pt=9.5, italic=True, color_rgb=(148, 163, 184))
 
-    # --- Severity Chart ---
-    chart_buf = generate_severity_chart(vulnerabilities, return_bytes=True)
-    if chart_buf:
-        doc.add_picture(chart_buf, width=Inches(5.5))
-        last_p = doc.paragraphs[-1]
-        last_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-
-    # Summary Statistics
-    doc.add_heading('Executive Summary', level=1)
-    # Note: Headings need color fix too as they default to black
-    for p in doc.paragraphs:
-        if p.style.name.startswith('Heading'):
-            for run in p.runs: run.font.color.rgb = RGBColor(248, 250, 252)
+    # Summary Stats Section
+    h_exec = doc.add_paragraph()
+    h_exec.paragraph_format.space_after = Pt(8)
+    format_run(h_exec.add_run('Executive Summary'), font_name="Segoe UI", size_pt=16, bold=True, color_rgb=(248, 250, 252))
 
     stats = {
         "HOSTS": len(set(h[0] for hosts in cve_to_hosts.values() for h in hosts)),
@@ -254,167 +263,262 @@ def save_docx_report(vulnerabilities, cve_to_hosts, scanner_type, target_file, o
         "Critical Risks": sum(1 for v in vulnerabilities.values() if isinstance(v.get('cvss_score'), (int, float)) and v['cvss_score'] >= 9),
         "KEV Exploited": sum(1 for v in vulnerabilities.values() if v.get('cisa_kev') == 'Yes')
     }
+
+    # Generate 4 distinct columns for cards
+    stats_table = doc.add_table(rows=1, cols=4)
+    stats_table.autofit = False
+    col_widths = [Inches(1.75), Inches(1.75), Inches(1.75), Inches(1.75)]
     
-    table = doc.add_table(rows=1, cols=4)
-    table.style = 'Table Grid'
-    hdr_cells = table.rows[0].cells
-    for i, label in enumerate(stats.keys()):
-        hdr_cells[i].text = label
-        shading_elm = parse_xml(r'<w:shd {} w:fill="1E293B"/>'.format(nsdecls('w')))
-        hdr_cells[i]._tc.get_or_add_tcPr().append(shading_elm)
-        run = hdr_cells[i].paragraphs[0].runs[0]
-        run.font.color.rgb = RGBColor(255, 255, 255)
-        run.bold = True
+    hdr_cells = stats_table.rows[0].cells
+    for i, (label, val) in enumerate(stats.items()):
+        cell = hdr_cells[i]
+        cell.width = col_widths[i]
+        set_cell_shading(cell, "1E293B")
+        set_cell_borders(cell, color_hex="334155", sz="4")
+        
+        # Stat Value
+        p_val = cell.paragraphs[0]
+        p_val.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        p_val.paragraph_format.space_before = Pt(8)
+        p_val.paragraph_format.space_after = Pt(2)
+        
+        val_color = (239, 68, 68) if i == 2 and val > 0 else (219, 39, 119) if i == 3 and val > 0 else (248, 250, 252)
+        format_run(p_val.add_run(str(val)), font_name="Segoe UI", size_pt=20, bold=True, color_rgb=val_color)
+        
+        # Stat Label
+        p_lbl = cell.add_paragraph()
+        p_lbl.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        p_lbl.paragraph_format.space_before = Pt(0)
+        p_lbl.paragraph_format.space_after = Pt(8)
+        format_run(p_lbl.add_run(label), font_name="Segoe UI", size_pt=8, bold=True, color_rgb=(148, 163, 184))
 
-    row_cells = table.add_row().cells
-    for i, val in enumerate(stats.values()):
-        row_cells[i].text = str(val)
-        row_cells[i].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
-        # Dark card background for value cells too
-        shading_elm = parse_xml(r'<w:shd {} w:fill="1E293B"/>'.format(nsdecls('w')))
-        row_cells[i]._tc.get_or_add_tcPr().append(shading_elm)
-        run = row_cells[i].paragraphs[0].runs[0]
-        run.font.color.rgb = RGBColor(248, 250, 252)
+    doc.add_paragraph().paragraph_format.space_after = Pt(10)
 
+    # Executive Severity Chart
+    chart_buf = generate_severity_chart(vulnerabilities, return_bytes=True)
+    if chart_buf:
+        chart_p = doc.add_paragraph()
+        chart_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        chart_p.paragraph_format.space_after = Pt(15)
+        chart_run = chart_p.add_run()
+        chart_run.add_picture(chart_buf, width=Inches(5.5))
+        
     doc.add_page_break()
 
-    # Detailed Findings
-    doc.add_heading('Detailed Findings', level=1)
-    
+    # Detailed Findings Header
+    h_findings = doc.add_paragraph()
+    h_findings.paragraph_format.space_after = Pt(12)
+    format_run(h_findings.add_run('Detailed Findings'), font_name="Segoe UI", size_pt=18, bold=True, color_rgb=(248, 250, 252))
+
     def get_score(v):
         s = v.get('cvss_score', 0)
         return float(s) if s != 'N/A' else 0
 
     sorted_cves = sorted(vulnerabilities.keys(), key=lambda cid: get_score(vulnerabilities[cid]), reverse=True)
 
+    # Color Palette mapping for Severity
+    sev_colors = {
+        "Critical": {"bg": "7F1D1D", "text": (252, 165, 165), "name": "CRITICAL"}, # Deep red / pink-red
+        "High": {"bg": "7C2D12", "text": (253, 186, 116), "name": "HIGH"},       # Deep orange / light orange
+        "Medium": {"bg": "78350F", "text": (253, 224, 71), "name": "MEDIUM"},    # Deep amber / yellow
+        "Low": {"bg": "1E3A8A", "text": (147, 197, 253), "name": "LOW"},         # Deep blue / light blue
+        "Info": {"bg": "064E3B", "text": (110, 231, 183), "name": "INFO"}        # Deep green / light green
+    }
+
     for i, cve_id in enumerate(sorted_cves):
         d = vulnerabilities[cve_id]
-        
-        # CVE Header Card
-        h_table = doc.add_table(rows=1, cols=1)
-        h_table.style = 'Table Grid'
-        cell = h_table.rows[0].cells[0]
-        shading_elm = parse_xml(r'<w:shd {} w:fill="1E293B"/>'.format(nsdecls('w')))
-        cell._tc.get_or_add_tcPr().append(shading_elm)
-        
-        p = cell.paragraphs[0]
-        id_run = p.add_run(f"{cve_id}: ")
-        id_run.bold = True
-        id_run.font.color.rgb = RGBColor(59, 130, 246)
-        id_run.font.size = Pt(14)
-        
-        title_run = p.add_run(d.get('title', 'N/A'))
-        title_run.font.color.rgb = RGBColor(255, 255, 255)
-        title_run.font.size = Pt(14)
-
-        p2 = cell.add_paragraph()
-        p2.add_run("CVSS: ").font.color.rgb = RGBColor(148, 163, 184)
-        score = str(d.get('cvss_score', 'N/A'))
-        s_run = p2.add_run(score)
-        s_run.bold = True
-        
         cvss_val = get_score(d)
-        if cvss_val >= 9.0: s_run.font.color.rgb = RGBColor(220, 38, 38)   # Red (Critical)
-        elif cvss_val >= 7.0: s_run.font.color.rgb = RGBColor(234, 88, 12) # Orange (High)
-        elif cvss_val >= 4.0: s_run.font.color.rgb = RGBColor(245, 158, 11) # Amber (Medium)
-        elif cvss_val >= 0.1: s_run.font.color.rgb = RGBColor(59, 130, 246) # Blue (Low)
-        else: s_run.font.color.rgb = RGBColor(34, 197, 94)                # Green (Info/NA)
         
-        p2.add_run(" | KEV: ").font.color.rgb = RGBColor(148, 163, 184)
-        kev_run = p2.add_run(d.get('cisa_kev', 'N/A'))
-        if d.get('cisa_kev') == 'Yes': kev_run.font.color.rgb = RGBColor(219, 39, 119)
+        if cvss_val >= 9.0: sev_key = "Critical"
+        elif cvss_val >= 7.0: sev_key = "High"
+        elif cvss_val >= 4.0: sev_key = "Medium"
+        elif cvss_val >= 0.1: sev_key = "Low"
+        else: sev_key = "Info"
         
-        p2.add_run(" | Exploitability: ").font.color.rgb = RGBColor(148, 163, 184)
-        p2.add_run(d.get('exploitability', 'N/A')).font.color.rgb = RGBColor(255, 255, 255)
+        theme = sev_colors[sev_key]
+
+        # -------------------------------------------------------------
+        # VULN HEADER CONTAINER (Structured Card Block)
+        # -------------------------------------------------------------
+        card_table = doc.add_table(rows=1, cols=1)
+        card_table.autofit = False
+        card_cell = card_table.rows[0].cells[0]
+        card_cell.width = Inches(7.0)
+        set_cell_shading(card_cell, "1E293B")
+        set_cell_borders(card_cell, color_hex="334155", sz="6")
+
+        p_header = card_cell.paragraphs[0]
+        p_header.paragraph_format.space_before = Pt(8)
+        p_header.paragraph_format.space_after = Pt(2)
         
-        p2.add_run(" | Threat Vector: ").font.color.rgb = RGBColor(148, 163, 184)
-        p2.add_run(d.get('threat_vector', 'N/A')).font.color.rgb = RGBColor(255, 255, 255)
+        # CVSS Score Badge
+        badge_run = p_header.add_run(f" {d.get('cvss_score', 'N/A')} ")
+        badge_run.bold = True
+        # Emulate a highlighted badge by using highlighted colors if possible, 
+        # or distinct coloring matching the severity theme
+        format_run(badge_run, font_name="Segoe UI", size_pt=13, bold=True, color_rgb=theme["text"])
+        
+        # Spacer
+        p_header.add_run("   |   ")
+        p_header.runs[-1].font.color.rgb = RGBColor(51, 65, 85)
+        
+        # CVE ID
+        id_run = p_header.add_run(f"{cve_id}   ")
+        format_run(id_run, font_name="Segoe UI", size_pt=14, bold=True, color_rgb=(59, 130, 246))
 
-        # Content - Manual color fix for every paragraph
-        def add_themed_para(text, level=None, color=RGBColor(248, 250, 252), bold=False):
-            if level:
-                h = doc.add_heading(text, level=level)
-                for run in h.runs: run.font.color.rgb = color
-                return h
-            else:
-                p = doc.add_paragraph()
-                r = p.add_run(text)
-                r.font.color.rgb = color
-                if bold: r.bold = True
-                return p
+        # Badges (KEV, Exploited)
+        if d.get('cisa_kev') == 'Yes':
+            kev_run = p_header.add_run(" [ CISA KEV ] ")
+            format_run(kev_run, font_name="Segoe UI", size_pt=9, bold=True, color_rgb=(219, 39, 119))
+        if "PoC" in d.get('exploitability', ''):
+            poc_run = p_header.add_run(" [ PoC AVAILABLE ] ")
+            format_run(poc_run, font_name="Segoe UI", size_pt=9, bold=True, color_rgb=(99, 102, 241))
+        elif d.get('exploitability') == "Exploited in the wild":
+            exp_run = p_header.add_run(" [ ACTIVE EXPLOIT ] ")
+            format_run(exp_run, font_name="Segoe UI", size_pt=9, bold=True, color_rgb=(220, 38, 38))
 
-        # --- NEW TECHNICAL FLOW ---
+        # Title line
+        p_title = card_cell.add_paragraph()
+        p_title.paragraph_format.space_before = Pt(4)
+        p_title.paragraph_format.space_after = Pt(8)
+        format_run(p_title.add_run(d.get('title', 'N/A')), font_name="Segoe UI", size_pt=12, bold=True, color_rgb=(255, 255, 255))
 
+        # Metadata Details Line
+        p_meta = card_cell.add_paragraph()
+        p_meta.paragraph_format.space_after = Pt(8)
+        
+        p_meta.add_run("EPSS: ")
+        format_run(p_meta.runs[-1], font_name="Segoe UI", size_pt=8.5, color_rgb=(148, 163, 184))
+        p_meta.add_run(f"{d.get('epss_score', 'N/A')}  |  ")
+        format_run(p_meta.runs[-1], font_name="Segoe UI", size_pt=8.5, bold=True, color_rgb=(248, 250, 252))
+
+        p_meta.add_run("Threat Vector: ")
+        format_run(p_meta.runs[-1], font_name="Segoe UI", size_pt=8.5, color_rgb=(148, 163, 184))
+        p_meta.add_run(f"{d.get('threat_vector', 'N/A')}  |  ")
+        format_run(p_meta.runs[-1], font_name="Segoe UI", size_pt=8.5, bold=True, color_rgb=(248, 250, 252))
+
+        p_meta.add_run("Complexity: ")
+        format_run(p_meta.runs[-1], font_name="Segoe UI", size_pt=8.5, color_rgb=(148, 163, 184))
+        p_meta.add_run(f"{d.get('attack_complexity', 'N/A')}")
+        format_run(p_meta.runs[-1], font_name="Segoe UI", size_pt=8.5, bold=True, color_rgb=(248, 250, 252))
+
+        # Add visual separator
+        doc.add_paragraph().paragraph_format.space_after = Pt(2)
+
+        # -------------------------------------------------------------
+        # TECHNICAL DETAILS
+        # -------------------------------------------------------------
+        
         # 1. Description
-        add_themed_para('Description', level=3, color=RGBColor(59, 130, 246))
-        add_themed_para(d.get('description', 'N/A'))
+        p_desc_h = doc.add_paragraph()
+        p_desc_h.paragraph_format.space_before = Pt(6)
+        p_desc_h.paragraph_format.space_after = Pt(2)
+        format_run(p_desc_h.add_run('DESCRIPTION'), font_name="Segoe UI", size_pt=9.5, bold=True, color_rgb=(59, 130, 246))
+        
+        p_desc = doc.add_paragraph()
+        p_desc.paragraph_format.space_after = Pt(10)
+        format_run(p_desc.add_run(d.get('description', 'N/A')), font_name="Segoe UI", size_pt=9.5, color_rgb=(203, 213, 225))
 
         # 2. Affected Products
-        add_themed_para('Affected Products', level=3, color=RGBColor(59, 130, 246))
-        for a in d.get('affected', []):
-            p = doc.add_paragraph(style='List Bullet')
-            r1 = p.add_run(f"{a['product']} ")
-            r1.bold = True
-            r1.font.color.rgb = RGBColor(248, 250, 252)
-            r2 = p.add_run(f"({', '.join(a['versions'])})")
-            r2.font.color.rgb = RGBColor(148, 163, 184)
-        if not d.get('affected'): add_themed_para("N/A", color=RGBColor(148, 163, 184))
+        p_aff_h = doc.add_paragraph()
+        p_aff_h.paragraph_format.space_after = Pt(2)
+        format_run(p_aff_h.add_run('AFFECTED PRODUCTS'), font_name="Segoe UI", size_pt=9.5, bold=True, color_rgb=(59, 130, 246))
+        
+        affected_items = d.get('affected', [])
+        if affected_items:
+            for a in affected_items:
+                p_item = doc.add_paragraph(style='List Bullet')
+                p_item.paragraph_format.space_after = Pt(1)
+                
+                r_prod = p_item.add_run(f"{a['product']} ")
+                format_run(r_prod, font_name="Segoe UI", size_pt=9, bold=True, color_rgb=(248, 250, 252))
+                
+                r_vers = p_item.add_run(f"({', '.join(a['versions'])})")
+                format_run(r_vers, font_name="Segoe UI", size_pt=9, color_rgb=(148, 163, 184))
+        else:
+            p_item = doc.add_paragraph()
+            p_item.paragraph_format.space_after = Pt(4)
+            format_run(p_item.add_run("N/A"), font_name="Segoe UI", size_pt=9, italic=True, color_rgb=(148, 163, 184))
 
-        # 3. Validation Evidence (Early Proof)
-        add_themed_para('Validation Evidence', level=3, color=RGBColor(59, 130, 246))
-        placeholder = doc.add_paragraph()
-        placeholder.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        run = placeholder.add_run("\n[ INSERT VALIDATION SCREENSHOT HERE ]\n")
-        run.font.color.rgb = RGBColor(150, 150, 150)
-        run.italic = True
+        doc.add_paragraph().paragraph_format.space_after = Pt(4)
 
-        caption = doc.add_paragraph()
-        caption.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        cap_run = caption.add_run(f"Figure: Evidence of successful validation for {cve_id}")
-        cap_run.font.size = Pt(9)
-        cap_run.font.color.rgb = RGBColor(148, 163, 184)
-        cap_run.italic = True
+        # 3. Affected Hosts
+        p_hosts_h = doc.add_paragraph()
+        p_hosts_h.paragraph_format.space_after = Pt(4)
+        format_run(p_hosts_h.add_run('AFFECTED HOSTS'), font_name="Segoe UI", size_pt=9.5, bold=True, color_rgb=(59, 130, 246))
 
-        # 4. Affected Hosts
-        add_themed_para('Affected Hosts', level=3, color=RGBColor(59, 130, 246))
         hosts = cve_to_hosts.get(cve_id, [])
-        hosts_str = ", ".join([f"{h[1]} ({h[0]}) ({h[2]})" if h[1] and h[0] else f"{h[1] or h[0]} ({h[2]})" for h in hosts[:5]])
-        if len(hosts) > 5: hosts_str += f" (+{len(hosts)-5} more)"
-        add_themed_para(hosts_str if hosts_str else "N/A")
+        if hosts:
+            # Generate a nice host tags format inside the document
+            p_host_tags = doc.add_paragraph()
+            p_host_tags.paragraph_format.space_after = Pt(10)
+            
+            # Show up to 5 hosts, matching the HTML limit
+            displayed_hosts = hosts[:5]
+            for idx, h in enumerate(displayed_hosts):
+                host_label = f"{h[1]} ({h[0]})" if h[1] and h[0] else h[1] or h[0]
+                tag_text = f" {host_label} [{h[2]}] "
+                
+                tag_run = p_host_tags.add_run(tag_text)
+                format_run(tag_run, font_name="Consolas", size_pt=8.5, color_rgb=(148, 163, 184))
+                
+                # Add inline visual tag shading if possible, or simple coloring
+                if idx < len(displayed_hosts) - 1:
+                    sep = p_host_tags.add_run("   ")
+                    format_run(sep, font_name="Segoe UI")
+            
+            if len(hosts) > 5:
+                more_run = p_host_tags.add_run(f"   (+{len(hosts)-5} more)")
+                format_run(more_run, font_name="Segoe UI", size_pt=8.5, bold=True, color_rgb=(59, 130, 246))
+        else:
+            p_none = doc.add_paragraph()
+            p_none.paragraph_format.space_after = Pt(10)
+            format_run(p_none.add_run("N/A"), font_name="Segoe UI", size_pt=9, italic=True, color_rgb=(148, 163, 184))
 
-        # 5. Remediation Recommendation
-        add_themed_para('Remediation Recommendation', level=3, color=RGBColor(59, 130, 246))
-        rem_p = doc.add_paragraph()
-        rem_run = rem_p.add_run(d.get('remediation', 'N/A'))
-        rem_run.font.color.rgb = RGBColor(59, 130, 246)
-        rem_run.bold = True
+        # 4. Remediation Recommendation Card
+        rem_table = doc.add_table(rows=1, cols=1)
+        rem_table.autofit = False
+        rem_cell = rem_table.rows[0].cells[0]
+        rem_cell.width = Inches(7.0)
+        
+        # Shade with a deep blue tint block to match HTML (.remediation)
+        set_cell_shading(rem_cell, "0F1E36") # Very deep blue
+        set_cell_borders(rem_cell, color_hex="1D4ED8", sz="4") # Vibrant blue border
+        
+        p_rem_title = rem_cell.paragraphs[0]
+        p_rem_title.paragraph_format.space_before = Pt(6)
+        p_rem_title.paragraph_format.space_after = Pt(2)
+        format_run(p_rem_title.add_run("🛡️ Remediation Recommendation"), font_name="Segoe UI", size_pt=8.5, bold=True, color_rgb=(59, 130, 246))
+        
+        p_rem_val = rem_cell.add_paragraph()
+        p_rem_val.paragraph_format.space_after = Pt(6)
+        format_run(p_rem_val.add_run(d.get('remediation', 'N/A')), font_name="Segoe UI", size_pt=9.5, bold=True, color_rgb=(248, 250, 252))
 
-        # 6. Intelligence & References
-        add_themed_para('Intelligence & References', level=3, color=RGBColor(59, 130, 246))
+        doc.add_paragraph().paragraph_format.space_after = Pt(8)
+
+        # 5. Intelligence & References
+        p_ref_h = doc.add_paragraph()
+        p_ref_h.paragraph_format.space_after = Pt(2)
+        format_run(p_ref_h.add_run('INTELLIGENCE & REFERENCES'), font_name="Segoe UI", size_pt=9.5, bold=True, color_rgb=(59, 130, 246))
+
         if d.get('poc_link') != 'N/A':
-            p = doc.add_paragraph(style='List Bullet')
-            r = p.add_run("Exploit PoC: ")
-            r.bold = True
-            r.font.color.rgb = RGBColor(248, 250, 252)
-            r2 = p.add_run(d['poc_link'])
-            r2.font.color.rgb = RGBColor(59, 130, 246)
+            p_poc = doc.add_paragraph(style='List Bullet')
+            p_poc.paragraph_format.space_after = Pt(1)
+            format_run(p_poc.add_run("🚀 Exploit PoC Link: "), font_name="Segoe UI", size_pt=9, bold=True, color_rgb=(248, 250, 252))
+            poc_link_run = p_poc.add_run(d['poc_link'])
+            format_run(poc_link_run, font_name="Segoe UI", size_pt=9, color_rgb=(59, 130, 246))
 
         for ref in d.get('references', [])[:4]:
-            p = doc.add_paragraph(ref, style='List Bullet')
-            for run in p.runs: run.font.color.rgb = RGBColor(59, 130, 246)
+            p_ref = doc.add_paragraph(style='List Bullet')
+            p_ref.paragraph_format.space_after = Pt(1)
+            ref_run = p_ref.add_run(ref)
+            format_run(ref_run, font_name="Segoe UI", size_pt=9, color_rgb=(59, 130, 246))
 
-        # Only add page break if there's another CVE after this one
+        # Page break if not the last item
         if i < len(sorted_cves) - 1:
             doc.add_page_break()
 
-
-    # Fix all standard headings to be white
-    for p in doc.paragraphs:
-        if p.style.name.startswith('Heading'):
-            for run in p.runs:
-                if not run.font.color.rgb: # Don't override our manual blue/accent fixes
-                    run.font.color.rgb = RGBColor(248, 250, 252)
-
+    # Save to output file
     doc.save(output_file)
     print(f"[+] Word (DOCX) intelligence report saved to: {output_file}")
 
