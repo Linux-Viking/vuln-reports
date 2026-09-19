@@ -8,5 +8,8 @@ __pycache__/
 *.json
 *.pdf
 *.md
+*.docx
+*.xlsx
+!templates/report_template.docx
 .env
 .config/
