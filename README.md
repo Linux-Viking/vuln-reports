@@ -8,7 +8,7 @@ A vulnerability management and reporting toolkit for security teams and penteste
 
 CVE lookup running as a Tines automation: paste CVE IDs, get enriched results (CVSS, KEV, EPSS, PoC links) as a table and CSV.
 
-https://github.com/user-attachments/assets/b764b731-a0b4-411e-bfb4-a027fb78b518
+https://github.com/user-attachments/assets/19e618e9-4107-4454-bef4-8acccefd0872
 
 ## Tools in the Suite
 
