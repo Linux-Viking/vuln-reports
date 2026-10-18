@@ -1,4 +1,4 @@
-"""Regression cases: CLI invocations whose outputs must match v1.0.0 exactly.
+"""Regression cases: CLI invocations whose outputs must match the reference release exactly.
 
 ``{work}`` in an argument expands to the absolute scratch directory the case
 runs in (automation such as Tines passes absolute ``/tmp/...`` paths the same way).

@@ -22,8 +22,8 @@ def main(input):
 
     import requests
 
-    TAG = "v1.1.0"
-    SHA256 = "8348152db144a7c9715b6d7b949f79e3bb78ebc46c93f5074ea57d587646050c"
+    TAG = "v1.3.0"
+    SHA256 = "9227f314ea392435558b5a273c62b8ac9af0e2ade0bd7ad69c38a164bce89041"
 
     def failure(message, stdout="", stderr=""):
         # Put the error in the CSV too, so the results page shows it instead of an empty table.

@@ -1,4 +1,6 @@
-"""Golden-master regression: today's CLI output must equal v1.0.0's on the same inputs.
+"""Golden-master regression: today's CLI output must equal the reference release's on the same inputs.
+
+The reference is v1.3.0, whose output is identical to the original v1.0.0 scripts.
 
 Goldens live in tests/regression/golden and are produced only by
 generate_goldens.py from a release tag. A failure here means user-visible

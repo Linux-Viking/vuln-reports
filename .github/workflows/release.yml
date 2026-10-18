@@ -2,14 +2,14 @@ name: Release
 
 # Push a version tag (git tag -a v1.2.3 -m "..." && git push origin v1.2.3) to publish a
 # GitHub Release with source archives, SHA256SUMS and build provenance.
-# "Run workflow" with a tag backfills a release for a tag that predates this workflow (v1.0.0).
+# "Run workflow" with a tag publishes a release for an existing tag (e.g. after a failed run).
 on:
   push:
     tags: ["v*.*.*"]
   workflow_dispatch:
     inputs:
       tag:
-        description: "Existing tag to publish (e.g. v1.0.0)"
+        description: "Existing tag to publish (e.g. v1.3.0)"
         required: true
 
 permissions:
