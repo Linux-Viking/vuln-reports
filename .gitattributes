@@ -1,0 +1,4 @@
+# Golden outputs and fixtures are compared byte for byte (CSV uses CRLF rows);
+# never let git rewrite their line endings.
+tests/regression/golden/** -text
+tests/fixtures/** -text

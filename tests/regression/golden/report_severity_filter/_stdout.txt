@@ -1,0 +1,6 @@
+[*] Detected scanner type: nessus_xml
+[*] Fetching enrichment data for 6 unique CVEs...
+  [!] Error enriching CVE-2099-0001: 404 Client Error: Not Found for url: https://cve.circl.lu/api/cve/CVE-2099-0001
+[*] Filtering results for severities: critical, high
+[+] Detailed CSV report saved to: filtered.csv
+[+] HTML intelligence report saved to: filtered.html

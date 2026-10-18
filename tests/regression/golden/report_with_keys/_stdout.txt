@@ -1,0 +1,8 @@
+[*] Using NVD API Key for accelerated lookups.
+[*] Using GitHub Token for PoC research.
+[*] Using Vulners API Key for enhanced intelligence.
+[*] Using CIRCL API Key for accelerated lookups.
+[*] Detected scanner type: nessus_xml
+[*] Fetching enrichment data for 6 unique CVEs...
+  [!] Error enriching CVE-2099-0001: 404 Client Error: Not Found for url: https://cve.circl.lu/api/cve/CVE-2099-0001
+[+] Detailed CSV report saved to: k.csv

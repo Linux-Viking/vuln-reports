@@ -1,0 +1,214 @@
+[
+    {
+        "cve_id": "CVE-2021-44228",
+        "title": "Apache Log4j2 JNDI lookups reach attacker controlled LDAP endpoints",
+        "description": "Apache Log4j2 2.0-beta9 through 2.15.0 JNDI features used in configuration, log messages, and parameters do not protect against attacker controlled LDAP endpoints. An attacker who controls log messages can execute arbitrary code.",
+        "affected": [
+            {
+                "vendor": "Apache Software Foundation",
+                "product": "Apache Log4j2",
+                "versions": [
+                    "2.0-beta9 to <2.3.1",
+                    "2.4 to <2.12.2",
+                    "2.13.0 to <2.15.0"
+                ]
+            }
+        ],
+        "cisa_kev": "Yes",
+        "cvss_score": 10.0,
+        "exploitability": "Exploited in the wild",
+        "poc_available": "Yes",
+        "poc_link": "https://www.exploit-db.com/exploits/00000",
+        "threat_vector": "NETWORK",
+        "user_interaction": "NONE",
+        "epss_score": "0.944570000",
+        "attack_complexity": "LOW",
+        "references": [
+            "https://nvd.nist.gov/vuln/detail/CVE-2021-44228",
+            "https://www.cve.org/CVERecord?id=CVE-2021-44228",
+            "https://logging.apache.org/log4j/2.x/security.html",
+            "https://www.exploit-db.com/exploits/00000",
+            "https://example.test/advisory/log4j"
+        ],
+        "remediation": "Upgrade to Log4j 2.17.1 or later; remove the JndiLookup class as an interim mitigation."
+    },
+    {
+        "cve_id": "CVE-2023-48795",
+        "title": "OpenSSH: Terrapin",
+        "description": "The SSH transport protocol with certain OpenSSH extensions, found in OpenSSH before 9.6 and other products, allows remote attackers to bypass integrity checks such that some packets are omitted, aka a Terrapin attack.",
+        "affected": [
+            {
+                "vendor": "Unknown",
+                "product": "OpenSSH",
+                "versions": [
+                    "9.6"
+                ]
+            }
+        ],
+        "cisa_kev": "No",
+        "cvss_score": 5.9,
+        "exploitability": "PoC Available",
+        "poc_available": "Yes (GitHub)",
+        "poc_link": "https://github.com/example-org/CVE-2023-48795-poc",
+        "threat_vector": "NETWORK",
+        "user_interaction": "NONE",
+        "epss_score": "0.645350000",
+        "attack_complexity": "HIGH",
+        "references": [
+            "https://nvd.nist.gov/vuln/detail/CVE-2023-48795",
+            "https://www.cve.org/CVERecord?id=CVE-2023-48795",
+            "https://terrapin-attack.example.test/",
+            "https://example.test/security-advisory/2023-48795",
+            "https://github.com/example-org/CVE-2023-48795-poc"
+        ],
+        "remediation": "Review vendor advisory and apply available patches: https://example.test/security-advisory/2023-48795"
+    },
+    {
+        "cve_id": "CVE-2024-6387",
+        "title": "OpenSSH: Race Condition",
+        "description": "A signal handler race condition was found in OpenSSH's server (sshd), where a client does not authenticate within LoginGraceTime seconds. This issue is fixed in version 9.8p1.",
+        "affected": [
+            {
+                "vendor": "OpenBSD",
+                "product": "OpenSSH",
+                "versions": [
+                    "8.5p1 to <9.8p1"
+                ]
+            }
+        ],
+        "cisa_kev": "No",
+        "cvss_score": 8.1,
+        "exploitability": "Theoretical / Unknown",
+        "poc_available": "No",
+        "poc_link": "N/A",
+        "threat_vector": "NETWORK",
+        "user_interaction": "NONE",
+        "epss_score": "0.391130000",
+        "attack_complexity": "HIGH",
+        "references": [
+            "https://nvd.nist.gov/vuln/detail/CVE-2024-6387",
+            "https://www.cve.org/CVERecord?id=CVE-2024-6387",
+            "https://www.openssh.example.test/txt/release-9.8"
+        ],
+        "remediation": "Upgrade to 9 or later."
+    },
+    {
+        "cve_id": "CVE-2014-0160",
+        "title": "OpenSSL: Obtain sensitive information from process memory via crafted packets that trigger a buffer over-read",
+        "description": "The TLS and DTLS implementations in OpenSSL 1.0.1 before 1.0.1g do not properly handle Heartbeat Extension packets, which allows remote attackers to obtain sensitive information from process memory via crafted packets that trigger a buffer over-read.",
+        "affected": [
+            {
+                "vendor": "OpenSSL",
+                "product": "OpenSSL",
+                "versions": [
+                    "96db9023b881d7cd9f379b0c154650d6c108e9a3 to <7e840163c06c7692b796a93e3fa85a93136adbb2"
+                ]
+            }
+        ],
+        "cisa_kev": "Yes",
+        "cvss_score": 5.0,
+        "exploitability": "Exploited in the wild",
+        "poc_available": "No",
+        "poc_link": "N/A",
+        "threat_vector": "NETWORK",
+        "user_interaction": "N/A",
+        "epss_score": "N/A",
+        "attack_complexity": "LOW",
+        "references": [
+            "https://nvd.nist.gov/vuln/detail/CVE-2014-0160",
+            "https://www.cve.org/CVERecord?id=CVE-2014-0160",
+            "https://www.openssl.example.test/news/secadv/20140407.txt"
+        ],
+        "remediation": "Apply the latest security patches from the vendor."
+    },
+    {
+        "cve_id": "CVE-2022-0001",
+        "title": "Intel(R) Processors: Information Disclosure",
+        "description": "Non-transparent sharing of branch predictor selectors between contexts in some Intel(R) Processors may allow an authorized user to potentially enable information disclosure via local access.",
+        "affected": [
+            {
+                "vendor": "n/a",
+                "product": "Intel(R) Processors",
+                "versions": [
+                    "See references"
+                ]
+            }
+        ],
+        "cisa_kev": "No",
+        "cvss_score": 6.5,
+        "exploitability": "Theoretical / Unknown",
+        "poc_available": "No",
+        "poc_link": "N/A",
+        "threat_vector": "LOCAL",
+        "user_interaction": "NONE",
+        "epss_score": "N/A",
+        "attack_complexity": "LOW",
+        "references": [
+            "https://nvd.nist.gov/vuln/detail/CVE-2022-0001",
+            "https://www.cve.org/CVERecord?id=CVE-2022-0001"
+        ],
+        "remediation": "Apply the latest security patches from the vendor."
+    },
+    {
+        "cve_id": "CVE-2026-42945",
+        "title": "nginx: synthetic heap overflow in HTTP/3 module",
+        "description": "A synthetic heap overflow in the nginx HTTP/3 module allows remote attackers to crash worker processes. Users are recommended to upgrade to 1.29.9, which fixes the issue.",
+        "affected": [
+            {
+                "vendor": "F5",
+                "product": "nginx",
+                "versions": [
+                    "1.29.8"
+                ]
+            }
+        ],
+        "cisa_kev": "No",
+        "cvss_score": 9.2,
+        "exploitability": "Theoretical / Unknown",
+        "poc_available": "No",
+        "poc_link": "N/A",
+        "threat_vector": "NETWORK",
+        "user_interaction": "NONE",
+        "epss_score": "0.000430000",
+        "attack_complexity": "LOW",
+        "references": [
+            "https://nvd.nist.gov/vuln/detail/CVE-2026-42945",
+            "https://www.cve.org/CVERecord?id=CVE-2026-42945",
+            "https://nginx.example.test/en/security_advisories.html"
+        ],
+        "remediation": "Upgrade to 1 or later."
+    },
+    {
+        "cve_id": "CVE-2021-41773",
+        "title": "Apache HTTP Server: Mapping urls to files outside the expected document root",
+        "description": "A flaw was found in a change made to path normalization in Apache HTTP Server 2.4.49 that allows mapping URLs to files outside the expected document root.",
+        "affected": [
+            {
+                "vendor": "Apache Software Foundation",
+                "product": "Apache HTTP Server",
+                "versions": [
+                    "2.4.49"
+                ]
+            }
+        ],
+        "cisa_kev": "No",
+        "cvss_score": 3.1,
+        "exploitability": "Theoretical / Unknown",
+        "poc_available": "No",
+        "poc_link": "N/A",
+        "threat_vector": "NETWORK",
+        "user_interaction": "REQUIRED",
+        "epss_score": "N/A",
+        "attack_complexity": "HIGH",
+        "references": [
+            "https://nvd.nist.gov/vuln/detail/CVE-2021-41773",
+            "https://www.cve.org/CVERecord?id=CVE-2021-41773",
+            "https://httpd.example.test/security/vulnerabilities_24.html"
+        ],
+        "remediation": "Apply the latest security patches from the vendor."
+    },
+    {
+        "cve_id": "CVE-2099-0001",
+        "error": "404 Client Error: Not Found for url: https://cve.circl.lu/api/cve/CVE-2099-0001"
+    }
+]

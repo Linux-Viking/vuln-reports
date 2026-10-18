@@ -1,0 +1,98 @@
+[
+    {
+        "cve_id": "CVE-2014-0160",
+        "title": "OpenSSL: Obtain sensitive information from process memory via crafted packets that trigger a buffer over-read",
+        "description": "The TLS and DTLS implementations in OpenSSL 1.0.1 before 1.0.1g do not properly handle Heartbeat Extension packets, which allows remote attackers to obtain sensitive information from process memory via crafted packets that trigger a buffer over-read.",
+        "affected": [
+            {
+                "vendor": "Unknown",
+                "product": "openssl",
+                "versions": [
+                    "before 1.0.1g"
+                ]
+            },
+            {
+                "vendor": "Unknown",
+                "product": "openssl",
+                "versions": [
+                    "up to 1.0.2-beta1"
+                ]
+            }
+        ],
+        "cisa_kev": "Yes",
+        "cvss_score": 5.0,
+        "exploitability": "Exploited in the wild",
+        "poc_available": "No",
+        "poc_link": "N/A",
+        "threat_vector": "NETWORK",
+        "user_interaction": "N/A",
+        "epss_score": "N/A",
+        "attack_complexity": "LOW",
+        "references": [
+            "https://nvd.nist.gov/vuln/detail/CVE-2014-0160",
+            "https://www.cve.org/CVERecord?id=CVE-2014-0160",
+            "https://www.openssl.example.test/news/secadv/20140407.txt"
+        ],
+        "remediation": "Apply the latest security patches from the vendor."
+    },
+    {
+        "cve_id": "CVE-2024-6387",
+        "title": "OpenSSH regreSSHion signal handler race (synthetic)",
+        "description": "A signal handler race condition was found in OpenSSH's server (sshd), where a client does not authenticate within LoginGraceTime seconds. This issue is fixed in version 9.8p1.",
+        "affected": [
+            {
+                "vendor": "OpenBSD",
+                "product": "OpenSSH",
+                "versions": [
+                    "8.5p1 to <9.8p1"
+                ]
+            }
+        ],
+        "cisa_kev": "No",
+        "cvss_score": 8.1,
+        "exploitability": "Theoretical / Unknown",
+        "poc_available": "No",
+        "poc_link": "N/A",
+        "threat_vector": "NETWORK",
+        "user_interaction": "NONE",
+        "epss_score": "0.391130000",
+        "attack_complexity": "HIGH",
+        "references": [
+            "https://nvd.nist.gov/vuln/detail/CVE-2024-6387",
+            "https://www.cve.org/CVERecord?id=CVE-2024-6387",
+            "https://www.openssh.example.test/txt/release-9.8"
+        ],
+        "remediation": "Upgrade to 9 or later."
+    },
+    {
+        "cve_id": "CVE-2023-48795",
+        "title": "OpenSSH: Terrapin",
+        "description": "The SSH transport protocol with certain OpenSSH extensions, found in OpenSSH before 9.6 and other products, allows remote attackers to bypass integrity checks such that some packets are omitted, aka a Terrapin attack.",
+        "affected": [
+            {
+                "vendor": "Unknown",
+                "product": "OpenSSH",
+                "versions": [
+                    "9.6"
+                ]
+            }
+        ],
+        "cisa_kev": "No",
+        "cvss_score": 5.9,
+        "exploitability": "PoC Available",
+        "poc_available": "Yes (GitHub)",
+        "poc_link": "https://github.com/example-org/CVE-2023-48795-poc",
+        "threat_vector": "NETWORK",
+        "user_interaction": "NONE",
+        "epss_score": "0.645350000",
+        "attack_complexity": "HIGH",
+        "references": [
+            "https://nvd.nist.gov/vuln/detail/CVE-2023-48795",
+            "https://www.cve.org/CVERecord?id=CVE-2023-48795",
+            "https://terrapin-attack.example.test/",
+            "https://example.test/security-advisory/2023-48795",
+            "https://github.com/example-org/CVE-2023-48795-poc"
+        ],
+        "remediation": "Review vendor advisory and apply available patches: https://example.test/security-advisory/2023-48795"
+    }
+]

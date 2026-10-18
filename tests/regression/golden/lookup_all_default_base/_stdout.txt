@@ -1,0 +1,29 @@
+--- CVE Lookup Tool Pro v2.2.1 (Intelligence Edition) ---
+[*] Analyzing 1 CVEs...
+
+============================================================
+CVE ID: CVE-2022-0001
+Vulnerability Title: Intel(R) Processors: Information Disclosure
+Description: Non-transparent sharing of branch predictor selectors between contexts in some Intel(R) Processors may allow an authorized user to potentially enable information disclosure via local access.
+Affected Products:
+  - Intel(R) Processors (See references)
+CISA KEV?: No
+CVSS Score: 6.5
+Exploitability: Theoretical / Unknown
+PoC Available: No
+PoC Link: N/A
+Threat Vector: LOCAL
+User Interaction: NONE
+EPSS Score: N/A
+Attack Complexity: LOW
+References:
+  - https://nvd.nist.gov/vuln/detail/CVE-2022-0001
+  - https://www.cve.org/CVERecord?id=CVE-2022-0001
+============================================================
+[+] JSON report saved to: results.json
+[+] CSV report saved to: results.csv
+[+] Text report saved to: results.txt
+[+] Grep report saved to: results.grep
+[+] XML report saved to: results.xml
+
+[+] Done. Processed 1 items.

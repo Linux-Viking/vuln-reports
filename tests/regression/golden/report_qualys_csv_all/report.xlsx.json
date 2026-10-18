@@ -1,0 +1,1559 @@
+{
+ "Summary": {
+  "rows": [
+   [
+    {
+     "v": "CVE ID",
+     "bold": true,
+     "fill": "00334155"
+    },
+    {
+     "v": "Title",
+     "bold": true,
+     "fill": "00334155"
+    },
+    {
+     "v": "CVSS Score",
+     "bold": true,
+     "fill": "00334155"
+    },
+    {
+     "v": "CISA KEV",
+     "bold": true,
+     "fill": "00334155"
+    },
+    {
+     "v": "Exploitability",
+     "bold": true,
+     "fill": "00334155"
+    },
+    {
+     "v": "Hosts Affected",
+     "bold": true,
+     "fill": "00334155"
+    }
+   ],
+   [
+    {
+     "v": "CVE-2021-44228",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": "Apache Log4j2 JNDI lookups reach attacker controlled LDAP endpoints",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": 10,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": "Yes",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": "Exploited in the wild",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": 1,
+     "bold": false,
+     "fill": null
+    }
+   ],
+   [
+    {
+     "v": "CVE-2024-6387",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": "OpenSSH: Race Condition",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": 8.1,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": "No",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": "Theoretical / Unknown",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": 1,
+     "bold": false,
+     "fill": null
+    }
+   ],
+   [
+    {
+     "v": "CVE-2022-0001",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": "Intel(R) Processors: Information Disclosure",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": 6.5,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": "No",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": "Theoretical / Unknown",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": 1,
+     "bold": false,
+     "fill": null
+    }
+   ],
+   [
+    {
+     "v": "CVE-2023-48795",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": "OpenSSH: Terrapin",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": 5.9,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": "No",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": "PoC Available",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": 1,
+     "bold": false,
+     "fill": null
+    }
+   ],
+   [
+    {
+     "v": "CVE-2014-0160",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": "OpenSSL: Obtain sensitive information from process memory via crafted packets that trigger a buffer over-read",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": 5,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": "Yes",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": "Exploited in the wild",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": 1,
+     "bold": false,
+     "fill": null
+    }
+   ]
+  ],
+  "widths": {}
+ },
+ "CVE-2021-44228": {
+  "rows": [
+   [
+    {
+     "v": "CVE ID",
+     "bold": true,
+     "fill": null
+    },
+    {
+     "v": "CVE-2021-44228",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    }
+   ],
+   [
+    {
+     "v": "Title",
+     "bold": true,
+     "fill": null
+    },
+    {
+     "v": "Apache Log4j2 JNDI lookups reach attacker controlled LDAP endpoints",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    }
+   ],
+   [
+    {
+     "v": "Description",
+     "bold": true,
+     "fill": null
+    },
+    {
+     "v": "Apache Log4j2 2.0-beta9 through 2.15.0 JNDI features used in configuration, log messages, and parameters do not protect against attacker controlled LDAP endpoints. An attacker who controls log messages can execute arbitrary code.",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    }
+   ],
+   [
+    {
+     "v": "CVSS Score",
+     "bold": true,
+     "fill": null
+    },
+    {
+     "v": "10.0",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    }
+   ],
+   [
+    {
+     "v": "CISA KEV",
+     "bold": true,
+     "fill": null
+    },
+    {
+     "v": "Yes",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    }
+   ],
+   [
+    {
+     "v": "Exploitability",
+     "bold": true,
+     "fill": null
+    },
+    {
+     "v": "Exploited in the wild",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    }
+   ],
+   [
+    {
+     "v": "EPSS Score",
+     "bold": true,
+     "fill": null
+    },
+    {
+     "v": "0.944570000",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    }
+   ],
+   [
+    {
+     "v": "Remediation",
+     "bold": true,
+     "fill": null
+    },
+    {
+     "v": "Upgrade to Log4j 2.17.1 or later; remove the JndiLookup class as an interim mitigation.",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    }
+   ],
+   [
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    }
+   ],
+   [
+    {
+     "v": "Affected Hosts",
+     "bold": true,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    }
+   ],
+   [
+    {
+     "v": "IP Address",
+     "bold": true,
+     "fill": "00334155"
+    },
+    {
+     "v": "Hostname",
+     "bold": true,
+     "fill": "00334155"
+    },
+    {
+     "v": "Port/Proto",
+     "bold": true,
+     "fill": "00334155"
+    },
+    {
+     "v": "Service Name",
+     "bold": true,
+     "fill": "00334155"
+    }
+   ],
+   [
+    {
+     "v": "192.0.2.51",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": "Host-level",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": "Log4j RCE",
+     "bold": false,
+     "fill": null
+    }
+   ]
+  ],
+  "widths": {
+   "A": 20.0,
+   "B": 80.0
+  }
+ },
+ "CVE-2024-6387": {
+  "rows": [
+   [
+    {
+     "v": "CVE ID",
+     "bold": true,
+     "fill": null
+    },
+    {
+     "v": "CVE-2024-6387",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    }
+   ],
+   [
+    {
+     "v": "Title",
+     "bold": true,
+     "fill": null
+    },
+    {
+     "v": "OpenSSH: Race Condition",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    }
+   ],
+   [
+    {
+     "v": "Description",
+     "bold": true,
+     "fill": null
+    },
+    {
+     "v": "A signal handler race condition was found in OpenSSH's server (sshd), where a client does not authenticate within LoginGraceTime seconds. This issue is fixed in version 9.8p1.",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    }
+   ],
+   [
+    {
+     "v": "CVSS Score",
+     "bold": true,
+     "fill": null
+    },
+    {
+     "v": "8.1",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    }
+   ],
+   [
+    {
+     "v": "CISA KEV",
+     "bold": true,
+     "fill": null
+    },
+    {
+     "v": "No",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    }
+   ],
+   [
+    {
+     "v": "Exploitability",
+     "bold": true,
+     "fill": null
+    },
+    {
+     "v": "Theoretical / Unknown",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    }
+   ],
+   [
+    {
+     "v": "EPSS Score",
+     "bold": true,
+     "fill": null
+    },
+    {
+     "v": "0.391130000",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    }
+   ],
+   [
+    {
+     "v": "Remediation",
+     "bold": true,
+     "fill": null
+    },
+    {
+     "v": "Upgrade to 9 or later.",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    }
+   ],
+   [
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    }
+   ],
+   [
+    {
+     "v": "Affected Hosts",
+     "bold": true,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    }
+   ],
+   [
+    {
+     "v": "IP Address",
+     "bold": true,
+     "fill": "00334155"
+    },
+    {
+     "v": "Hostname",
+     "bold": true,
+     "fill": "00334155"
+    },
+    {
+     "v": "Port/Proto",
+     "bold": true,
+     "fill": "00334155"
+    },
+    {
+     "v": "Service Name",
+     "bold": true,
+     "fill": "00334155"
+    }
+   ],
+   [
+    {
+     "v": "192.0.2.50",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": "hr01.example.test",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": "22/tcp",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": "SSH Prefix Truncation",
+     "bold": false,
+     "fill": null
+    }
+   ]
+  ],
+  "widths": {
+   "A": 20.0,
+   "B": 80.0
+  }
+ },
+ "CVE-2022-0001": {
+  "rows": [
+   [
+    {
+     "v": "CVE ID",
+     "bold": true,
+     "fill": null
+    },
+    {
+     "v": "CVE-2022-0001",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    }
+   ],
+   [
+    {
+     "v": "Title",
+     "bold": true,
+     "fill": null
+    },
+    {
+     "v": "Intel(R) Processors: Information Disclosure",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    }
+   ],
+   [
+    {
+     "v": "Description",
+     "bold": true,
+     "fill": null
+    },
+    {
+     "v": "Non-transparent sharing of branch predictor selectors between contexts in some Intel(R) Processors may allow an authorized user to potentially enable information disclosure via local access.",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    }
+   ],
+   [
+    {
+     "v": "CVSS Score",
+     "bold": true,
+     "fill": null
+    },
+    {
+     "v": "6.5",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    }
+   ],
+   [
+    {
+     "v": "CISA KEV",
+     "bold": true,
+     "fill": null
+    },
+    {
+     "v": "No",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    }
+   ],
+   [
+    {
+     "v": "Exploitability",
+     "bold": true,
+     "fill": null
+    },
+    {
+     "v": "Theoretical / Unknown",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    }
+   ],
+   [
+    {
+     "v": "EPSS Score",
+     "bold": true,
+     "fill": null
+    },
+    {
+     "v": "N/A",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    }
+   ],
+   [
+    {
+     "v": "Remediation",
+     "bold": true,
+     "fill": null
+    },
+    {
+     "v": "Apply the latest security patches from the vendor.",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    }
+   ],
+   [
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    }
+   ],
+   [
+    {
+     "v": "Affected Hosts",
+     "bold": true,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    }
+   ],
+   [
+    {
+     "v": "IP Address",
+     "bold": true,
+     "fill": "00334155"
+    },
+    {
+     "v": "Hostname",
+     "bold": true,
+     "fill": "00334155"
+    },
+    {
+     "v": "Port/Proto",
+     "bold": true,
+     "fill": "00334155"
+    },
+    {
+     "v": "Service Name",
+     "bold": true,
+     "fill": "00334155"
+    }
+   ],
+   [
+    {
+     "v": "192.0.2.51",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": "Host-level",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": "Log4j RCE",
+     "bold": false,
+     "fill": null
+    }
+   ]
+  ],
+  "widths": {
+   "A": 20.0,
+   "B": 80.0
+  }
+ },
+ "CVE-2023-48795": {
+  "rows": [
+   [
+    {
+     "v": "CVE ID",
+     "bold": true,
+     "fill": null
+    },
+    {
+     "v": "CVE-2023-48795",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    }
+   ],
+   [
+    {
+     "v": "Title",
+     "bold": true,
+     "fill": null
+    },
+    {
+     "v": "OpenSSH: Terrapin",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    }
+   ],
+   [
+    {
+     "v": "Description",
+     "bold": true,
+     "fill": null
+    },
+    {
+     "v": "The SSH transport protocol with certain OpenSSH extensions, found in OpenSSH before 9.6 and other products, allows remote attackers to bypass integrity checks such that some packets are omitted, aka a Terrapin attack.",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    }
+   ],
+   [
+    {
+     "v": "CVSS Score",
+     "bold": true,
+     "fill": null
+    },
+    {
+     "v": "5.9",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    }
+   ],
+   [
+    {
+     "v": "CISA KEV",
+     "bold": true,
+     "fill": null
+    },
+    {
+     "v": "No",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    }
+   ],
+   [
+    {
+     "v": "Exploitability",
+     "bold": true,
+     "fill": null
+    },
+    {
+     "v": "PoC Available",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    }
+   ],
+   [
+    {
+     "v": "EPSS Score",
+     "bold": true,
+     "fill": null
+    },
+    {
+     "v": "0.645350000",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    }
+   ],
+   [
+    {
+     "v": "Remediation",
+     "bold": true,
+     "fill": null
+    },
+    {
+     "v": "Review vendor advisory and apply available patches: https://example.test/security-advisory/2023-48795",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    }
+   ],
+   [
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    }
+   ],
+   [
+    {
+     "v": "Affected Hosts",
+     "bold": true,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    }
+   ],
+   [
+    {
+     "v": "IP Address",
+     "bold": true,
+     "fill": "00334155"
+    },
+    {
+     "v": "Hostname",
+     "bold": true,
+     "fill": "00334155"
+    },
+    {
+     "v": "Port/Proto",
+     "bold": true,
+     "fill": "00334155"
+    },
+    {
+     "v": "Service Name",
+     "bold": true,
+     "fill": "00334155"
+    }
+   ],
+   [
+    {
+     "v": "192.0.2.50",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": "hr01.example.test",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": "22/tcp",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": "SSH Prefix Truncation",
+     "bold": false,
+     "fill": null
+    }
+   ]
+  ],
+  "widths": {
+   "A": 20.0,
+   "B": 80.0
+  }
+ },
+ "CVE-2014-0160": {
+  "rows": [
+   [
+    {
+     "v": "CVE ID",
+     "bold": true,
+     "fill": null
+    },
+    {
+     "v": "CVE-2014-0160",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    }
+   ],
+   [
+    {
+     "v": "Title",
+     "bold": true,
+     "fill": null
+    },
+    {
+     "v": "OpenSSL: Obtain sensitive information from process memory via crafted packets that trigger a buffer over-read",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    }
+   ],
+   [
+    {
+     "v": "Description",
+     "bold": true,
+     "fill": null
+    },
+    {
+     "v": "The TLS and DTLS implementations in OpenSSL 1.0.1 before 1.0.1g do not properly handle Heartbeat Extension packets, which allows remote attackers to obtain sensitive information from process memory via crafted packets that trigger a buffer over-read.",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    }
+   ],
+   [
+    {
+     "v": "CVSS Score",
+     "bold": true,
+     "fill": null
+    },
+    {
+     "v": "5.0",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    }
+   ],
+   [
+    {
+     "v": "CISA KEV",
+     "bold": true,
+     "fill": null
+    },
+    {
+     "v": "Yes",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    }
+   ],
+   [
+    {
+     "v": "Exploitability",
+     "bold": true,
+     "fill": null
+    },
+    {
+     "v": "Exploited in the wild",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    }
+   ],
+   [
+    {
+     "v": "EPSS Score",
+     "bold": true,
+     "fill": null
+    },
+    {
+     "v": "N/A",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    }
+   ],
+   [
+    {
+     "v": "Remediation",
+     "bold": true,
+     "fill": null
+    },
+    {
+     "v": "Apply the latest security patches from the vendor.",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    }
+   ],
+   [
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    }
+   ],
+   [
+    {
+     "v": "Affected Hosts",
+     "bold": true,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    }
+   ],
+   [
+    {
+     "v": "IP Address",
+     "bold": true,
+     "fill": "00334155"
+    },
+    {
+     "v": "Hostname",
+     "bold": true,
+     "fill": "00334155"
+    },
+    {
+     "v": "Port/Proto",
+     "bold": true,
+     "fill": "00334155"
+    },
+    {
+     "v": "Service Name",
+     "bold": true,
+     "fill": "00334155"
+    }
+   ],
+   [
+    {
+     "v": null,
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": "payroll01.example.test",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": "8443/tcp",
+     "bold": false,
+     "fill": null
+    },
+    {
+     "v": "OpenSSL Heartbleed",
+     "bold": false,
+     "fill": null
+    }
+   ]
+  ],
+  "widths": {
+   "A": 20.0,
+   "B": 80.0
+  }
+ }
+}

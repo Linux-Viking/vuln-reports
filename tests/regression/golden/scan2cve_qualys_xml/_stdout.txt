@@ -1,0 +1,17 @@
+[*] Detected type: qualys_xml
+[*] Analyzing 2 hosts...
+
+[192.0.2.40 / erp01.example.test]
+  └─ 22/tcp (ssh): 1 CVEs found.
+     - CVE-2023-48795
+  └─ 22/tcp (ssh): 1 CVEs found.
+     - CVE-2024-6387
+  └─ 443/tcp (Web server): 2 CVEs found.
+     - CVE-2021-44228
+     - CVE-2022-0001
+
+[crm01.example.test]
+  └─ 8443/tcp (ssl): 1 CVEs found.
+     - CVE-2014-0160
+
+[+] Saved 5 unique CVEs to cves.txt

@@ -1,0 +1,38 @@
+{
+  "CVE-2014-0160": [
+    {
+      "type": "openvas",
+      "title": "CVE-2014-0160",
+      "description": "short"
+    },
+    {
+      "type": "nvd",
+      "title": "OpenSSL Heartbleed heartbeat over-read (synthetic)",
+      "description": "Synthetic Vulners description for the OpenSSL heartbeat over-read.",
+      "affectedSoftware": [
+        {
+          "name": "openssl",
+          "version": "1.0.1g",
+          "operator": "lt"
+        },
+        {
+          "name": "openssl",
+          "version": "1.0.2-beta1",
+          "operator": "le"
+        },
+        {
+          "name": "openssl",
+          "version": "1.0.1g",
+          "operator": "lt"
+        }
+      ]
+    }
+  ],
+  "CVE-2024-6387": [
+    {
+      "type": "cisa_kev",
+      "title": "OpenSSH regreSSHion signal handler race (synthetic)",
+      "description": "Synthetic KEV description."
+    }
+  ]
+}

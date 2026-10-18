@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Synthetic Qualys scan export for tests. No real hosts or client data. -->
+<SCAN value="scan/0000000000.00000">
+  <IP value="192.0.2.40" name="erp01.example.test">
+    <VULNS>
+      <CAT value="ssh" port="22" protocol="tcp">
+        <VULN number="38909" severity="3" cveid="CVE-2023-48795">
+          <TITLE>SSH Prefix Truncation Vulnerability</TITLE>
+        </VULN>
+        <VULN number="42041" severity="4">
+          <TITLE>OpenSSH Race Condition</TITLE>
+          <CVE_ID_LIST><CVE_ID><ID>CVE-2024-6387</ID></CVE_ID></CVE_ID_LIST>
+        </VULN>
+      </CAT>
+      <CAT value="Web server" port="443" protocol="tcp">
+        <VULN number="730297" severity="5" cveid="CVE-2021-44228,CVE-2022-0001">
+          <TITLE>Apache Log4j Remote Code Execution</TITLE>
+        </VULN>
+      </CAT>
+    </VULNS>
+  </IP>
+  <IP value="crm01.example.test">
+    <VULNS>
+      <CAT value="ssl" port="8443" protocol="tcp">
+        <VULN number="42430" severity="4" cveid="CVE-2014-0160">
+          <TITLE>OpenSSL Heartbeat Information Disclosure</TITLE>
+        </VULN>
+      </CAT>
+    </VULNS>
+  </IP>
+</SCAN>

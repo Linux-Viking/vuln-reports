@@ -1,0 +1,2494 @@
+<!-- word/document.xml -->
+<?xml version='1.0' encoding='UTF-8' standalone='yes'?>
+<w:document xmlns:wpc="http://schemas.microsoft.com/office/word/2010/wordprocessingCanvas" xmlns:mo="http://schemas.microsoft.com/office/mac/office/2008/main" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:mv="urn:schemas-microsoft-com:mac:vml" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:wp14="http://schemas.microsoft.com/office/word/2010/wordprocessingDrawing" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:w10="urn:schemas-microsoft-com:office:word" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:w14="http://schemas.microsoft.com/office/word/2010/wordml" xmlns:wpg="http://schemas.microsoft.com/office/word/2010/wordprocessingGroup" xmlns:wpi="http://schemas.microsoft.com/office/word/2010/wordprocessingInk" xmlns:wne="http://schemas.microsoft.com/office/word/2006/wordml" xmlns:wps="http://schemas.microsoft.com/office/word/2010/wordprocessingShape" mc:Ignorable="w14 wp14">
+<w:background w:color="0F172A"/>
+<w:body>
+<w:p>
+<w:pPr>
+<w:pStyle w:val="Title"/>
+</w:pPr>
+<w:r>
+<w:t>Custom Report Template</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:r>
+<w:t>This is a placeholder template. Replace this file with your branded report_template.docx to preserve headers, footers, and logos.</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:spacing w:before="200" w:after="40"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="3B82F6"/>
+<w:sz w:val="48"/>
+</w:rPr>
+<w:t>Vulnerability Intelligence Report</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:spacing w:after="400"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b w:val="0"/>
+<w:i/>
+<w:color w:val="94A3B8"/>
+<w:sz w:val="19"/>
+</w:rPr>
+<w:t>Generated on: 2026-10-17 12:00 | Scanner: qualys_xml | Target: qualys.xml</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:spacing w:after="160"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="F8FAFC"/>
+<w:sz w:val="32"/>
+</w:rPr>
+<w:t>Executive Summary</w:t>
+</w:r>
+</w:p>
+<w:tbl>
+<w:tblPr>
+<w:tblW w:type="auto" w:w="0"/>
+<w:tblLayout w:type="fixed"/>
+<w:tblLook w:firstColumn="1" w:firstRow="1" w:lastColumn="0" w:lastRow="0" w:noHBand="0" w:noVBand="1" w:val="04A0"/>
+</w:tblPr>
+<w:tblGrid>
+<w:gridCol w:w="2520"/>
+<w:gridCol w:w="2520"/>
+<w:gridCol w:w="2520"/>
+<w:gridCol w:w="2520"/>
+</w:tblGrid>
+<w:tr>
+<w:tc>
+<w:tcPr>
+<w:tcW w:type="dxa" w:w="2520"/>
+<w:shd w:fill="1E293B"/>
+<w:tcBorders>
+<w:top w:val="single" w:sz="4" w:space="0" w:color="334155"/>
+<w:left w:val="single" w:sz="4" w:space="0" w:color="334155"/>
+<w:bottom w:val="single" w:sz="4" w:space="0" w:color="334155"/>
+<w:right w:val="single" w:sz="4" w:space="0" w:color="334155"/>
+</w:tcBorders>
+</w:tcPr>
+<w:p>
+<w:pPr>
+<w:spacing w:before="160" w:after="40"/>
+<w:jc w:val="center"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="F8FAFC"/>
+<w:sz w:val="40"/>
+</w:rPr>
+<w:t>2</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:spacing w:before="0" w:after="160"/>
+<w:jc w:val="center"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="94A3B8"/>
+<w:sz w:val="16"/>
+</w:rPr>
+<w:t>HOSTS</w:t>
+</w:r>
+</w:p>
+</w:tc>
+<w:tc>
+<w:tcPr>
+<w:tcW w:type="dxa" w:w="2520"/>
+<w:shd w:fill="1E293B"/>
+<w:tcBorders>
+<w:top w:val="single" w:sz="4" w:space="0" w:color="334155"/>
+<w:left w:val="single" w:sz="4" w:space="0" w:color="334155"/>
+<w:bottom w:val="single" w:sz="4" w:space="0" w:color="334155"/>
+<w:right w:val="single" w:sz="4" w:space="0" w:color="334155"/>
+</w:tcBorders>
+</w:tcPr>
+<w:p>
+<w:pPr>
+<w:spacing w:before="160" w:after="40"/>
+<w:jc w:val="center"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="F8FAFC"/>
+<w:sz w:val="40"/>
+</w:rPr>
+<w:t>5</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:spacing w:before="0" w:after="160"/>
+<w:jc w:val="center"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="94A3B8"/>
+<w:sz w:val="16"/>
+</w:rPr>
+<w:t>Unique CVEs</w:t>
+</w:r>
+</w:p>
+</w:tc>
+<w:tc>
+<w:tcPr>
+<w:tcW w:type="dxa" w:w="2520"/>
+<w:shd w:fill="1E293B"/>
+<w:tcBorders>
+<w:top w:val="single" w:sz="4" w:space="0" w:color="334155"/>
+<w:left w:val="single" w:sz="4" w:space="0" w:color="334155"/>
+<w:bottom w:val="single" w:sz="4" w:space="0" w:color="334155"/>
+<w:right w:val="single" w:sz="4" w:space="0" w:color="334155"/>
+</w:tcBorders>
+</w:tcPr>
+<w:p>
+<w:pPr>
+<w:spacing w:before="160" w:after="40"/>
+<w:jc w:val="center"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="EF4444"/>
+<w:sz w:val="40"/>
+</w:rPr>
+<w:t>1</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:spacing w:before="0" w:after="160"/>
+<w:jc w:val="center"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="94A3B8"/>
+<w:sz w:val="16"/>
+</w:rPr>
+<w:t>Critical Risks</w:t>
+</w:r>
+</w:p>
+</w:tc>
+<w:tc>
+<w:tcPr>
+<w:tcW w:type="dxa" w:w="2520"/>
+<w:shd w:fill="1E293B"/>
+<w:tcBorders>
+<w:top w:val="single" w:sz="4" w:space="0" w:color="334155"/>
+<w:left w:val="single" w:sz="4" w:space="0" w:color="334155"/>
+<w:bottom w:val="single" w:sz="4" w:space="0" w:color="334155"/>
+<w:right w:val="single" w:sz="4" w:space="0" w:color="334155"/>
+</w:tcBorders>
+</w:tcPr>
+<w:p>
+<w:pPr>
+<w:spacing w:before="160" w:after="40"/>
+<w:jc w:val="center"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="DB2777"/>
+<w:sz w:val="40"/>
+</w:rPr>
+<w:t>2</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:spacing w:before="0" w:after="160"/>
+<w:jc w:val="center"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="94A3B8"/>
+<w:sz w:val="16"/>
+</w:rPr>
+<w:t>KEV Exploited</w:t>
+</w:r>
+</w:p>
+</w:tc>
+</w:tr>
+</w:tbl>
+<w:p>
+<w:pPr>
+<w:spacing w:after="200"/>
+</w:pPr>
+</w:p>
+<w:p>
+<w:pPr>
+<w:spacing w:after="300"/>
+<w:jc w:val="center"/>
+</w:pPr>
+<w:r>
+<w:drawing>
+<wp:inline xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture">
+<wp:extent cx="5029200" cy="3877793"/>
+<wp:docPr id="1" name="Picture 1"/>
+<wp:cNvGraphicFramePr>
+<a:graphicFrameLocks noChangeAspect="1"/>
+</wp:cNvGraphicFramePr>
+<a:graphic>
+<a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture">
+<pic:pic>
+<pic:nvPicPr>
+<pic:cNvPr id="0" name="image.png"/>
+<pic:cNvPicPr/>
+</pic:nvPicPr>
+<pic:blipFill>
+<a:blip r:embed="rId9"/>
+<a:stretch>
+<a:fillRect/>
+</a:stretch>
+</pic:blipFill>
+<pic:spPr>
+<a:xfrm>
+<a:off x="0" y="0"/>
+<a:ext cx="5029200" cy="3877793"/>
+</a:xfrm>
+<a:prstGeom prst="rect"/>
+</pic:spPr>
+</pic:pic>
+</a:graphicData>
+</a:graphic>
+</wp:inline>
+</w:drawing>
+</w:r>
+</w:p>
+<w:p>
+<w:r>
+<w:br w:type="page"/>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:spacing w:after="240"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="F8FAFC"/>
+<w:sz w:val="36"/>
+</w:rPr>
+<w:t>Detailed Findings</w:t>
+</w:r>
+</w:p>
+<w:tbl>
+<w:tblPr>
+<w:tblW w:type="auto" w:w="0"/>
+<w:tblLayout w:type="fixed"/>
+<w:tblLook w:firstColumn="1" w:firstRow="1" w:lastColumn="0" w:lastRow="0" w:noHBand="0" w:noVBand="1" w:val="04A0"/>
+</w:tblPr>
+<w:tblGrid>
+<w:gridCol w:w="10080"/>
+</w:tblGrid>
+<w:tr>
+<w:tc>
+<w:tcPr>
+<w:tcW w:type="dxa" w:w="10080"/>
+<w:shd w:fill="1E293B"/>
+<w:tcBorders>
+<w:top w:val="single" w:sz="6" w:space="0" w:color="334155"/>
+<w:left w:val="single" w:sz="6" w:space="0" w:color="334155"/>
+<w:bottom w:val="single" w:sz="6" w:space="0" w:color="334155"/>
+<w:right w:val="single" w:sz="6" w:space="0" w:color="334155"/>
+</w:tcBorders>
+</w:tcPr>
+<w:p>
+<w:pPr>
+<w:spacing w:before="160" w:after="40"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:b/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:i w:val="0"/>
+<w:color w:val="FCA5A5"/>
+<w:sz w:val="26"/>
+</w:rPr>
+<w:t xml:space="preserve"> 10.0 </w:t>
+</w:r>
+<w:r>
+<w:rPr>
+<w:color w:val="334155"/>
+</w:rPr>
+<w:t xml:space="preserve">   |   </w:t>
+</w:r>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="3B82F6"/>
+<w:sz w:val="28"/>
+</w:rPr>
+<w:t xml:space="preserve">CVE-2021-44228   </w:t>
+</w:r>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="DB2777"/>
+<w:sz w:val="18"/>
+</w:rPr>
+<w:t xml:space="preserve"> [ CISA KEV ] </w:t>
+</w:r>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="DC2626"/>
+<w:sz w:val="18"/>
+</w:rPr>
+<w:t xml:space="preserve"> [ ACTIVE EXPLOIT ] </w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:spacing w:before="80" w:after="160"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="FFFFFF"/>
+<w:sz w:val="24"/>
+</w:rPr>
+<w:t>Apache Log4j2 JNDI lookups reach attacker controlled LDAP endpoints</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:spacing w:after="160"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b w:val="0"/>
+<w:i w:val="0"/>
+<w:color w:val="94A3B8"/>
+<w:sz w:val="17"/>
+</w:rPr>
+<w:t xml:space="preserve">EPSS: </w:t>
+</w:r>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="F8FAFC"/>
+<w:sz w:val="17"/>
+</w:rPr>
+<w:t xml:space="preserve">0.944570000  |  </w:t>
+</w:r>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b w:val="0"/>
+<w:i w:val="0"/>
+<w:color w:val="94A3B8"/>
+<w:sz w:val="17"/>
+</w:rPr>
+<w:t xml:space="preserve">Threat Vector: </w:t>
+</w:r>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="F8FAFC"/>
+<w:sz w:val="17"/>
+</w:rPr>
+<w:t xml:space="preserve">NETWORK  |  </w:t>
+</w:r>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b w:val="0"/>
+<w:i w:val="0"/>
+<w:color w:val="94A3B8"/>
+<w:sz w:val="17"/>
+</w:rPr>
+<w:t xml:space="preserve">Complexity: </w:t>
+</w:r>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="F8FAFC"/>
+<w:sz w:val="17"/>
+</w:rPr>
+<w:t>LOW</w:t>
+</w:r>
+</w:p>
+</w:tc>
+</w:tr>
+</w:tbl>
+<w:p>
+<w:pPr>
+<w:spacing w:after="40"/>
+</w:pPr>
+</w:p>
+<w:p>
+<w:pPr>
+<w:spacing w:before="120" w:after="40"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="3B82F6"/>
+<w:sz w:val="19"/>
+</w:rPr>
+<w:t>DESCRIPTION</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:spacing w:after="200"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b w:val="0"/>
+<w:i w:val="0"/>
+<w:color w:val="CBD5E1"/>
+<w:sz w:val="19"/>
+</w:rPr>
+<w:t>Apache Log4j2 2.0-beta9 through 2.15.0 JNDI features used in configuration, log messages, and parameters do not protect against attacker controlled LDAP endpoints. An attacker who controls log messages can execute arbitrary code.</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:spacing w:after="40"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="3B82F6"/>
+<w:sz w:val="19"/>
+</w:rPr>
+<w:t>AFFECTED PRODUCTS</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:pStyle w:val="ListBullet"/>
+<w:spacing w:after="20"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="F8FAFC"/>
+<w:sz w:val="18"/>
+</w:rPr>
+<w:t xml:space="preserve">Apache Log4j2 </w:t>
+</w:r>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b w:val="0"/>
+<w:i w:val="0"/>
+<w:color w:val="94A3B8"/>
+<w:sz w:val="18"/>
+</w:rPr>
+<w:t>(2.0-beta9 to &lt;2.3.1, 2.4 to &lt;2.12.2, 2.13.0 to &lt;2.15.0)</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:spacing w:after="80"/>
+</w:pPr>
+</w:p>
+<w:p>
+<w:pPr>
+<w:spacing w:after="80"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="3B82F6"/>
+<w:sz w:val="19"/>
+</w:rPr>
+<w:t>AFFECTED HOSTS</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:spacing w:after="200"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Consolas" w:hAnsi="Consolas"/>
+<w:rFonts w:ascii="Consolas" w:hAnsi="Consolas" w:cs="Consolas"/>
+<w:b w:val="0"/>
+<w:i w:val="0"/>
+<w:color w:val="94A3B8"/>
+<w:sz w:val="17"/>
+</w:rPr>
+<w:t xml:space="preserve"> erp01.example.test (192.0.2.40) [443/tcp] </w:t>
+</w:r>
+</w:p>
+<w:tbl>
+<w:tblPr>
+<w:tblW w:type="auto" w:w="0"/>
+<w:tblLayout w:type="fixed"/>
+<w:tblLook w:firstColumn="1" w:firstRow="1" w:lastColumn="0" w:lastRow="0" w:noHBand="0" w:noVBand="1" w:val="04A0"/>
+</w:tblPr>
+<w:tblGrid>
+<w:gridCol w:w="10080"/>
+</w:tblGrid>
+<w:tr>
+<w:tc>
+<w:tcPr>
+<w:tcW w:type="dxa" w:w="10080"/>
+<w:shd w:fill="0F1E36"/>
+<w:tcBorders>
+<w:top w:val="single" w:sz="4" w:space="0" w:color="1D4ED8"/>
+<w:left w:val="single" w:sz="4" w:space="0" w:color="1D4ED8"/>
+<w:bottom w:val="single" w:sz="4" w:space="0" w:color="1D4ED8"/>
+<w:right w:val="single" w:sz="4" w:space="0" w:color="1D4ED8"/>
+</w:tcBorders>
+</w:tcPr>
+<w:p>
+<w:pPr>
+<w:spacing w:before="120" w:after="40"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="3B82F6"/>
+<w:sz w:val="17"/>
+</w:rPr>
+<w:t>🛡️ Remediation Recommendation</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:spacing w:after="120"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="F8FAFC"/>
+<w:sz w:val="19"/>
+</w:rPr>
+<w:t>Upgrade to Log4j 2.17.1 or later; remove the JndiLookup class as an interim mitigation.</w:t>
+</w:r>
+</w:p>
+</w:tc>
+</w:tr>
+</w:tbl>
+<w:p>
+<w:pPr>
+<w:spacing w:after="160"/>
+</w:pPr>
+</w:p>
+<w:p>
+<w:pPr>
+<w:spacing w:after="40"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="3B82F6"/>
+<w:sz w:val="19"/>
+</w:rPr>
+<w:t>INTELLIGENCE &amp; REFERENCES</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:pStyle w:val="ListBullet"/>
+<w:spacing w:after="20"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="F8FAFC"/>
+<w:sz w:val="18"/>
+</w:rPr>
+<w:t xml:space="preserve">🚀 Exploit PoC Link: </w:t>
+</w:r>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b w:val="0"/>
+<w:i w:val="0"/>
+<w:color w:val="3B82F6"/>
+<w:sz w:val="18"/>
+</w:rPr>
+<w:t>https://www.exploit-db.com/exploits/00000</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:pStyle w:val="ListBullet"/>
+<w:spacing w:after="20"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b w:val="0"/>
+<w:i w:val="0"/>
+<w:color w:val="3B82F6"/>
+<w:sz w:val="18"/>
+</w:rPr>
+<w:t>https://nvd.nist.gov/vuln/detail/CVE-2021-44228</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:pStyle w:val="ListBullet"/>
+<w:spacing w:after="20"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b w:val="0"/>
+<w:i w:val="0"/>
+<w:color w:val="3B82F6"/>
+<w:sz w:val="18"/>
+</w:rPr>
+<w:t>https://www.cve.org/CVERecord?id=CVE-2021-44228</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:pStyle w:val="ListBullet"/>
+<w:spacing w:after="20"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b w:val="0"/>
+<w:i w:val="0"/>
+<w:color w:val="3B82F6"/>
+<w:sz w:val="18"/>
+</w:rPr>
+<w:t>https://logging.apache.org/log4j/2.x/security.html</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:pStyle w:val="ListBullet"/>
+<w:spacing w:after="20"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b w:val="0"/>
+<w:i w:val="0"/>
+<w:color w:val="3B82F6"/>
+<w:sz w:val="18"/>
+</w:rPr>
+<w:t>https://www.exploit-db.com/exploits/00000</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:r>
+<w:br w:type="page"/>
+</w:r>
+</w:p>
+<w:tbl>
+<w:tblPr>
+<w:tblW w:type="auto" w:w="0"/>
+<w:tblLayout w:type="fixed"/>
+<w:tblLook w:firstColumn="1" w:firstRow="1" w:lastColumn="0" w:lastRow="0" w:noHBand="0" w:noVBand="1" w:val="04A0"/>
+</w:tblPr>
+<w:tblGrid>
+<w:gridCol w:w="10080"/>
+</w:tblGrid>
+<w:tr>
+<w:tc>
+<w:tcPr>
+<w:tcW w:type="dxa" w:w="10080"/>
+<w:shd w:fill="1E293B"/>
+<w:tcBorders>
+<w:top w:val="single" w:sz="6" w:space="0" w:color="334155"/>
+<w:left w:val="single" w:sz="6" w:space="0" w:color="334155"/>
+<w:bottom w:val="single" w:sz="6" w:space="0" w:color="334155"/>
+<w:right w:val="single" w:sz="6" w:space="0" w:color="334155"/>
+</w:tcBorders>
+</w:tcPr>
+<w:p>
+<w:pPr>
+<w:spacing w:before="160" w:after="40"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:b/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:i w:val="0"/>
+<w:color w:val="FDBA74"/>
+<w:sz w:val="26"/>
+</w:rPr>
+<w:t xml:space="preserve"> 8.1 </w:t>
+</w:r>
+<w:r>
+<w:rPr>
+<w:color w:val="334155"/>
+</w:rPr>
+<w:t xml:space="preserve">   |   </w:t>
+</w:r>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="3B82F6"/>
+<w:sz w:val="28"/>
+</w:rPr>
+<w:t xml:space="preserve">CVE-2024-6387   </w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:spacing w:before="80" w:after="160"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="FFFFFF"/>
+<w:sz w:val="24"/>
+</w:rPr>
+<w:t>OpenSSH: Race Condition</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:spacing w:after="160"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b w:val="0"/>
+<w:i w:val="0"/>
+<w:color w:val="94A3B8"/>
+<w:sz w:val="17"/>
+</w:rPr>
+<w:t xml:space="preserve">EPSS: </w:t>
+</w:r>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="F8FAFC"/>
+<w:sz w:val="17"/>
+</w:rPr>
+<w:t xml:space="preserve">0.391130000  |  </w:t>
+</w:r>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b w:val="0"/>
+<w:i w:val="0"/>
+<w:color w:val="94A3B8"/>
+<w:sz w:val="17"/>
+</w:rPr>
+<w:t xml:space="preserve">Threat Vector: </w:t>
+</w:r>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="F8FAFC"/>
+<w:sz w:val="17"/>
+</w:rPr>
+<w:t xml:space="preserve">NETWORK  |  </w:t>
+</w:r>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b w:val="0"/>
+<w:i w:val="0"/>
+<w:color w:val="94A3B8"/>
+<w:sz w:val="17"/>
+</w:rPr>
+<w:t xml:space="preserve">Complexity: </w:t>
+</w:r>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="F8FAFC"/>
+<w:sz w:val="17"/>
+</w:rPr>
+<w:t>HIGH</w:t>
+</w:r>
+</w:p>
+</w:tc>
+</w:tr>
+</w:tbl>
+<w:p>
+<w:pPr>
+<w:spacing w:after="40"/>
+</w:pPr>
+</w:p>
+<w:p>
+<w:pPr>
+<w:spacing w:before="120" w:after="40"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="3B82F6"/>
+<w:sz w:val="19"/>
+</w:rPr>
+<w:t>DESCRIPTION</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:spacing w:after="200"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b w:val="0"/>
+<w:i w:val="0"/>
+<w:color w:val="CBD5E1"/>
+<w:sz w:val="19"/>
+</w:rPr>
+<w:t>A signal handler race condition was found in OpenSSH's server (sshd), where a client does not authenticate within LoginGraceTime seconds. This issue is fixed in version 9.8p1.</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:spacing w:after="40"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="3B82F6"/>
+<w:sz w:val="19"/>
+</w:rPr>
+<w:t>AFFECTED PRODUCTS</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:pStyle w:val="ListBullet"/>
+<w:spacing w:after="20"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="F8FAFC"/>
+<w:sz w:val="18"/>
+</w:rPr>
+<w:t xml:space="preserve">OpenSSH </w:t>
+</w:r>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b w:val="0"/>
+<w:i w:val="0"/>
+<w:color w:val="94A3B8"/>
+<w:sz w:val="18"/>
+</w:rPr>
+<w:t>(8.5p1 to &lt;9.8p1)</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:spacing w:after="80"/>
+</w:pPr>
+</w:p>
+<w:p>
+<w:pPr>
+<w:spacing w:after="80"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="3B82F6"/>
+<w:sz w:val="19"/>
+</w:rPr>
+<w:t>AFFECTED HOSTS</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:spacing w:after="200"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Consolas" w:hAnsi="Consolas"/>
+<w:rFonts w:ascii="Consolas" w:hAnsi="Consolas" w:cs="Consolas"/>
+<w:b w:val="0"/>
+<w:i w:val="0"/>
+<w:color w:val="94A3B8"/>
+<w:sz w:val="17"/>
+</w:rPr>
+<w:t xml:space="preserve"> erp01.example.test (192.0.2.40) [22/tcp] </w:t>
+</w:r>
+</w:p>
+<w:tbl>
+<w:tblPr>
+<w:tblW w:type="auto" w:w="0"/>
+<w:tblLayout w:type="fixed"/>
+<w:tblLook w:firstColumn="1" w:firstRow="1" w:lastColumn="0" w:lastRow="0" w:noHBand="0" w:noVBand="1" w:val="04A0"/>
+</w:tblPr>
+<w:tblGrid>
+<w:gridCol w:w="10080"/>
+</w:tblGrid>
+<w:tr>
+<w:tc>
+<w:tcPr>
+<w:tcW w:type="dxa" w:w="10080"/>
+<w:shd w:fill="0F1E36"/>
+<w:tcBorders>
+<w:top w:val="single" w:sz="4" w:space="0" w:color="1D4ED8"/>
+<w:left w:val="single" w:sz="4" w:space="0" w:color="1D4ED8"/>
+<w:bottom w:val="single" w:sz="4" w:space="0" w:color="1D4ED8"/>
+<w:right w:val="single" w:sz="4" w:space="0" w:color="1D4ED8"/>
+</w:tcBorders>
+</w:tcPr>
+<w:p>
+<w:pPr>
+<w:spacing w:before="120" w:after="40"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="3B82F6"/>
+<w:sz w:val="17"/>
+</w:rPr>
+<w:t>🛡️ Remediation Recommendation</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:spacing w:after="120"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="F8FAFC"/>
+<w:sz w:val="19"/>
+</w:rPr>
+<w:t>Upgrade to 9 or later.</w:t>
+</w:r>
+</w:p>
+</w:tc>
+</w:tr>
+</w:tbl>
+<w:p>
+<w:pPr>
+<w:spacing w:after="160"/>
+</w:pPr>
+</w:p>
+<w:p>
+<w:pPr>
+<w:spacing w:after="40"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="3B82F6"/>
+<w:sz w:val="19"/>
+</w:rPr>
+<w:t>INTELLIGENCE &amp; REFERENCES</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:pStyle w:val="ListBullet"/>
+<w:spacing w:after="20"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b w:val="0"/>
+<w:i w:val="0"/>
+<w:color w:val="3B82F6"/>
+<w:sz w:val="18"/>
+</w:rPr>
+<w:t>https://nvd.nist.gov/vuln/detail/CVE-2024-6387</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:pStyle w:val="ListBullet"/>
+<w:spacing w:after="20"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b w:val="0"/>
+<w:i w:val="0"/>
+<w:color w:val="3B82F6"/>
+<w:sz w:val="18"/>
+</w:rPr>
+<w:t>https://www.cve.org/CVERecord?id=CVE-2024-6387</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:pStyle w:val="ListBullet"/>
+<w:spacing w:after="20"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b w:val="0"/>
+<w:i w:val="0"/>
+<w:color w:val="3B82F6"/>
+<w:sz w:val="18"/>
+</w:rPr>
+<w:t>https://www.openssh.example.test/txt/release-9.8</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:r>
+<w:br w:type="page"/>
+</w:r>
+</w:p>
+<w:tbl>
+<w:tblPr>
+<w:tblW w:type="auto" w:w="0"/>
+<w:tblLayout w:type="fixed"/>
+<w:tblLook w:firstColumn="1" w:firstRow="1" w:lastColumn="0" w:lastRow="0" w:noHBand="0" w:noVBand="1" w:val="04A0"/>
+</w:tblPr>
+<w:tblGrid>
+<w:gridCol w:w="10080"/>
+</w:tblGrid>
+<w:tr>
+<w:tc>
+<w:tcPr>
+<w:tcW w:type="dxa" w:w="10080"/>
+<w:shd w:fill="1E293B"/>
+<w:tcBorders>
+<w:top w:val="single" w:sz="6" w:space="0" w:color="334155"/>
+<w:left w:val="single" w:sz="6" w:space="0" w:color="334155"/>
+<w:bottom w:val="single" w:sz="6" w:space="0" w:color="334155"/>
+<w:right w:val="single" w:sz="6" w:space="0" w:color="334155"/>
+</w:tcBorders>
+</w:tcPr>
+<w:p>
+<w:pPr>
+<w:spacing w:before="160" w:after="40"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:b/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:i w:val="0"/>
+<w:color w:val="FDE047"/>
+<w:sz w:val="26"/>
+</w:rPr>
+<w:t xml:space="preserve"> 6.5 </w:t>
+</w:r>
+<w:r>
+<w:rPr>
+<w:color w:val="334155"/>
+</w:rPr>
+<w:t xml:space="preserve">   |   </w:t>
+</w:r>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="3B82F6"/>
+<w:sz w:val="28"/>
+</w:rPr>
+<w:t xml:space="preserve">CVE-2022-0001   </w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:spacing w:before="80" w:after="160"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="FFFFFF"/>
+<w:sz w:val="24"/>
+</w:rPr>
+<w:t>Intel(R) Processors: Information Disclosure</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:spacing w:after="160"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b w:val="0"/>
+<w:i w:val="0"/>
+<w:color w:val="94A3B8"/>
+<w:sz w:val="17"/>
+</w:rPr>
+<w:t xml:space="preserve">EPSS: </w:t>
+</w:r>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="F8FAFC"/>
+<w:sz w:val="17"/>
+</w:rPr>
+<w:t xml:space="preserve">N/A  |  </w:t>
+</w:r>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b w:val="0"/>
+<w:i w:val="0"/>
+<w:color w:val="94A3B8"/>
+<w:sz w:val="17"/>
+</w:rPr>
+<w:t xml:space="preserve">Threat Vector: </w:t>
+</w:r>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="F8FAFC"/>
+<w:sz w:val="17"/>
+</w:rPr>
+<w:t xml:space="preserve">LOCAL  |  </w:t>
+</w:r>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b w:val="0"/>
+<w:i w:val="0"/>
+<w:color w:val="94A3B8"/>
+<w:sz w:val="17"/>
+</w:rPr>
+<w:t xml:space="preserve">Complexity: </w:t>
+</w:r>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="F8FAFC"/>
+<w:sz w:val="17"/>
+</w:rPr>
+<w:t>LOW</w:t>
+</w:r>
+</w:p>
+</w:tc>
+</w:tr>
+</w:tbl>
+<w:p>
+<w:pPr>
+<w:spacing w:after="40"/>
+</w:pPr>
+</w:p>
+<w:p>
+<w:pPr>
+<w:spacing w:before="120" w:after="40"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="3B82F6"/>
+<w:sz w:val="19"/>
+</w:rPr>
+<w:t>DESCRIPTION</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:spacing w:after="200"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b w:val="0"/>
+<w:i w:val="0"/>
+<w:color w:val="CBD5E1"/>
+<w:sz w:val="19"/>
+</w:rPr>
+<w:t>Non-transparent sharing of branch predictor selectors between contexts in some Intel(R) Processors may allow an authorized user to potentially enable information disclosure via local access.</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:spacing w:after="40"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="3B82F6"/>
+<w:sz w:val="19"/>
+</w:rPr>
+<w:t>AFFECTED PRODUCTS</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:pStyle w:val="ListBullet"/>
+<w:spacing w:after="20"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="F8FAFC"/>
+<w:sz w:val="18"/>
+</w:rPr>
+<w:t xml:space="preserve">Intel(R) Processors </w:t>
+</w:r>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b w:val="0"/>
+<w:i w:val="0"/>
+<w:color w:val="94A3B8"/>
+<w:sz w:val="18"/>
+</w:rPr>
+<w:t>(See references)</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:spacing w:after="80"/>
+</w:pPr>
+</w:p>
+<w:p>
+<w:pPr>
+<w:spacing w:after="80"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="3B82F6"/>
+<w:sz w:val="19"/>
+</w:rPr>
+<w:t>AFFECTED HOSTS</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:spacing w:after="200"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Consolas" w:hAnsi="Consolas"/>
+<w:rFonts w:ascii="Consolas" w:hAnsi="Consolas" w:cs="Consolas"/>
+<w:b w:val="0"/>
+<w:i w:val="0"/>
+<w:color w:val="94A3B8"/>
+<w:sz w:val="17"/>
+</w:rPr>
+<w:t xml:space="preserve"> erp01.example.test (192.0.2.40) [443/tcp] </w:t>
+</w:r>
+</w:p>
+<w:tbl>
+<w:tblPr>
+<w:tblW w:type="auto" w:w="0"/>
+<w:tblLayout w:type="fixed"/>
+<w:tblLook w:firstColumn="1" w:firstRow="1" w:lastColumn="0" w:lastRow="0" w:noHBand="0" w:noVBand="1" w:val="04A0"/>
+</w:tblPr>
+<w:tblGrid>
+<w:gridCol w:w="10080"/>
+</w:tblGrid>
+<w:tr>
+<w:tc>
+<w:tcPr>
+<w:tcW w:type="dxa" w:w="10080"/>
+<w:shd w:fill="0F1E36"/>
+<w:tcBorders>
+<w:top w:val="single" w:sz="4" w:space="0" w:color="1D4ED8"/>
+<w:left w:val="single" w:sz="4" w:space="0" w:color="1D4ED8"/>
+<w:bottom w:val="single" w:sz="4" w:space="0" w:color="1D4ED8"/>
+<w:right w:val="single" w:sz="4" w:space="0" w:color="1D4ED8"/>
+</w:tcBorders>
+</w:tcPr>
+<w:p>
+<w:pPr>
+<w:spacing w:before="120" w:after="40"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="3B82F6"/>
+<w:sz w:val="17"/>
+</w:rPr>
+<w:t>🛡️ Remediation Recommendation</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:spacing w:after="120"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="F8FAFC"/>
+<w:sz w:val="19"/>
+</w:rPr>
+<w:t>Apply the latest security patches from the vendor.</w:t>
+</w:r>
+</w:p>
+</w:tc>
+</w:tr>
+</w:tbl>
+<w:p>
+<w:pPr>
+<w:spacing w:after="160"/>
+</w:pPr>
+</w:p>
+<w:p>
+<w:pPr>
+<w:spacing w:after="40"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="3B82F6"/>
+<w:sz w:val="19"/>
+</w:rPr>
+<w:t>INTELLIGENCE &amp; REFERENCES</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:pStyle w:val="ListBullet"/>
+<w:spacing w:after="20"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b w:val="0"/>
+<w:i w:val="0"/>
+<w:color w:val="3B82F6"/>
+<w:sz w:val="18"/>
+</w:rPr>
+<w:t>https://nvd.nist.gov/vuln/detail/CVE-2022-0001</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:pStyle w:val="ListBullet"/>
+<w:spacing w:after="20"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b w:val="0"/>
+<w:i w:val="0"/>
+<w:color w:val="3B82F6"/>
+<w:sz w:val="18"/>
+</w:rPr>
+<w:t>https://www.cve.org/CVERecord?id=CVE-2022-0001</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:r>
+<w:br w:type="page"/>
+</w:r>
+</w:p>
+<w:tbl>
+<w:tblPr>
+<w:tblW w:type="auto" w:w="0"/>
+<w:tblLayout w:type="fixed"/>
+<w:tblLook w:firstColumn="1" w:firstRow="1" w:lastColumn="0" w:lastRow="0" w:noHBand="0" w:noVBand="1" w:val="04A0"/>
+</w:tblPr>
+<w:tblGrid>
+<w:gridCol w:w="10080"/>
+</w:tblGrid>
+<w:tr>
+<w:tc>
+<w:tcPr>
+<w:tcW w:type="dxa" w:w="10080"/>
+<w:shd w:fill="1E293B"/>
+<w:tcBorders>
+<w:top w:val="single" w:sz="6" w:space="0" w:color="334155"/>
+<w:left w:val="single" w:sz="6" w:space="0" w:color="334155"/>
+<w:bottom w:val="single" w:sz="6" w:space="0" w:color="334155"/>
+<w:right w:val="single" w:sz="6" w:space="0" w:color="334155"/>
+</w:tcBorders>
+</w:tcPr>
+<w:p>
+<w:pPr>
+<w:spacing w:before="160" w:after="40"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:b/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:i w:val="0"/>
+<w:color w:val="FDE047"/>
+<w:sz w:val="26"/>
+</w:rPr>
+<w:t xml:space="preserve"> 5.9 </w:t>
+</w:r>
+<w:r>
+<w:rPr>
+<w:color w:val="334155"/>
+</w:rPr>
+<w:t xml:space="preserve">   |   </w:t>
+</w:r>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="3B82F6"/>
+<w:sz w:val="28"/>
+</w:rPr>
+<w:t xml:space="preserve">CVE-2023-48795   </w:t>
+</w:r>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="6366F1"/>
+<w:sz w:val="18"/>
+</w:rPr>
+<w:t xml:space="preserve"> [ PoC AVAILABLE ] </w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:spacing w:before="80" w:after="160"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="FFFFFF"/>
+<w:sz w:val="24"/>
+</w:rPr>
+<w:t>OpenSSH: Terrapin</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:spacing w:after="160"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b w:val="0"/>
+<w:i w:val="0"/>
+<w:color w:val="94A3B8"/>
+<w:sz w:val="17"/>
+</w:rPr>
+<w:t xml:space="preserve">EPSS: </w:t>
+</w:r>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="F8FAFC"/>
+<w:sz w:val="17"/>
+</w:rPr>
+<w:t xml:space="preserve">0.645350000  |  </w:t>
+</w:r>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b w:val="0"/>
+<w:i w:val="0"/>
+<w:color w:val="94A3B8"/>
+<w:sz w:val="17"/>
+</w:rPr>
+<w:t xml:space="preserve">Threat Vector: </w:t>
+</w:r>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="F8FAFC"/>
+<w:sz w:val="17"/>
+</w:rPr>
+<w:t xml:space="preserve">NETWORK  |  </w:t>
+</w:r>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b w:val="0"/>
+<w:i w:val="0"/>
+<w:color w:val="94A3B8"/>
+<w:sz w:val="17"/>
+</w:rPr>
+<w:t xml:space="preserve">Complexity: </w:t>
+</w:r>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="F8FAFC"/>
+<w:sz w:val="17"/>
+</w:rPr>
+<w:t>HIGH</w:t>
+</w:r>
+</w:p>
+</w:tc>
+</w:tr>
+</w:tbl>
+<w:p>
+<w:pPr>
+<w:spacing w:after="40"/>
+</w:pPr>
+</w:p>
+<w:p>
+<w:pPr>
+<w:spacing w:before="120" w:after="40"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="3B82F6"/>
+<w:sz w:val="19"/>
+</w:rPr>
+<w:t>DESCRIPTION</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:spacing w:after="200"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b w:val="0"/>
+<w:i w:val="0"/>
+<w:color w:val="CBD5E1"/>
+<w:sz w:val="19"/>
+</w:rPr>
+<w:t>The SSH transport protocol with certain OpenSSH extensions, found in OpenSSH before 9.6 and other products, allows remote attackers to bypass integrity checks such that some packets are omitted, aka a Terrapin attack.</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:spacing w:after="40"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="3B82F6"/>
+<w:sz w:val="19"/>
+</w:rPr>
+<w:t>AFFECTED PRODUCTS</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:pStyle w:val="ListBullet"/>
+<w:spacing w:after="20"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="F8FAFC"/>
+<w:sz w:val="18"/>
+</w:rPr>
+<w:t xml:space="preserve">OpenSSH </w:t>
+</w:r>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b w:val="0"/>
+<w:i w:val="0"/>
+<w:color w:val="94A3B8"/>
+<w:sz w:val="18"/>
+</w:rPr>
+<w:t>(9.6)</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:spacing w:after="80"/>
+</w:pPr>
+</w:p>
+<w:p>
+<w:pPr>
+<w:spacing w:after="80"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="3B82F6"/>
+<w:sz w:val="19"/>
+</w:rPr>
+<w:t>AFFECTED HOSTS</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:spacing w:after="200"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Consolas" w:hAnsi="Consolas"/>
+<w:rFonts w:ascii="Consolas" w:hAnsi="Consolas" w:cs="Consolas"/>
+<w:b w:val="0"/>
+<w:i w:val="0"/>
+<w:color w:val="94A3B8"/>
+<w:sz w:val="17"/>
+</w:rPr>
+<w:t xml:space="preserve"> erp01.example.test (192.0.2.40) [22/tcp] </w:t>
+</w:r>
+</w:p>
+<w:tbl>
+<w:tblPr>
+<w:tblW w:type="auto" w:w="0"/>
+<w:tblLayout w:type="fixed"/>
+<w:tblLook w:firstColumn="1" w:firstRow="1" w:lastColumn="0" w:lastRow="0" w:noHBand="0" w:noVBand="1" w:val="04A0"/>
+</w:tblPr>
+<w:tblGrid>
+<w:gridCol w:w="10080"/>
+</w:tblGrid>
+<w:tr>
+<w:tc>
+<w:tcPr>
+<w:tcW w:type="dxa" w:w="10080"/>
+<w:shd w:fill="0F1E36"/>
+<w:tcBorders>
+<w:top w:val="single" w:sz="4" w:space="0" w:color="1D4ED8"/>
+<w:left w:val="single" w:sz="4" w:space="0" w:color="1D4ED8"/>
+<w:bottom w:val="single" w:sz="4" w:space="0" w:color="1D4ED8"/>
+<w:right w:val="single" w:sz="4" w:space="0" w:color="1D4ED8"/>
+</w:tcBorders>
+</w:tcPr>
+<w:p>
+<w:pPr>
+<w:spacing w:before="120" w:after="40"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="3B82F6"/>
+<w:sz w:val="17"/>
+</w:rPr>
+<w:t>🛡️ Remediation Recommendation</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:spacing w:after="120"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="F8FAFC"/>
+<w:sz w:val="19"/>
+</w:rPr>
+<w:t>Review vendor advisory and apply available patches: https://example.test/security-advisory/2023-48795</w:t>
+</w:r>
+</w:p>
+</w:tc>
+</w:tr>
+</w:tbl>
+<w:p>
+<w:pPr>
+<w:spacing w:after="160"/>
+</w:pPr>
+</w:p>
+<w:p>
+<w:pPr>
+<w:spacing w:after="40"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="3B82F6"/>
+<w:sz w:val="19"/>
+</w:rPr>
+<w:t>INTELLIGENCE &amp; REFERENCES</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:pStyle w:val="ListBullet"/>
+<w:spacing w:after="20"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="F8FAFC"/>
+<w:sz w:val="18"/>
+</w:rPr>
+<w:t xml:space="preserve">🚀 Exploit PoC Link: </w:t>
+</w:r>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b w:val="0"/>
+<w:i w:val="0"/>
+<w:color w:val="3B82F6"/>
+<w:sz w:val="18"/>
+</w:rPr>
+<w:t>https://github.com/example-org/CVE-2023-48795-poc</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:pStyle w:val="ListBullet"/>
+<w:spacing w:after="20"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b w:val="0"/>
+<w:i w:val="0"/>
+<w:color w:val="3B82F6"/>
+<w:sz w:val="18"/>
+</w:rPr>
+<w:t>https://nvd.nist.gov/vuln/detail/CVE-2023-48795</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:pStyle w:val="ListBullet"/>
+<w:spacing w:after="20"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b w:val="0"/>
+<w:i w:val="0"/>
+<w:color w:val="3B82F6"/>
+<w:sz w:val="18"/>
+</w:rPr>
+<w:t>https://www.cve.org/CVERecord?id=CVE-2023-48795</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:pStyle w:val="ListBullet"/>
+<w:spacing w:after="20"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b w:val="0"/>
+<w:i w:val="0"/>
+<w:color w:val="3B82F6"/>
+<w:sz w:val="18"/>
+</w:rPr>
+<w:t>https://terrapin-attack.example.test/</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:pStyle w:val="ListBullet"/>
+<w:spacing w:after="20"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b w:val="0"/>
+<w:i w:val="0"/>
+<w:color w:val="3B82F6"/>
+<w:sz w:val="18"/>
+</w:rPr>
+<w:t>https://example.test/security-advisory/2023-48795</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:r>
+<w:br w:type="page"/>
+</w:r>
+</w:p>
+<w:tbl>
+<w:tblPr>
+<w:tblW w:type="auto" w:w="0"/>
+<w:tblLayout w:type="fixed"/>
+<w:tblLook w:firstColumn="1" w:firstRow="1" w:lastColumn="0" w:lastRow="0" w:noHBand="0" w:noVBand="1" w:val="04A0"/>
+</w:tblPr>
+<w:tblGrid>
+<w:gridCol w:w="10080"/>
+</w:tblGrid>
+<w:tr>
+<w:tc>
+<w:tcPr>
+<w:tcW w:type="dxa" w:w="10080"/>
+<w:shd w:fill="1E293B"/>
+<w:tcBorders>
+<w:top w:val="single" w:sz="6" w:space="0" w:color="334155"/>
+<w:left w:val="single" w:sz="6" w:space="0" w:color="334155"/>
+<w:bottom w:val="single" w:sz="6" w:space="0" w:color="334155"/>
+<w:right w:val="single" w:sz="6" w:space="0" w:color="334155"/>
+</w:tcBorders>
+</w:tcPr>
+<w:p>
+<w:pPr>
+<w:spacing w:before="160" w:after="40"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:b/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:i w:val="0"/>
+<w:color w:val="FDE047"/>
+<w:sz w:val="26"/>
+</w:rPr>
+<w:t xml:space="preserve"> 5.0 </w:t>
+</w:r>
+<w:r>
+<w:rPr>
+<w:color w:val="334155"/>
+</w:rPr>
+<w:t xml:space="preserve">   |   </w:t>
+</w:r>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="3B82F6"/>
+<w:sz w:val="28"/>
+</w:rPr>
+<w:t xml:space="preserve">CVE-2014-0160   </w:t>
+</w:r>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="DB2777"/>
+<w:sz w:val="18"/>
+</w:rPr>
+<w:t xml:space="preserve"> [ CISA KEV ] </w:t>
+</w:r>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="DC2626"/>
+<w:sz w:val="18"/>
+</w:rPr>
+<w:t xml:space="preserve"> [ ACTIVE EXPLOIT ] </w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:spacing w:before="80" w:after="160"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="FFFFFF"/>
+<w:sz w:val="24"/>
+</w:rPr>
+<w:t>OpenSSL: Obtain sensitive information from process memory via crafted packets that trigger a buffer over-read</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:spacing w:after="160"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b w:val="0"/>
+<w:i w:val="0"/>
+<w:color w:val="94A3B8"/>
+<w:sz w:val="17"/>
+</w:rPr>
+<w:t xml:space="preserve">EPSS: </w:t>
+</w:r>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="F8FAFC"/>
+<w:sz w:val="17"/>
+</w:rPr>
+<w:t xml:space="preserve">N/A  |  </w:t>
+</w:r>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b w:val="0"/>
+<w:i w:val="0"/>
+<w:color w:val="94A3B8"/>
+<w:sz w:val="17"/>
+</w:rPr>
+<w:t xml:space="preserve">Threat Vector: </w:t>
+</w:r>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="F8FAFC"/>
+<w:sz w:val="17"/>
+</w:rPr>
+<w:t xml:space="preserve">NETWORK  |  </w:t>
+</w:r>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b w:val="0"/>
+<w:i w:val="0"/>
+<w:color w:val="94A3B8"/>
+<w:sz w:val="17"/>
+</w:rPr>
+<w:t xml:space="preserve">Complexity: </w:t>
+</w:r>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="F8FAFC"/>
+<w:sz w:val="17"/>
+</w:rPr>
+<w:t>LOW</w:t>
+</w:r>
+</w:p>
+</w:tc>
+</w:tr>
+</w:tbl>
+<w:p>
+<w:pPr>
+<w:spacing w:after="40"/>
+</w:pPr>
+</w:p>
+<w:p>
+<w:pPr>
+<w:spacing w:before="120" w:after="40"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="3B82F6"/>
+<w:sz w:val="19"/>
+</w:rPr>
+<w:t>DESCRIPTION</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:spacing w:after="200"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b w:val="0"/>
+<w:i w:val="0"/>
+<w:color w:val="CBD5E1"/>
+<w:sz w:val="19"/>
+</w:rPr>
+<w:t>The TLS and DTLS implementations in OpenSSL 1.0.1 before 1.0.1g do not properly handle Heartbeat Extension packets, which allows remote attackers to obtain sensitive information from process memory via crafted packets that trigger a buffer over-read.</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:spacing w:after="40"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="3B82F6"/>
+<w:sz w:val="19"/>
+</w:rPr>
+<w:t>AFFECTED PRODUCTS</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:pStyle w:val="ListBullet"/>
+<w:spacing w:after="20"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="F8FAFC"/>
+<w:sz w:val="18"/>
+</w:rPr>
+<w:t xml:space="preserve">OpenSSL </w:t>
+</w:r>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b w:val="0"/>
+<w:i w:val="0"/>
+<w:color w:val="94A3B8"/>
+<w:sz w:val="18"/>
+</w:rPr>
+<w:t>(96db9023b881d7cd9f379b0c154650d6c108e9a3 to &lt;7e840163c06c7692b796a93e3fa85a93136adbb2)</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:spacing w:after="80"/>
+</w:pPr>
+</w:p>
+<w:p>
+<w:pPr>
+<w:spacing w:after="80"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="3B82F6"/>
+<w:sz w:val="19"/>
+</w:rPr>
+<w:t>AFFECTED HOSTS</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:spacing w:after="200"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Consolas" w:hAnsi="Consolas"/>
+<w:rFonts w:ascii="Consolas" w:hAnsi="Consolas" w:cs="Consolas"/>
+<w:b w:val="0"/>
+<w:i w:val="0"/>
+<w:color w:val="94A3B8"/>
+<w:sz w:val="17"/>
+</w:rPr>
+<w:t xml:space="preserve"> crm01.example.test [8443/tcp] </w:t>
+</w:r>
+</w:p>
+<w:tbl>
+<w:tblPr>
+<w:tblW w:type="auto" w:w="0"/>
+<w:tblLayout w:type="fixed"/>
+<w:tblLook w:firstColumn="1" w:firstRow="1" w:lastColumn="0" w:lastRow="0" w:noHBand="0" w:noVBand="1" w:val="04A0"/>
+</w:tblPr>
+<w:tblGrid>
+<w:gridCol w:w="10080"/>
+</w:tblGrid>
+<w:tr>
+<w:tc>
+<w:tcPr>
+<w:tcW w:type="dxa" w:w="10080"/>
+<w:shd w:fill="0F1E36"/>
+<w:tcBorders>
+<w:top w:val="single" w:sz="4" w:space="0" w:color="1D4ED8"/>
+<w:left w:val="single" w:sz="4" w:space="0" w:color="1D4ED8"/>
+<w:bottom w:val="single" w:sz="4" w:space="0" w:color="1D4ED8"/>
+<w:right w:val="single" w:sz="4" w:space="0" w:color="1D4ED8"/>
+</w:tcBorders>
+</w:tcPr>
+<w:p>
+<w:pPr>
+<w:spacing w:before="120" w:after="40"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="3B82F6"/>
+<w:sz w:val="17"/>
+</w:rPr>
+<w:t>🛡️ Remediation Recommendation</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:spacing w:after="120"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="F8FAFC"/>
+<w:sz w:val="19"/>
+</w:rPr>
+<w:t>Apply the latest security patches from the vendor.</w:t>
+</w:r>
+</w:p>
+</w:tc>
+</w:tr>
+</w:tbl>
+<w:p>
+<w:pPr>
+<w:spacing w:after="160"/>
+</w:pPr>
+</w:p>
+<w:p>
+<w:pPr>
+<w:spacing w:after="40"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b/>
+<w:i w:val="0"/>
+<w:color w:val="3B82F6"/>
+<w:sz w:val="19"/>
+</w:rPr>
+<w:t>INTELLIGENCE &amp; REFERENCES</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:pStyle w:val="ListBullet"/>
+<w:spacing w:after="20"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b w:val="0"/>
+<w:i w:val="0"/>
+<w:color w:val="3B82F6"/>
+<w:sz w:val="18"/>
+</w:rPr>
+<w:t>https://nvd.nist.gov/vuln/detail/CVE-2014-0160</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:pStyle w:val="ListBullet"/>
+<w:spacing w:after="20"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b w:val="0"/>
+<w:i w:val="0"/>
+<w:color w:val="3B82F6"/>
+<w:sz w:val="18"/>
+</w:rPr>
+<w:t>https://www.cve.org/CVERecord?id=CVE-2014-0160</w:t>
+</w:r>
+</w:p>
+<w:p>
+<w:pPr>
+<w:pStyle w:val="ListBullet"/>
+<w:spacing w:after="20"/>
+</w:pPr>
+<w:r>
+<w:rPr>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI"/>
+<w:rFonts w:ascii="Segoe UI" w:hAnsi="Segoe UI" w:cs="Segoe UI"/>
+<w:b w:val="0"/>
+<w:i w:val="0"/>
+<w:color w:val="3B82F6"/>
+<w:sz w:val="18"/>
+</w:rPr>
+<w:t>https://www.openssl.example.test/news/secadv/20140407.txt</w:t>
+</w:r>
+</w:p>
+<w:sectPr w:rsidR="00FC693F" w:rsidRPr="0006063C" w:rsidSect="00034616">
+<w:pgSz w:w="12240" w:h="15840"/>
+<w:pgMar w:top="1080" w:right="1080" w:bottom="1080" w:left="1080" w:header="720" w:footer="720" w:gutter="0"/>
+<w:cols w:space="720"/>
+<w:docGrid w:linePitch="360"/>
+</w:sectPr>
+</w:body>
+</w:document>
+<!-- word/settings.xml -->
+<?xml version='1.0' encoding='UTF-8' standalone='yes'?>
+<w:settings xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w10="urn:schemas-microsoft-com:office:word" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:w14="http://schemas.microsoft.com/office/word/2010/wordml" xmlns:sl="http://schemas.openxmlformats.org/schemaLibrary/2006/main" mc:Ignorable="w14">
+<w:zoom w:val="bestFit"/>
+<w:proofState w:spelling="clean" w:grammar="clean"/>
+<w:defaultTabStop w:val="720"/>
+<w:characterSpacingControl w:val="doNotCompress"/>
+<w:savePreviewPicture/>
+<w:compat>
+<w:useFELayout/>
+<w:compatSetting w:name="compatibilityMode" w:uri="http://schemas.microsoft.com/office/word" w:val="14"/>
+<w:compatSetting w:name="overrideTableStyleFontSizeAndJustification" w:uri="http://schemas.microsoft.com/office/word" w:val="1"/>
+<w:compatSetting w:name="enableOpenTypeFeatures" w:uri="http://schemas.microsoft.com/office/word" w:val="1"/>
+<w:compatSetting w:name="doNotFlipMirrorIndents" w:uri="http://schemas.microsoft.com/office/word" w:val="1"/>
+</w:compat>
+<w:rsids>
+<w:rsidRoot w:val="00B47730"/>
+<w:rsid w:val="00034616"/>
+<w:rsid w:val="0006063C"/>
+<w:rsid w:val="0015074B"/>
+<w:rsid w:val="0029639D"/>
+<w:rsid w:val="00326F90"/>
+<w:rsid w:val="00AA1D8D"/>
+<w:rsid w:val="00B47730"/>
+<w:rsid w:val="00CB0664"/>
+<w:rsid w:val="00FC693F"/>
+</w:rsids>
+<m:mathPr>
+<m:mathFont m:val="Cambria Math"/>
+<m:brkBin m:val="before"/>
+<m:brkBinSub m:val="--"/>
+<m:smallFrac m:val="0"/>
+<m:dispDef/>
+<m:lMargin m:val="0"/>
+<m:rMargin m:val="0"/>
+<m:defJc m:val="centerGroup"/>
+<m:wrapIndent m:val="1440"/>
+<m:intLim m:val="subSup"/>
+<m:naryLim m:val="undOvr"/>
+</m:mathPr>
+<w:themeFontLang w:val="en-US" w:eastAsia="ja-JP"/>
+<w:clrSchemeMapping w:bg1="light1" w:t1="dark1" w:bg2="light2" w:t2="dark2" w:accent1="accent1" w:accent2="accent2" w:accent3="accent3" w:accent4="accent4" w:accent5="accent5" w:accent6="accent6" w:hyperlink="hyperlink" w:followedHyperlink="followedHyperlink"/>
+<w:doNotAutoCompressPictures/>
+<w:shapeDefaults>
+<o:shapedefaults v:ext="edit" spidmax="1027"/>
+<o:shapelayout v:ext="edit">
+<o:idmap v:ext="edit" data="1"/>
+</o:shapelayout>
+</w:shapeDefaults>
+<w:decimalSymbol w:val="."/>
+<w:listSeparator w:val=","/>
+<w14:docId w14:val="24062061"/>
+<w14:defaultImageDpi w14:val="300"/>
+<w:displayBackgroundShape/>
+</w:settings>
+<!-- media -->
+word/media/image1.png

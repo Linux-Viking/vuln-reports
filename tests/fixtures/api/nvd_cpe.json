@@ -1,0 +1,15 @@
+{
+  "cpe:2.3:a:openbsd:openssh:8.9p1": [
+    "CVE-2023-48795",
+    "CVE-2024-6387"
+  ],
+  "cpe:2.3:a:igor_sysoev:nginx:1.29.8": [],
+  "cpe:2.3:a:f5:nginx:1.29.8": [
+    "CVE-2022-0001"
+  ],
+  "cpe:2.3:a:nginx:nginx:1.29.8": [],
+  "cpe:2.3:a:apache:http_server:2.4.49": [
+    "CVE-2021-41773",
+    "CVE-2021-44228"
+  ]
+}

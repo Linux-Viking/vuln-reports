@@ -1,0 +1,10 @@
+============================================================
+CVE ID: CVE-2022-0001
+Title: Intel(R) Processors: Information Disclosure
+Description: Non-transparent sharing of branch predictor selectors between contexts in some Intel(R) Processors may allow an authorized user to potentially enable information disclosure via local access.
+CVSS: 6.5 | KEV: No | EPSS: N/A
+Exploitability: Theoretical / Unknown | PoC: N/A
+Threat Vector: LOCAL | User Interaction: NONE | Complexity: LOW
+Affected: Intel(R) Processors (See references)
+References: https://nvd.nist.gov/vuln/detail/CVE-2022-0001, https://www.cve.org/CVERecord?id=CVE-2022-0001
+

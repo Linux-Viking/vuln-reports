@@ -1,0 +1,27 @@
+{
+  "repositories": {
+    "\"CVE-2023-48795\"": [
+      {
+        "name": "terrapin-scanner",
+        "description": "Scanner for CVE-2023-48795",
+        "html_url": "https://github.com/example-org/terrapin-scanner"
+      },
+      {
+        "name": "CVE-2023-48795-poc",
+        "description": "Proof of concept",
+        "html_url": "https://github.com/example-org/CVE-2023-48795-poc"
+      }
+    ],
+    "\"Terrapin\"": []
+  },
+  "code": {
+    "\"Terrapin\"": [
+      {
+        "path": "exploits/terrapin/poc.py",
+        "repository": {
+          "html_url": "https://github.com/example-org/collection"
+        }
+      }
+    ]
+  }
+}

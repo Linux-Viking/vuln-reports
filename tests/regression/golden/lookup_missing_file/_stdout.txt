@@ -1,0 +1,2 @@
+--- CVE Lookup Tool Pro v2.2.1 (Intelligence Edition) ---
+Error: [Errno 2] No such file or directory: 'nope.txt'

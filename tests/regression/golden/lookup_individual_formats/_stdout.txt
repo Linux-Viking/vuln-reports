@@ -1,0 +1,32 @@
+--- CVE Lookup Tool Pro v2.2.1 (Intelligence Edition) ---
+[*] Analyzing 1 CVEs...
+
+============================================================
+CVE ID: CVE-2021-44228
+Vulnerability Title: Apache Log4j2 JNDI lookups reach attacker controlled LDAP endpoints
+Description: Apache Log4j2 2.0-beta9 through 2.15.0 JNDI features used in configuration, log messages, and parameters do not protect against attacker controlled LDAP endpoints. An attacker who controls log messages can execute arbitrary code.
+Affected Products:
+  - Apache Log4j2 (2.0-beta9 to <2.3.1, 2.4 to <2.12.2, 2.13.0 to <2.15.0)
+CISA KEV?: Yes
+CVSS Score: 10.0
+Exploitability: Exploited in the wild
+PoC Available: Yes
+PoC Link: https://www.exploit-db.com/exploits/00000
+Threat Vector: NETWORK
+User Interaction: NONE
+EPSS Score: 0.944570000
+Attack Complexity: LOW
+References:
+  - https://nvd.nist.gov/vuln/detail/CVE-2021-44228
+  - https://www.cve.org/CVERecord?id=CVE-2021-44228
+  - https://logging.apache.org/log4j/2.x/security.html
+  - https://www.exploit-db.com/exploits/00000
+  - https://example.test/advisory/log4j
+============================================================
+[+] JSON report saved to: results.json
+[+] CSV report saved to: c.csv
+[+] Text report saved to: t.txt
+[+] Grep report saved to: g.grep
+[+] XML report saved to: x.xml
+
+[+] Done. Processed 1 items.

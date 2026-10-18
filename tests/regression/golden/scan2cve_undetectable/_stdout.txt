@@ -1,0 +1,1 @@
+[!] Could not detect scanner type for cves_upload.csv. Use -t to specify.

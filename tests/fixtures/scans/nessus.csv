@@ -1,0 +1,6 @@
+Plugin ID,CVE,CVSS v3.0 Base Score,Risk,Host,FQDN,Protocol,Port,Name,Synopsis
+187315,CVE-2023-48795,5.9,Medium,192.0.2.30,vpn01.example.test,tcp,22,SSH Terrapin Prefix Truncation Weakness,Synthetic row
+201194,CVE-2024-6387,8.1,High,192.0.2.30,vpn01.example.test,tcp,22,SSH Terrapin Prefix Truncation Weakness,Synthetic row
+156057,"CVE-2021-44228, CVE-2022-0001",10.0,Critical,192.0.2.31,,tcp,8443,Apache Log4j RCE,Synthetic row
+19506,,,None,192.0.2.31,,tcp,0,Nessus Scan Information,Synthetic row
+73412,CVE-2014-0160,7.5,High,legacy01.example.test,,tcp,0,OpenSSL Heartbleed,Synthetic row

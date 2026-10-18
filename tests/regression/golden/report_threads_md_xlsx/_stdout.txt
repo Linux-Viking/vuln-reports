@@ -1,0 +1,7 @@
+[*] Detected scanner type: nmap_xml
+  [-] Skipping broad/generic CPE: cpe:/o:linux:linux_kernel
+  [-] Skipping broad/generic CPE: cpe:/a:apache:http_server
+[*] Fetching CVEs for 3 unique specific CPEs using 2 threads...
+[*] Fetching enrichment data for 6 unique CVEs...
+[+] Markdown report saved to: n.md
+[+] XLSX intelligence report saved to: n.xlsx

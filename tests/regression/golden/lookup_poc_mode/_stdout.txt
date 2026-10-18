@@ -1,0 +1,5 @@
+[*] Analyzing 4 CVEs...
+CVE-2021-44228: https://www.exploit-db.com/exploits/00000
+CVE-2023-48795: https://github.com/example-org/CVE-2023-48795-poc
+
+[+] Done. Processed 2 items.

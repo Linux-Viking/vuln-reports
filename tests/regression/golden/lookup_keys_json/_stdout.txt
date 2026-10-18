@@ -1,0 +1,71 @@
+--- CVE Lookup Tool Pro v2.2.1 (Intelligence Edition) ---
+[*] Analyzing 3 CVEs...
+
+============================================================
+CVE ID: CVE-2014-0160
+Vulnerability Title: OpenSSL: Obtain sensitive information from process memory via crafted packets that trigger a buffer over-read
+Description: The TLS and DTLS implementations in OpenSSL 1.0.1 before 1.0.1g do not properly handle Heartbeat Extension packets, which allows remote attackers to obtain sensitive information from process memory via crafted packets that trigger a buffer over-read.
+Affected Products:
+  - openssl (before 1.0.1g)
+  - openssl (up to 1.0.2-beta1)
+CISA KEV?: Yes
+CVSS Score: 5.0
+Exploitability: Exploited in the wild
+PoC Available: No
+PoC Link: N/A
+Threat Vector: NETWORK
+User Interaction: N/A
+EPSS Score: N/A
+Attack Complexity: LOW
+References:
+  - https://nvd.nist.gov/vuln/detail/CVE-2014-0160
+  - https://www.cve.org/CVERecord?id=CVE-2014-0160
+  - https://www.openssl.example.test/news/secadv/20140407.txt
+============================================================
+
+============================================================
+CVE ID: CVE-2024-6387
+Vulnerability Title: OpenSSH regreSSHion signal handler race (synthetic)
+Description: A signal handler race condition was found in OpenSSH's server (sshd), where a client does not authenticate within LoginGraceTime seconds. This issue is fixed in version 9.8p1.
+Affected Products:
+  - OpenSSH (8.5p1 to <9.8p1)
+CISA KEV?: No
+CVSS Score: 8.1
+Exploitability: Theoretical / Unknown
+PoC Available: No
+PoC Link: N/A
+Threat Vector: NETWORK
+User Interaction: NONE
+EPSS Score: 0.391130000
+Attack Complexity: HIGH
+References:
+  - https://nvd.nist.gov/vuln/detail/CVE-2024-6387
+  - https://www.cve.org/CVERecord?id=CVE-2024-6387
+  - https://www.openssh.example.test/txt/release-9.8
+============================================================
+
+============================================================
+CVE ID: CVE-2023-48795
+Vulnerability Title: OpenSSH: Terrapin
+Description: The SSH transport protocol with certain OpenSSH extensions, found in OpenSSH before 9.6 and other products, allows remote attackers to bypass integrity checks such that some packets are omitted, aka a Terrapin attack.
+Affected Products:
+  - OpenSSH (9.6)
+CISA KEV?: No
+CVSS Score: 5.9
+Exploitability: PoC Available
+PoC Available: Yes (GitHub)
+PoC Link: https://github.com/example-org/CVE-2023-48795-poc
+Threat Vector: NETWORK
+User Interaction: NONE
+EPSS Score: 0.645350000
+Attack Complexity: HIGH
+References:
+  - https://nvd.nist.gov/vuln/detail/CVE-2023-48795
+  - https://www.cve.org/CVERecord?id=CVE-2023-48795
+  - https://terrapin-attack.example.test/
+  - https://example.test/security-advisory/2023-48795
+  - https://github.com/example-org/CVE-2023-48795-poc
+============================================================
+[+] JSON report saved to: keys.json
+
+[+] Done. Processed 3 items.

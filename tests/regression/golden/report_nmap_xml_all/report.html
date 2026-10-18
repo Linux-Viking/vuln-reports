@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vulnerability Intelligence Report</title>
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --accent: #3b82f6;
+            --critical: #ef4444;
+            --high: #f97316;
+            --medium: #eab308;
+            --low: #3b82f6;
+            --info: #22c55e;
+            --kev: #db2777;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            border-bottom: 1px solid #334155;
+            padding-bottom: 2rem;
+            margin-bottom: 2rem;
+            display: block;
+        }
+
+        h1 { margin: 0; font-size: 2.5rem; letter-spacing: -0.025em; }
+        .metadata { color: var(--text-dim); font-size: 0.9rem; }
+
+        .summary-grid {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            width: 100%;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            border: 1px solid #334155;
+            text-align: center;
+            flex: 1;
+            box-sizing: border-box;
+        }
+
+        .stat-value { font-size: 2rem; font-weight: 700; display: block; }
+        .stat-label { color: var(--text-dim); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; }
+
+        .vulnerability-list { 
+            display: block;
+            page-break-before: always;
+            margin-top: 2rem;
+        }
+
+        .vuln-card {
+            background: var(--bg-card);
+            border-radius: 1rem;
+            border: 1px solid #334155;
+            overflow: hidden;
+            margin-bottom: 2rem;
+            page-break-inside: avoid;
+            display: block;
+        }
+
+        .vuln-header {
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-bottom: 1px solid #334155;
+            display: block;
+            position: relative;
+            min-height: 80px;
+        }
+
+        .severity-badge {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.2rem;
+            vertical-align: middle;
+            margin-right: 1.5rem;
+        }
+
+        .vuln-header-text {
+            display: inline-block;
+            vertical-align: middle;
+            width: 55%;
+        }
+
+        .vuln-header-right {
+            position: absolute;
+            right: 1.5rem;
+            top: 1.5rem;
+            text-align: right;
+            font-size: 0.8rem;
+            color: var(--text-dim);
+        }
+
+        .sev-critical { background: rgba(239, 68, 68, 0.1); color: var(--critical); border: 2px solid var(--critical); }
+        .sev-high { background: rgba(249, 115, 22, 0.1); color: var(--high); border: 2px solid var(--high); }
+        .sev-medium { background: rgba(234, 179, 8, 0.1); color: var(--medium); border: 2px solid var(--medium); }
+        .sev-low { background: rgba(59, 130, 246, 0.1); color: var(--low); border: 2px solid var(--low); }
+        .sev-info { background: rgba(34, 197, 94, 0.1); color: var(--info); border: 2px solid var(--info); }
+
+        .vuln-id { font-weight: 700; color: var(--accent); margin-bottom: 0.25rem; }
+        .vuln-title { font-size: 1.1rem; font-weight: 600; margin: 0; word-wrap: break-word; }
+
+        .badge-container { display: block; margin-top: 0.5rem; }
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            display: inline-block;
+            margin-right: 0.5rem;
+        }
+
+        .badge-kev { background: var(--kev); color: white; }
+        .badge-poc { background: #6366f1; color: white; }
+        .badge-exploited { background: #dc2626; color: white; }
+
+        .vuln-body { padding: 1.5rem; display: block; }
+        .vuln-body h4 { margin-top: 0; }
+        .vuln-desc { color: var(--text-dim); margin-bottom: 1.5rem; font-size: 0.95rem; display: block; }
+
+        .section-header {
+            margin: 1.5rem 0 0.75rem 0;
+            font-size: 0.8rem;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 700;
+        }
+
+        .affected-list, .reference-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            font-size: 0.85rem;
+        }
+
+        .affected-list li { margin-bottom: 0.5rem; }
+        .reference-list li {
+            margin-bottom: 0.25rem;
+            word-wrap: break-word;
+        }
+
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        .host-list {
+            margin-top: 0.5rem;
+            display: block;
+            width: 100%;
+        }
+
+        .host-item {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.2rem 0.6rem;
+            border-radius: 0.25rem;
+            font-family: monospace;
+            font-size: 0.8rem;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        @page {
+            background: var(--bg-dark);
+            margin: 1cm;
+        }
+
+        * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        .summary-page {
+            display: block;
+            page-break-after: always;
+        }
+
+        .chart-container {
+            text-align: center;
+            background: var(--bg-card);
+            padding: 1rem;
+            border-radius: 1rem;
+            border: 1px solid #334155;
+            display: block;
+            margin-bottom: 2rem;
+        }
+
+        .chart-container img {
+            max-width: 80%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="summary-page">
+            <header>
+                <div style="display: inline-block; width: 55%;">
+                    <h1>Vulnerability Intelligence Report</h1>
+                    <div class="metadata">
+                        Generated on: 2026-10-17 12:00 | Scanner: nmap_xml | Target: nmap.xml
+                    </div>
+                </div>
+                <div style="display: inline-block; width: 28%; text-align: right; vertical-align: top;">
+                    <span style="font-weight: 800; font-size: 1.5rem; color: var(--accent);">VULN-REPORTS</span>
+                </div>
+            </header>
+
+            <section class="summary-grid">
+                <div class="stat-card">
+                    <span class="stat-value">3</span>
+                    <span class="stat-label">HOSTS</span>
+                </div>
+
+                <div class="stat-card">
+                    <span class="stat-value">6</span>
+                    <span class="stat-label">Unique CVEs</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value" style="color: var(--critical)">2</span>
+                    <span class="stat-label">Critical Risks</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value" style="color: var(--kev)">1</span>
+                    <span class="stat-label">KEV Exploited</span>
+                </div>
+            </section>
+
+            
+            <div class="chart-container">
+                <img src="data:image/png;base64,<CHART_PNG>" alt="Severity Distribution">
+            </div>
+            
+        </div>
+
+        <div class="vulnerability-list">
+            
+            <div class="vuln-card">
+                <div class="vuln-header">
+                    <div class="severity-badge sev-critical">
+                        10.0
+                    </div>
+                    <div class="vuln-header-text">
+                        <div class="vuln-id">CVE-2021-44228</div>
+                        <h3 class="vuln-title">Apache Log4j2 JNDI lookups reach attacker controlled LDAP endpoints</h3>
+                        <div class="badge-container">
+                            <span class="badge badge-kev">CISA KEV</span>
+                            <span class="badge badge-exploited">Active Exploitation</span>
+                            
+                        </div>
+                    </div>
+                    <div class="vuln-header-right">
+                        EPSS: 0.944570000<br>
+                        Threat Vector: NETWORK<br>
+                        Complexity: LOW
+                    </div>
+                </div>
+                <div class="vuln-body">
+                    <!-- 1. Description -->
+                    <div class="section-header">Description</div>
+                    <div class="vuln-desc">Apache Log4j2 2.0-beta9 through 2.15.0 JNDI features used in configuration, log messages, and parameters do not protect against attacker controlled LDAP endpoints. An attacker who controls log messages can execute arbitrary code.</div>
+                    
+                    <!-- 2. Affected Products -->
+                    <div class="section-header">Affected Products</div>
+                    <ul class="affected-list" style="margin-bottom: 1.5rem;">
+                        
+                        <li><strong>Apache Log4j2</strong> (2.0-beta9 to <2.3.1, 2.4 to <2.12.2, 2.13.0 to <2.15.0)</li>
+                        
+                        
+                    </ul>
+
+                    <!-- 3. Affected Hosts -->
+                    <div class="section-header">Affected Hosts</div>
+                    
+                    <div class="host-list" style="margin-bottom: 1.5rem;">
+                        
+                        <span class="host-item">app02.example.test (443/tcp)</span>
+                        
+                        
+                    </div>
+                    
+
+                    <!-- 4. Remediation Recommendation -->
+                    <div style="background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.2); padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
+                        <h4 style="margin: 0 0 0.5rem 0; font-size: 0.8rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em;">🛡️ Remediation Recommendation</h4>
+                        <div style="font-size: 0.9rem; font-weight: 700;">Upgrade to Log4j 2.17.1 or later; remove the JndiLookup class as an interim mitigation.</div>
+                    </div>
+
+                    <!-- 5. Intelligence & References -->
+                    <div class="section-header">Intelligence & References</div>
+                    <ul class="reference-list">
+                        
+                        <li>🚀 <a href="https://www.exploit-db.com/exploits/00000" target="_blank">Exploit PoC Link</a></li>
+                        
+                        
+                        <li>🔗 <a href="https://nvd.nist.gov/vuln/detail/CVE-2021-44228" target="_blank">https://nvd.nist.gov/vuln/detail/CVE-2021-44228</a></li>
+                        
+                        <li>🔗 <a href="https://www.cve.org/CVERecord?id=CVE-2021-44228" target="_blank">https://www.cve.org/CVERecord?id=CVE-2021-44228</a></li>
+                        
+                        <li>🔗 <a href="https://logging.apache.org/log4j/2.x/security.html" target="_blank">https://logging.apache.org/log4j/2.x/security.html</a></li>
+                        
+                        <li>🔗 <a href="https://www.exploit-db.com/exploits/00000" target="_blank">https://www.exploit-db.com/exploits/00000</a></li>
+                        
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="vuln-card">
+                <div class="vuln-header">
+                    <div class="severity-badge sev-critical">
+                        9.2
+                    </div>
+                    <div class="vuln-header-text">
+                        <div class="vuln-id">CVE-2026-42945</div>
+                        <h3 class="vuln-title">nginx: synthetic heap overflow in HTTP/3 module</h3>
+                        <div class="badge-container">
+                            
+                            
+                            
+                        </div>
+                    </div>
+                    <div class="vuln-header-right">
+                        EPSS: 0.000430000<br>
+                        Threat Vector: NETWORK<br>
+                        Complexity: LOW
+                    </div>
+                </div>
+                <div class="vuln-body">
+                    <!-- 1. Description -->
+                    <div class="section-header">Description</div>
+                    <div class="vuln-desc">A synthetic heap overflow in the nginx HTTP/3 module allows remote attackers to crash worker processes. Users are recommended to upgrade to 1.29.9, which fixes the issue.</div>
+                    
+                    <!-- 2. Affected Products -->
+                    <div class="section-header">Affected Products</div>
+                    <ul class="affected-list" style="margin-bottom: 1.5rem;">
+                        
+                        <li><strong>nginx</strong> (1.29.8)</li>
+                        
+                        
+                    </ul>
+
+                    <!-- 3. Affected Hosts -->
+                    <div class="section-header">Affected Hosts</div>
+                    
+                    <div class="host-list" style="margin-bottom: 1.5rem;">
+                        
+                        <span class="host-item">web01.example.test (192.0.2.10) (80/tcp)</span>
+                        
+                        
+                    </div>
+                    
+
+                    <!-- 4. Remediation Recommendation -->
+                    <div style="background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.2); padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
+                        <h4 style="margin: 0 0 0.5rem 0; font-size: 0.8rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em;">🛡️ Remediation Recommendation</h4>
+                        <div style="font-size: 0.9rem; font-weight: 700;">Upgrade to 1 or later.</div>
+                    </div>
+
+                    <!-- 5. Intelligence & References -->
+                    <div class="section-header">Intelligence & References</div>
+                    <ul class="reference-list">
+                        
+                        
+                        <li>🔗 <a href="https://nvd.nist.gov/vuln/detail/CVE-2026-42945" target="_blank">https://nvd.nist.gov/vuln/detail/CVE-2026-42945</a></li>
+                        
+                        <li>🔗 <a href="https://www.cve.org/CVERecord?id=CVE-2026-42945" target="_blank">https://www.cve.org/CVERecord?id=CVE-2026-42945</a></li>
+                        
+                        <li>🔗 <a href="https://nginx.example.test/en/security_advisories.html" target="_blank">https://nginx.example.test/en/security_advisories.html</a></li>
+                        
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="vuln-card">
+                <div class="vuln-header">
+                    <div class="severity-badge sev-high">
+                        8.1
+                    </div>
+                    <div class="vuln-header-text">
+                        <div class="vuln-id">CVE-2024-6387</div>
+                        <h3 class="vuln-title">OpenSSH: Race Condition</h3>
+                        <div class="badge-container">
+                            
+                            
+                            
+                        </div>
+                    </div>
+                    <div class="vuln-header-right">
+                        EPSS: 0.391130000<br>
+                        Threat Vector: NETWORK<br>
+                        Complexity: HIGH
+                    </div>
+                </div>
+                <div class="vuln-body">
+                    <!-- 1. Description -->
+                    <div class="section-header">Description</div>
+                    <div class="vuln-desc">A signal handler race condition was found in OpenSSH's server (sshd), where a client does not authenticate within LoginGraceTime seconds. This issue is fixed in version 9.8p1.</div>
+                    
+                    <!-- 2. Affected Products -->
+                    <div class="section-header">Affected Products</div>
+                    <ul class="affected-list" style="margin-bottom: 1.5rem;">
+                        
+                        <li><strong>OpenSSH</strong> (8.5p1 to <9.8p1)</li>
+                        
+                        
+                    </ul>
+
+                    <!-- 3. Affected Hosts -->
+                    <div class="section-header">Affected Hosts</div>
+                    
+                    <div class="host-list" style="margin-bottom: 1.5rem;">
+                        
+                        <span class="host-item">web01.example.test (192.0.2.10) (22/tcp)</span>
+                        
+                        <span class="host-item">192.0.2.11 (22/tcp)</span>
+                        
+                        
+                    </div>
+                    
+
+                    <!-- 4. Remediation Recommendation -->
+                    <div style="background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.2); padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
+                        <h4 style="margin: 0 0 0.5rem 0; font-size: 0.8rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em;">🛡️ Remediation Recommendation</h4>
+                        <div style="font-size: 0.9rem; font-weight: 700;">Upgrade to 9 or later.</div>
+                    </div>
+
+                    <!-- 5. Intelligence & References -->
+                    <div class="section-header">Intelligence & References</div>
+                    <ul class="reference-list">
+                        
+                        
+                        <li>🔗 <a href="https://nvd.nist.gov/vuln/detail/CVE-2024-6387" target="_blank">https://nvd.nist.gov/vuln/detail/CVE-2024-6387</a></li>
+                        
+                        <li>🔗 <a href="https://www.cve.org/CVERecord?id=CVE-2024-6387" target="_blank">https://www.cve.org/CVERecord?id=CVE-2024-6387</a></li>
+                        
+                        <li>🔗 <a href="https://www.openssh.example.test/txt/release-9.8" target="_blank">https://www.openssh.example.test/txt/release-9.8</a></li>
+                        
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="vuln-card">
+                <div class="vuln-header">
+                    <div class="severity-badge sev-medium">
+                        6.5
+                    </div>
+                    <div class="vuln-header-text">
+                        <div class="vuln-id">CVE-2022-0001</div>
+                        <h3 class="vuln-title">Intel(R) Processors: Information Disclosure</h3>
+                        <div class="badge-container">
+                            
+                            
+                            
+                        </div>
+                    </div>
+                    <div class="vuln-header-right">
+                        EPSS: N/A<br>
+                        Threat Vector: LOCAL<br>
+                        Complexity: LOW
+                    </div>
+                </div>
+                <div class="vuln-body">
+                    <!-- 1. Description -->
+                    <div class="section-header">Description</div>
+                    <div class="vuln-desc">Non-transparent sharing of branch predictor selectors between contexts in some Intel(R) Processors may allow an authorized user to potentially enable information disclosure via local access.</div>
+                    
+                    <!-- 2. Affected Products -->
+                    <div class="section-header">Affected Products</div>
+                    <ul class="affected-list" style="margin-bottom: 1.5rem;">
+                        
+                        <li><strong>Intel(R) Processors</strong> (See references)</li>
+                        
+                        
+                    </ul>
+
+                    <!-- 3. Affected Hosts -->
+                    <div class="section-header">Affected Hosts</div>
+                    
+                    <div class="host-list" style="margin-bottom: 1.5rem;">
+                        
+                        <span class="host-item">web01.example.test (192.0.2.10) (80/tcp)</span>
+                        
+                        
+                    </div>
+                    
+
+                    <!-- 4. Remediation Recommendation -->
+                    <div style="background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.2); padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
+                        <h4 style="margin: 0 0 0.5rem 0; font-size: 0.8rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em;">🛡️ Remediation Recommendation</h4>
+                        <div style="font-size: 0.9rem; font-weight: 700;">Apply the latest security patches from the vendor.</div>
+                    </div>
+
+                    <!-- 5. Intelligence & References -->
+                    <div class="section-header">Intelligence & References</div>
+                    <ul class="reference-list">
+                        
+                        
+                        <li>🔗 <a href="https://nvd.nist.gov/vuln/detail/CVE-2022-0001" target="_blank">https://nvd.nist.gov/vuln/detail/CVE-2022-0001</a></li>
+                        
+                        <li>🔗 <a href="https://www.cve.org/CVERecord?id=CVE-2022-0001" target="_blank">https://www.cve.org/CVERecord?id=CVE-2022-0001</a></li>
+                        
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="vuln-card">
+                <div class="vuln-header">
+                    <div class="severity-badge sev-medium">
+                        5.9
+                    </div>
+                    <div class="vuln-header-text">
+                        <div class="vuln-id">CVE-2023-48795</div>
+                        <h3 class="vuln-title">OpenSSH: Terrapin</h3>
+                        <div class="badge-container">
+                            
+                            
+                            <span class="badge badge-poc">PoC Available</span>
+                        </div>
+                    </div>
+                    <div class="vuln-header-right">
+                        EPSS: 0.645350000<br>
+                        Threat Vector: NETWORK<br>
+                        Complexity: HIGH
+                    </div>
+                </div>
+                <div class="vuln-body">
+                    <!-- 1. Description -->
+                    <div class="section-header">Description</div>
+                    <div class="vuln-desc">The SSH transport protocol with certain OpenSSH extensions, found in OpenSSH before 9.6 and other products, allows remote attackers to bypass integrity checks such that some packets are omitted, aka a Terrapin attack.</div>
+                    
+                    <!-- 2. Affected Products -->
+                    <div class="section-header">Affected Products</div>
+                    <ul class="affected-list" style="margin-bottom: 1.5rem;">
+                        
+                        <li><strong>OpenSSH</strong> (9.6)</li>
+                        
+                        
+                    </ul>
+
+                    <!-- 3. Affected Hosts -->
+                    <div class="section-header">Affected Hosts</div>
+                    
+                    <div class="host-list" style="margin-bottom: 1.5rem;">
+                        
+                        <span class="host-item">web01.example.test (192.0.2.10) (22/tcp)</span>
+                        
+                        <span class="host-item">192.0.2.11 (22/tcp)</span>
+                        
+                        
+                    </div>
+                    
+
+                    <!-- 4. Remediation Recommendation -->
+                    <div style="background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.2); padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
+                        <h4 style="margin: 0 0 0.5rem 0; font-size: 0.8rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em;">🛡️ Remediation Recommendation</h4>
+                        <div style="font-size: 0.9rem; font-weight: 700;">Review vendor advisory and apply available patches: https://example.test/security-advisory/2023-48795</div>
+                    </div>
+
+                    <!-- 5. Intelligence & References -->
+                    <div class="section-header">Intelligence & References</div>
+                    <ul class="reference-list">
+                        
+                        <li>🚀 <a href="https://github.com/example-org/CVE-2023-48795-poc" target="_blank">Exploit PoC Link</a></li>
+                        
+                        
+                        <li>🔗 <a href="https://nvd.nist.gov/vuln/detail/CVE-2023-48795" target="_blank">https://nvd.nist.gov/vuln/detail/CVE-2023-48795</a></li>
+                        
+                        <li>🔗 <a href="https://www.cve.org/CVERecord?id=CVE-2023-48795" target="_blank">https://www.cve.org/CVERecord?id=CVE-2023-48795</a></li>
+                        
+                        <li>🔗 <a href="https://terrapin-attack.example.test/" target="_blank">https://terrapin-attack.example.test/</a></li>
+                        
+                        <li>🔗 <a href="https://example.test/security-advisory/2023-48795" target="_blank">https://example.test/security-advisory/2023-48795</a></li>
+                        
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="vuln-card">
+                <div class="vuln-header">
+                    <div class="severity-badge sev-low">
+                        3.1
+                    </div>
+                    <div class="vuln-header-text">
+                        <div class="vuln-id">CVE-2021-41773</div>
+                        <h3 class="vuln-title">Apache HTTP Server: Mapping urls to files outside the expected document root</h3>
+                        <div class="badge-container">
+                            
+                            
+                            
+                        </div>
+                    </div>
+                    <div class="vuln-header-right">
+                        EPSS: N/A<br>
+                        Threat Vector: NETWORK<br>
+                        Complexity: HIGH
+                    </div>
+                </div>
+                <div class="vuln-body">
+                    <!-- 1. Description -->
+                    <div class="section-header">Description</div>
+                    <div class="vuln-desc">A flaw was found in a change made to path normalization in Apache HTTP Server 2.4.49 that allows mapping URLs to files outside the expected document root.</div>
+                    
+                    <!-- 2. Affected Products -->
+                    <div class="section-header">Affected Products</div>
+                    <ul class="affected-list" style="margin-bottom: 1.5rem;">
+                        
+                        <li><strong>Apache HTTP Server</strong> (2.4.49)</li>
+                        
+                        
+                    </ul>
+
+                    <!-- 3. Affected Hosts -->
+                    <div class="section-header">Affected Hosts</div>
+                    
+                    <div class="host-list" style="margin-bottom: 1.5rem;">
+                        
+                        <span class="host-item">app02.example.test (443/tcp)</span>
+                        
+                        
+                    </div>
+                    
+
+                    <!-- 4. Remediation Recommendation -->
+                    <div style="background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.2); padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
+                        <h4 style="margin: 0 0 0.5rem 0; font-size: 0.8rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em;">🛡️ Remediation Recommendation</h4>
+                        <div style="font-size: 0.9rem; font-weight: 700;">Apply the latest security patches from the vendor.</div>
+                    </div>
+
+                    <!-- 5. Intelligence & References -->
+                    <div class="section-header">Intelligence & References</div>
+                    <ul class="reference-list">
+                        
+                        
+                        <li>🔗 <a href="https://nvd.nist.gov/vuln/detail/CVE-2021-41773" target="_blank">https://nvd.nist.gov/vuln/detail/CVE-2021-41773</a></li>
+                        
+                        <li>🔗 <a href="https://www.cve.org/CVERecord?id=CVE-2021-41773" target="_blank">https://www.cve.org/CVERecord?id=CVE-2021-41773</a></li>
+                        
+                        <li>🔗 <a href="https://httpd.example.test/security/vulnerabilities_24.html" target="_blank">https://httpd.example.test/security/vulnerabilities_24.html</a></li>
+                        
+                    </ul>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</body>
+</html>

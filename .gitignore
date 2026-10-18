@@ -1,0 +1,30 @@
+__pycache__/
+*.csv
+*.xml
+*.nessus
+*.html
+*.grep
+*.txt
+*.json
+*.pdf
+*.md
+*.docx
+*.xlsx
+!templates/report_template.docx
+.env
+.config/
+
+# Development
+.venv/
+.pytest_cache/
+.ruff_cache/
+
+# Generated-report patterns above must not swallow tests, fixtures or dev requirements
+!tests/fixtures/**
+!tests/regression/golden/**
+!requirements-dev.txt
+
+# Project files that the generated-report patterns above would otherwise ignore
+!README.md
+!requirements.txt
+!templates/**

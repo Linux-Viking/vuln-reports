@@ -1,0 +1,17 @@
+[*] Detected type: nessus_csv
+[*] Analyzing 3 hosts...
+
+[192.0.2.30 / vpn01.example.test]
+  └─ 22/tcp (SSH Terrapin Prefix Truncation Weakness): 2 CVEs found.
+     - CVE-2023-48795
+     - CVE-2024-6387
+
+[192.0.2.31]
+  └─ 8443/tcp (Apache Log4j RCE): 2 CVEs found.
+     - CVE-2021-44228
+     - CVE-2022-0001
+
+[legacy01.example.test]
+  └─ Host-level (OpenSSL Heartbleed): 1 CVEs found.
+     - CVE-2014-0160
+

@@ -1,0 +1,9 @@
+requests
+argparse
+keyring
+jinja2
+weasyprint
+openpyxl
+python-docx
+matplotlib
+defusedxml

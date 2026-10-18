@@ -1,0 +1,24 @@
+--- CVE Lookup Tool Pro v2.2.1 (Intelligence Edition) ---
+usage: cve_lookup.py [-h] [-f FILE] [-p] [-j [JSON]] [-c [CSV]] [-t [TEXT]]
+                     [-G [GREP]] [-x [XML]] [-A [ALL]] [-n] [-v]
+                     [cve_ids ...]
+
+CVE Lookup Tool Pro - Intelligence Edition
+
+positional arguments:
+  cve_ids            CVE IDs
+
+options:
+  -h, --help         show this help message and exit
+  -f, --file FILE    Input file
+  -p, --poc          PoC Mode: Filter for results with exploits and show
+                     minimal output
+  -j, --json [JSON]  JSON export (default: results.json)
+  -c, --csv [CSV]    CSV export (default: results.csv)
+  -t, --text [TEXT]  Text report (default: results.txt)
+  -G, --grep [GREP]  Grep export (default: results.grep)
+  -x, --xml [XML]    XML export (default: results.xml)
+  -A, --all [ALL]    Generate all output formats. Optionally specify a base
+                     filename (default: 'results')
+  -n, --no-color     Disable colors
+  -v, --version      show program's version number and exit

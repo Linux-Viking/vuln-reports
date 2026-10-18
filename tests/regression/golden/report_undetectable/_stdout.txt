@@ -1,0 +1,2 @@
+[*] No output format specified. Defaulting to CSV: vulnerability_report.csv
+[!] Could not detect scanner type for cves_upload.csv

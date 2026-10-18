@@ -1,0 +1,39 @@
+<?xml version="1.0" ?>
+<!-- Synthetic Nessus v2 export for tests. No real hosts or client data. -->
+<NessusClientData_v2>
+  <Report name="synthetic-scan">
+    <ReportHost name="192.0.2.20">
+      <HostProperties>
+        <tag name="host-ip">192.0.2.20</tag>
+        <tag name="host-fqdn">mail01.example.test</tag>
+      </HostProperties>
+      <ReportItem port="22" svc_name="ssh" protocol="tcp" severity="2" pluginID="187315" pluginName="SSH Terrapin Prefix Truncation Weakness">
+        <cve>CVE-2023-48795</cve>
+      </ReportItem>
+      <ReportItem port="22" svc_name="ssh" protocol="tcp" severity="3" pluginID="201194" pluginName="OpenSSH signal handler race condition">
+        <cve>CVE-2024-6387</cve>
+      </ReportItem>
+      <ReportItem port="443" svc_name="www" protocol="tcp" severity="4" pluginID="156057" pluginName="Apache Log4j RCE">
+        <cve>CVE-2021-44228</cve>
+        <cve>CVE-2099-0001</cve>
+      </ReportItem>
+      <ReportItem port="0" svc_name="general" protocol="tcp" severity="0" pluginID="19506" pluginName="Nessus Scan Information"/>
+    </ReportHost>
+    <ReportHost name="db01.example.test">
+      <HostProperties>
+        <tag name="host-ip">192.0.2.21</tag>
+      </HostProperties>
+      <ReportItem port="0" svc_name="general" protocol="tcp" severity="2" pluginID="73412" pluginName="OpenSSL Heartbleed">
+        <cve>CVE-2014-0160</cve>
+      </ReportItem>
+    </ReportHost>
+    <ReportHost name="files01.example.test">
+      <HostProperties>
+        <tag name="host-ip">files01.example.test</tag>
+      </HostProperties>
+      <ReportItem port="445" svc_name="cifs" protocol="tcp" severity="2" pluginID="1" pluginName="Synthetic branch predictor issue">
+        <cve>CVE-2022-0001</cve>
+      </ReportItem>
+    </ReportHost>
+  </Report>
+</NessusClientData_v2>

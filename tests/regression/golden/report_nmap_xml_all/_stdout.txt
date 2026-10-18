@@ -1,0 +1,12 @@
+[*] Detected scanner type: nmap_xml
+  [-] Skipping broad/generic CPE: cpe:/o:linux:linux_kernel
+  [-] Skipping broad/generic CPE: cpe:/a:apache:http_server
+[*] Fetching CVEs for 3 unique specific CPEs using 10 threads...
+[*] Fetching enrichment data for 6 unique CVEs...
+[+] Detailed CSV report saved to: report.csv
+[+] HTML intelligence report saved to: report.html
+[+] Markdown report saved to: report.md
+[+] PDF intelligence report saved to: report.pdf
+[+] XLSX intelligence report saved to: report.xlsx
+[*] Using custom Word template: <ROOT>/templates/report_template.docx
+[+] Word (DOCX) intelligence report saved to: report.docx

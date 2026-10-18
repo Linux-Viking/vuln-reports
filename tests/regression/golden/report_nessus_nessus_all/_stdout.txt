@@ -1,0 +1,9 @@
+[*] Detected scanner type: nessus_xml
+[*] Fetching enrichment data for 6 unique CVEs...
+  [!] Error enriching CVE-2099-0001: 404 Client Error: Not Found for url: https://cve.circl.lu/api/cve/CVE-2099-0001
+[+] Detailed CSV report saved to: report.csv
+[!] Error generating HTML report: 'dict object' has no attribute 'cvss_score'
+[!] Error generating Markdown report: 'dict object' has no attribute 'references'
+[!] Error generating PDF report: 'dict object' has no attribute 'cvss_score'
+[+] XLSX intelligence report saved to: report.xlsx
+[*] Using custom Word template: <ROOT>/templates/report_template.docx

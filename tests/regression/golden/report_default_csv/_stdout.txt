@@ -1,0 +1,4 @@
+[*] No output format specified. Defaulting to CSV: vulnerability_report.csv
+[*] Detected scanner type: qualys_csv
+[*] Fetching enrichment data for 5 unique CVEs...
+[+] Detailed CSV report saved to: vulnerability_report.csv

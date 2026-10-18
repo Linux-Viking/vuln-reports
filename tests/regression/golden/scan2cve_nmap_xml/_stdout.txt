@@ -1,0 +1,24 @@
+[*] Detected type: nmap_xml
+[*] Analyzing 4 hosts...
+
+[*] Fetching CVEs for 3 unique specific CPEs...
+[192.0.2.10 / web01.example.test]
+  └─ 22/tcp (OpenSSH 8.9p1): 2 CVEs found.
+     - CVE-2023-48795
+     - CVE-2024-6387
+  └─ 80/tcp (nginx 1.29.8): 2 CVEs found.
+     - CVE-2022-0001
+     - CVE-2026-42945
+  └─ 443/tcp (Apache httpd): No CVEs.
+
+[192.0.2.11]
+  └─ 22/tcp (OpenSSH 8.9p1): 2 CVEs found.
+     - CVE-2023-48795
+     - CVE-2024-6387
+
+[app02.example.test]
+  └─ 443/tcp (Apache httpd 2.4.49): 2 CVEs found.
+     - CVE-2021-41773
+     - CVE-2021-44228
+
+[+] Saved 6 unique CVEs to cves.txt

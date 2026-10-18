@@ -1,0 +1,18 @@
+[*] Detected type: qualys_csv
+[*] Analyzing 3 hosts...
+
+[192.0.2.50 / hr01.example.test]
+  └─ 22/tcp (SSH Prefix Truncation): 2 CVEs found.
+     - CVE-2023-48795
+     - CVE-2024-6387
+
+[192.0.2.51]
+  └─ Host-level (Log4j RCE): 2 CVEs found.
+     - CVE-2021-44228
+     - CVE-2022-0001
+
+[payroll01.example.test]
+  └─ 8443/tcp (OpenSSL Heartbleed): 1 CVEs found.
+     - CVE-2014-0160
+
+[+] Saved 5 unique CVEs to cves.txt

@@ -1,0 +1,6 @@
+cve_id,notes
+CVE-2021-44228,synthetic
+cve-2024-6387,lowercase
+"CVE-2023-48795, CVE-2014-0160",quoted pair
+not-a-cve,ignored
+CVE-2021-44228,duplicate
