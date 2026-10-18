@@ -4,7 +4,7 @@
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-ra"
-markers = ["regression: golden-master comparison against the v1.0.0 CLI outputs"]
+markers = ["regression: golden-master comparison against the reference release's CLI outputs"]
 
 [tool.black]
 line-length = 120

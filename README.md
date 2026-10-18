@@ -210,7 +210,7 @@ vuln_reports/
 templates/         Report templates (HTML, Markdown, optional branded DOCX)
 tests/
   unit/            Offline unit tests per module
-  regression/      Golden-master tests: today's output vs. v1.0.0 on the same inputs
+  regression/      Golden-master tests: today's output vs. the reference release on the same inputs
   fixtures/        Synthetic scans and API responses (RFC 5737 IPs, *.example.test hosts — no client data)
 examples/          Pinned, checksum-verified Tines "Run Script" action
 .github/workflows/ ci.yml (tests, lint, Bandit, Gitleaks, pip-audit), release.yml
@@ -231,11 +231,11 @@ bandit --configfile pyproject.toml --recursive . --severity-level medium
 pip-audit -r requirements.txt -r requirements-dev.txt
 ```
 
-**Regression tests.** `tests/regression/` runs 31 command lines (including the way a Tines automation calls `cve_lookup.py`) against both the current code and the stored outputs of **v1.0.0**. Every case runs in a fresh interpreter with the network mocked, the clock frozen, and thread pools serialized, so the output is deterministic. CSV, JSON, text, grep, XML, HTML, Markdown and terminal output must match byte for byte. XLSX is compared cell by cell, DOCX by its `document.xml`, and PDF by extracted text.
+**Regression tests.** `tests/regression/` runs 31 command lines (including the way a Tines automation calls `cve_lookup.py`) against both the current code and the stored outputs of the **reference release** (v1.3.0, whose output is identical to the original v1.0.0 scripts). Every case runs in a fresh interpreter with the network mocked, the clock frozen, and thread pools serialized, so the output is deterministic. CSV, JSON, text, grep, XML, HTML, Markdown and terminal output must match byte for byte. XLSX is compared cell by cell, DOCX by its `document.xml`, and PDF by extracted text.
 
 If an output change is intentional, cut a release first, then regenerate the goldens from that tag. Never regenerate them from the working tree:
 ```bash
-python tests/regression/generate_goldens.py --ref v1.2.0
+python tests/regression/generate_goldens.py --ref v1.4.0
 ```
 
 **CI** (`.github/workflows/ci.yml`) runs on every push and pull request:
@@ -258,10 +258,10 @@ Pushing a `vX.Y.Z` tag runs `.github/workflows/release.yml`:
 5. Creates the GitHub Release.
 
 ```bash
-git tag --annotate v1.2.0 --message "v1.2.0"
-git push origin v1.2.0
+git tag --annotate v1.4.0 --message "v1.4.0"
+git push origin v1.4.0
 ```
-For a tag created before the workflow existed (such as `v1.0.0`), go to Actions › Release › **Run workflow** and enter the tag.
+To publish a release for an existing tag (for example if a run failed), go to Actions › Release › **Run workflow** and enter the tag.
 
 ---
 
@@ -275,11 +275,11 @@ Anything that downloads this repo automatically, such as a Tines workflow, CI jo
 ### Option 1 — Release archive + SHA256 (recommended)
 
 ```bash
-TAG=v1.1.0
+TAG=v1.3.0
 BASE=https://github.com/Linux-Viking/vuln-reports/releases/download/$TAG
 curl --fail --location --remote-name "$BASE/vuln-reports-$TAG.tar.gz"
 curl --fail --location --remote-name "$BASE/SHA256SUMS"
-sha256sum --check --ignore-missing SHA256SUMS      # must print: vuln-reports-v1.1.0.tar.gz: OK
+sha256sum --check --ignore-missing SHA256SUMS      # must print: vuln-reports-v1.3.0.tar.gz: OK
 tar --extract --gzip --file "vuln-reports-$TAG.tar.gz"
 cd "vuln-reports-$TAG" && pip install -r requirements.txt
 ```
@@ -302,7 +302,7 @@ gh attestation verify "vuln-reports-$TAG.tar.gz" --repo Linux-Viking/vuln-report
 - installs only what `cve_lookup.py` needs (`requests`, `keyring`): about 23 MB in seconds, instead of the full report stack;
 - reports failures in the results table and CSV, instead of returning an empty table. A failed download or install, a timeout, or every lookup failing (for example when CIRCL is unavailable) each produce an `error` row explaining what happened.
 
-To use it, set `TAG` and `SHA256` to a release you've reviewed (the example ships with v1.1.0's values). To upgrade, change both together.
+To use it, set `TAG` and `SHA256` to a release you've reviewed (the example ships with v1.3.0's values). To upgrade, change both together.
 
 ### Option 2 — Pin a commit hash
 
@@ -310,8 +310,8 @@ If you need a commit that isn't released, pin the full 40-character commit SHA a
 ```bash
 git clone https://github.com/Linux-Viking/vuln-reports.git
 cd vuln-reports
-git checkout --detach 37a99f0332b2b9fd0648adc4ec19d4901443a6f8
-test "$(git rev-parse HEAD)" = 37a99f0332b2b9fd0648adc4ec19d4901443a6f8
+git checkout --detach 626bf9295c90d57f6ebbbb96cab98aef44b72853
+test "$(git rev-parse HEAD)" = 626bf9295c90d57f6ebbbb96cab98aef44b72853
 ```
 GitHub's automatic archives (`/archive/<sha>.tar.gz`, `/zipball/<ref>`) are fine for pinning *what* you download. However, GitHub doesn't guarantee their bytes stay the same over time, so **don't publish or check a SHA256 of those**. Use release assets when you need a checksum.
 

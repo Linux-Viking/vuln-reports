@@ -1,6 +1,6 @@
-"""Regenerate golden outputs from a known-good release (default: v1.0.0).
+"""Regenerate golden outputs from a known-good release (default: v1.3.0).
 
-    python tests/regression/generate_goldens.py [--ref v1.0.0] [case ...]
+    python tests/regression/generate_goldens.py [--ref v1.3.0] [case ...]
 
 The ref is exported with ``git archive`` into a temp dir and every case in
 cases.py is run against it. Goldens must only ever come from a released tag,
@@ -30,7 +30,7 @@ def export_ref(ref, dest):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--ref", default="v1.0.0", help="git tag/commit to treat as the reference (default: v1.0.0)")
+    parser.add_argument("--ref", default="v1.3.0", help="git tag/commit to treat as the reference (default: v1.3.0)")
     parser.add_argument("cases", nargs="*", help="only regenerate these case names")
     args = parser.parse_args()
 
